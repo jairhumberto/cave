@@ -1,8 +1,16 @@
-<?php\r\n/**\r\n * Squille Cave (https://github.com/jairhumberto/Cave\r\n * \r\n * @copyright Copyright (c) 2018 Squille\r\n * @license   this software is distributed under MIT license, see the\r\n *            LICENSE file.\r\n */\r\n\r\n
+<?php
+/**
+ * Squille Cave (https://github.com/jairhumberto/Cave)
+ * 
+ * @copyright Copyright (c) 2018 Squille
+ * @license   this software is distributed under MIT license, see the
+ *            LICENSE file.
+ */
+
 namespace Squille\Cave;
 
-class Table {
-
+class Table
+{
     protected $Name;
     protected $Engine;
     protected $Row_format;
@@ -14,70 +22,85 @@ class Table {
     protected $indexes;
     protected $fks;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->fields = new FieldList;
         $this->indexes = new IndexList;
         $this->fks = new FKList;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->Name;
     }
 
-    public function setName($value) {
+    public function setName($value)
+    {
         $this->Name = $value;
     }
 
-    public function getEngine() {
+    public function getEngine()
+    {
         return $this->Engine;
     }
 
-    public function setEngine($value) {
+    public function setEngine($value)
+    {
         $this->Engine = $value;
     }
 
-    public function getRow_format() {
+    public function getRow_format()
+    {
         return $this->Row_format;
     }
 
-    public function setRow_format($value) {
+    public function setRow_format($value)
+    {
         $this->Row_format = $value;
     }
 
-    public function getCharset() {
+    public function getCharset()
+    {
         return $this->Charset;
     }
 
-    public function setCharset($value) {
+    public function setCharset($value)
+    {
         $this->Charset = $value;
     }
 
-    public function getCollation() {
+    public function getCollation()
+    {
         return $this->Collation;
     }
 
-    public function setCollation($value) {
+    public function setCollation($value)
+    {
         $this->Collation = $value;
     }
 
-    public function getChecksum() {
+    public function getChecksum()
+    {
         return $this->Checksum;
     }
 
-    public function setChecksum($value) {
+    public function setChecksum($value)
+    {
         $this->Checksum = $value;
     }
 
-    public function getFields() {
+    public function getFields()
+    {
         return $this->fields;
     }
 
-    public function getIndexes() {
+    public function getIndexes()
+    {
         return $this->indexes;
     }
 
-    public function getFKs() {
+    public function getFKs()
+    {
         return $this->fks;
     }
-
 }

@@ -1,15 +1,25 @@
-<?php\r\n/**\r\n * Squille Cave (https://github.com/jairhumberto/Cave\r\n * \r\n * @copyright Copyright (c) 2018 Squille\r\n * @license   this software is distributed under MIT license, see the\r\n *            LICENSE file.\r\n */\r\n\r\n
+<?php
+/**
+ * Squille Cave (https://github.com/jairhumberto/Cave)
+ * 
+ * @copyright Copyright (c) 2018 Squille
+ * @license   this software is distributed under MIT license, see the
+ *            LICENSE file.
+ */
+
 namespace Squille\Cave;
 
-class Model extends Database {
-
+class Model extends Database
+{
     protected $xml;
-	
-	public function getEncoding() {
-		return $this->xml->actualEncoding;
-	}
+    
+    public function getEncoding()
+    {
+        return $this->xml->actualEncoding;
+    }
 
-    public function __construct(DOMDocument $xml) {
+    public function __construct(DOMDocument $xml)
+    {
         // Carregando o modelo.
         $this->xml = $xml;
 
@@ -45,7 +55,7 @@ class Model extends Database {
                 $field->setKey($nodetable_nodefield->getAttribute("Key"));
 
                 $field->setDefault($nodetable_nodefield->getAttribute("Default"));
-				
+                
                 $field->setExtra($nodetable_nodefield->getAttribute("Extra"));
                 $field->setComment($nodetable_nodefield->getAttribute("Comment"));
 
@@ -158,5 +168,4 @@ class Model extends Database {
             $this->getTables()->addItem($newtable);
         }
     }
-
 }
