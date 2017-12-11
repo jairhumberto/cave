@@ -512,11 +512,11 @@ class DatabaseImplementation extends Database
                             }
                             /*foreach($table->getFKs()->getItens() as $fk) {
                                 printf("model:%s.%s\n",
-										$modeltable->getName(),$modelfk->getSymbol()
-										);
-								printf("imple:%s.%s\n",
-										$table->getName(),$fk->getSymbol()
-										);
+                                        $modeltable->getName(),$modelfk->getSymbol()
+                                        );
+                                printf("imple:%s.%s\n",
+                                        $table->getName(),$fk->getSymbol()
+                                        );
                             }*/
                             $wrongkey = true;
                             break;
