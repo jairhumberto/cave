@@ -1,4 +1,6 @@
-<?php
+<?php\r\n/**\r\n * Squille Cave (https://github.com/jairhumberto/Cave\r\n * \r\n * @copyright Copyright (c) 2018 Squille\r\n * @license   this software is distributed under MIT license, see the\r\n *            LICENSE file.\r\n */\r\n\r\n
+namespace Squille\Cave;
+
 class DatabaseImplementation extends Database {
 
     protected $connection;
@@ -129,7 +131,6 @@ class DatabaseImplementation extends Database {
     }
 
     public function backup() {} /* implementar backup depois. backup geral do banco atraves desse método */
-
     public function integrity(Model $model) {
 
         $ul = new UnconformanceList;

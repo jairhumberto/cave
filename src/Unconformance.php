@@ -1,4 +1,14 @@
 <?php
+/**
+ * Squille Cave (https://github.com/jairhumberto/Cave
+ * 
+ * @copyright Copyright (c) 2018 Squille
+ * @license   this software is distributed under MIT license, see the
+ *            LICENSE file.
+ */
+
+namespace Squille\Cave;
+
 class Unconformance {
 
     protected $corrections;
@@ -10,7 +20,6 @@ class Unconformance {
     public function fix(mysqli $connection) {
         foreach($this->corrections->getItens() as $correction) {
             $connection->query($correction->getSQL());
-            // debug file_put_contents("log.txt", Date("Y-m-d H:i:s") . " - " . $connection->error . " - " . $correction->getSQL() . "\n", FILE_APPEND);
         }
     }
 
