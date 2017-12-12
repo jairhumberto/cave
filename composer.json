@@ -1,7 +1,7 @@
 {
     "name": "squille/cave",
     "type": "library",
-    "description": "Cave is a database migration tool",
+    "description": "Cave is a database migration PHP tool",
     "keywords": ["php", "migrate"],
     "homepage": "http://cave.squille.org/",
     "license": "MIT",
