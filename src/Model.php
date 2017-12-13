@@ -1,10 +1,28 @@
 <?php
 /**
  * Squille Cave (https://github.com/jairhumberto/Cave)
- * 
- * @copyright Copyright (c) 2018 Squille
- * @license   this software is distributed under MIT license, see the
- *            LICENSE file.
+ *
+ * MIT License
+ *
+ * Copyright (c) 2018 jairhumberto
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 namespace Squille\Cave;
@@ -12,7 +30,7 @@ namespace Squille\Cave;
 class Model extends Database
 {
     protected $xml;
-    
+
     public function getEncoding()
     {
         return $this->xml->actualEncoding;
@@ -55,7 +73,7 @@ class Model extends Database
                 $field->setKey($nodetable_nodefield->getAttribute("Key"));
 
                 $field->setDefault($nodetable_nodefield->getAttribute("Default"));
-                
+
                 $field->setExtra($nodetable_nodefield->getAttribute("Extra"));
                 $field->setComment($nodetable_nodefield->getAttribute("Comment"));
 
@@ -103,7 +121,7 @@ class Model extends Database
                         // Buscar o índice a que se refere esta fk no nó da tabela atual.
                         $nodetable_nodeindexes = $nodetable->getElementsByTagName("indexes")->item(0);
                         $referenceindex = "";
-                        
+
                         // Percorrendo todos os índices do nó da tabela atual.
                         foreach($nodetable_nodeindexes->getElementsByTagName("index") as $nodetable_nodeindexes_nodeindex) {
                             if($nodetable_nodeindexes_nodeindex->getAttribute("Column_name") == $nodetable_nodeindexes_nodefk_nodeindexes_nodeindex->getAttribute("Column_name")) {
@@ -141,7 +159,7 @@ class Model extends Database
 
                                         /* Ao encontrar o índice, para este foreach e o próximo, fazendo com que a variável referenceindex mantenha
                                            o valor desejado, que é uma instância do índice a que se relaciona a fk atual */
-                                        break 2; 
+                                        break 2;
                                     }
                                 }
 
