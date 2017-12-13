@@ -61,6 +61,10 @@ if (!$loaded) {
     exit(1);
 }
 
+require getcwd()
+      . DIRECTORY_SEPARATOR . 'vendor'
+      . DIRECTORY_SEPARATOR . 'autoload.php';
+
 $model = new Squille\Cave\Model($xml);
 
 $connection = new mysqli($dbhost, $dbuser, $dbpassword, $dbname);
