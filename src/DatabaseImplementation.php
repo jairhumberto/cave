@@ -90,6 +90,10 @@ class DatabaseImplementation extends Database
             $subresult->closeCursor();
 
             // A consulta retorna o código de criação da tabela separado por new lines
+            if (!isset($subreg[1])) {
+                continue;
+            }
+
             $createtable = $subreg[1];
             $lines = explode("\n", $createtable);
 
