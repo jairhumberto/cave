@@ -67,7 +67,7 @@ require getcwd()
 
 $model = new Squille\Cave\Model($xml);
 
-$connection = new mysqli($dbhost, $dbuser, $dbpassword, $dbname);
+$connection = new \PDO("mysql:host={$dbhost};dbname={$dbname}", $dbuser, $dbpassword);
 $impl = new Squille\Cave\DatabaseImplementation($connection);
 
 $ul = $impl->integrity($model);

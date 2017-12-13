@@ -13,23 +13,23 @@ class DatabaseImplementation extends Database
 {
     protected $connection;
 
-    public function __construct(\mysqli $connection)
+    public function __construct(\PDO $connection)
     {
         $this->connection = $connection;
         parent::__construct();
 
         // Estabelecendo as propriedades do banco.
         $result = $this->connection->query("SHOW VARIABLES LIKE 'character_set_database'");
-        $this->setCharset($result->fetch_object()->Value);
-        $result->free();
+        $this->setCharset($result->fetchObject()->Value);
+        $result->closeCursor();
 
         $result = $this->connection->query("SHOW VARIABLES LIKE 'collation_database'");
-        $this->setCollation($result->fetch_object()->Value);
-        $result->free();
+        $this->setCollation($result->fetchObject()->Value);
+        $result->closeCursor();
 
         // Estabelecendo as tabelas do banco.
         $result = $this->connection->query("SHOW TABLE STATUS");
-        while($reg = $result->fetch_object()) {
+        while($reg = $result->fetchObject()) {
             $table = new Table;
 
             // Estabelecendo as propriedades da tabela.
@@ -41,7 +41,7 @@ class DatabaseImplementation extends Database
 
             // Estabelecendo  os campos da tabela.
             $subresult = $this->connection->query(sprintf("SHOW FULL FIELDS IN %s", $reg->Name));
-            while($subreg = $subresult->fetch_object()) {
+            while($subreg = $subresult->fetchObject()) {
                 $field = new Field;
 
                 // Estabelecendo as propriedades do campo.
@@ -61,11 +61,11 @@ class DatabaseImplementation extends Database
 
                 $table->getFields()->addItem($field);
             }
-            $subresult->free();
+            $subresult->closeCursor();
 
             // Estabelecendo os indices da tabela.
             $subresult = $this->connection->query(sprintf("SHOW INDEXES IN %s", $reg->Name));
-            while($subreg = $subresult->fetch_object()) {
+            while($subreg = $subresult->fetchObject()) {
                 $index = new Index;
 
                 // Estabelecendo as propriedades do indice.
@@ -82,12 +82,12 @@ class DatabaseImplementation extends Database
 
                 $table->getIndexes()->addItem($index, $subreg->Column_name);
             }
-            $subresult->free();
+            $subresult->closeCursor();
 
             // Estabelecendo as fks da tabela.
             $subresult = $this->connection->query(sprintf("SHOW CREATE TABLE %s", $reg->Name));
-            $subreg = $subresult->fetch_array(MYSQLI_NUM);
-            $subresult->free();
+            $subreg = $subresult->fetchAll(\PDO::FETCH_NUM);
+            $subresult->closeCursor();
 
             // A consulta retorna o código de criação da tabela separado por new lines
             $createtable = $subreg[1];
@@ -136,7 +136,7 @@ class DatabaseImplementation extends Database
 
             $this->getTables()->addItem($table, $reg->Name);
         }
-        $result->free();
+        $result->closeCursor();
     }
 
     public function backup()
@@ -290,7 +290,7 @@ class DatabaseImplementation extends Database
 
                                         if ($modelfield->getExtra() == "auto_increment") {
                                             $result = $this->connection->query(sprintf("SELECT MAX(%s) AS cnt FROM %s", $tablefield->getField(), $table->getName()));
-                                            $tablerows = $result->fetch_object();
+                                            $tablerows = $result->fetchObject();
                                             $auto_increment = $tablerows->cnt + 1;
                                         } else {
                                             $auto_increment = 1;
@@ -607,8 +607,8 @@ class DatabaseImplementation extends Database
                 foreach($this->getTables()->getItens() as $subtable) {
 
                     $result = $this->connection->query(sprintf("SHOW CREATE TABLE %s", $subtable->getName()));
-                    $registro = $result->fetch_array(MYSQLI_NUM);
-                    $result->free();
+                    $registro = $result->fetchAll(\PDO::FETCH_NUM);
+                    $result->closeCursor();
 
                     // Obtem o código de criação da tabela.
                     $createtable = $registro[1];
