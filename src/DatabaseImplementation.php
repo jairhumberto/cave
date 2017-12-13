@@ -664,6 +664,17 @@ class DatabaseImplementation extends Database
                     $registro = $result->fetchAll(\PDO::FETCH_NUM);
                     $result->closeCursor();
 
+                    if (!count($registro)) {
+                        continue;
+                    }
+
+                    $registro = $registro[0];
+
+                    // A consulta retorna o código de criação da tabela separado por new lines
+                    if (!isset($registro[1])) {
+                        continue;
+                    }
+
                     // Obtem o código de criação da tabela.
                     $createtable = $registro[1];
 
