@@ -1,7 +1,7 @@
 <?php
 /**
  * Squille Cave (https://github.com/jairhumberto/Cave)
- * 
+ *
  * @copyright Copyright (c) 2018 Squille
  * @license   this software is distributed under MIT license, see the
  *            LICENSE file.
@@ -156,25 +156,29 @@ class DatabaseImplementation extends Database
 
             // Confere charset do banco.
             if($this->getCharset() != $model->getCharset()) {
-                $desc = sprintf('CHARSET do banco (%s) difere do modelo.', $this->getCharset());
+                $desc = sprintf('Database CHARSET (%s) differs from the model.', $this->getCharset());
                 $errorid = $ul->addMessage($desc);
 
                 $sqllist = new SQLList;
                 $sqllist->addItem(new SQL(sprintf("ALTER DATABASE CHARACTER SET %s", $model->getCharset())));
 
-                $ul->addItem(new Unconformance($sqllist, $desc));
+                $measure = sprintf('Changing the database CHARSET to %s', $model->getCharset());
+
+                $ul->addItem(new Unconformance($sqllist, $measure));
                 $ul->addSolution(sprintf("ALTER DATABASE CHARACTER SET %s", $model->getCharset()), $errorid);
             }
 
             // Confere collation do banco.
             if($this->getCollation() != $model->getCollation()) {
-                $desc = sprintf('COLLATION do banco (%s) difere do modelo.', $this->getCollation());
+                $desc = sprintf('Database COLLATION (%s) differs from the model.', $this->getCollation());
                 $errorid = $ul->addMessage($desc);
 
                 $sqllist = new SQLList;
                 $sqllist->addItem(new SQL(sprintf("ALTER DATABASE COLLATE %s", $model->getCollation())));
 
-                $ul->addItem(new Unconformance($sqllist, $desc));
+                $measure = sprintf('Changing the database COLLATION to %s', $model->getCollation());
+
+                $ul->addItem(new Unconformance($sqllist, $measure));
                 $ul->addSolution(sprintf("ALTER DATABASE COLLATE %s", $model->getCollation()), $errorid);
             }
 
@@ -189,12 +193,12 @@ class DatabaseImplementation extends Database
 
                         // Confere o engine.
                         if($table->getEngine() != $modeltable->getEngine()) {
-                            $desc = sprintf('Engine da tabela %s (%s) difere do modelo.', $table->getName(), $table->getEngine());
+                            $desc = sprintf('The engine (%s) of the table %s differs from the model.', $table->getEngine(), $table->getName());
                             $errorid = $ul->addMessage($desc);
                             $sqllist = new SQLList;
 
                             /* No caso abaixo é necessário percorrer o banco em busca de relacionamentos com
-                               essa tabela e excluí-los, pois o engine MyISAM não permite relacionamentos, 
+                               essa tabela e excluí-los, pois o engine MyISAM não permite relacionamentos,
                                enquanto o InnoDB permite. */
                             if($modeltable->getEngine() == "MyISAM" && $table->getEngine() == "InnoDB") {
                                 /* Percorre todas as tabelas do banco em busca de relacionamentos com a tabela que se quer
@@ -224,37 +228,48 @@ class DatabaseImplementation extends Database
                             // Pronto para mudar o engine.
                             $sqllist->addItem(new SQL(sprintf("ALTER TABLE `%s` ENGINE = %s", $table->getName(), $modeltable->getEngine())));
 
-                            $ul->addItem(new Unconformance($sqllist, $desc));
+                            $measure = sprintf('Changing the table engine of the table %s to %s', $table->getName(), $modeltable->getEngine());
+
+                            $ul->addItem(new Unconformance($sqllist, $measure));
                             $ul->addSolution(sprintf("ALTER TABLE `%s` ENGINE = %s", $table->getName(), $modeltable->getEngine()), $errorid);
                         }
 
                         // Confere o Row_format da tabela.
                         if($table->getRow_format() != $modeltable->getRow_format()) {
-                            $desc = sprintf('Row format da tabela %s (%s) difere do modelo.', $table->getName(), $table->getRow_format());
+                            $desc = sprintf('The row format (%s) of the table %s differs from the model.', $table->getRow_format(), $table->getName());
                             $errorid = $ul->addMessage($desc);
                             $sqllist = new SQLList;
                             $sqllist->addItem(new SQL(sprintf("ALTER TABLE `%s` ROW_FORMAT = %s", $table->getName(), $modeltable->getRow_format())));
-                            $ul->addItem(new Unconformance($sqllist, $desc));
+
+                            $measure = sprintf('Changing the row format of the table %s to %s', $table->getName, $modeltable->getRow_format());
+
+                            $ul->addItem(new Unconformance($sqllist, $measure));
                             $ul->addSolution(sprintf("ALTER TABLE `%s` ROW_FORMAT = %s", $table->getName(), $modeltable->getRow_format()), $errorid);
                         }
 
                         // Confere o Collation da tabela.
                         if($table->getCollation() != $modeltable->getCollation()) {
-                            $desc = sprintf('Collation da tabela %s (%s) difere do modelo.', $table->getName(), $table->getCollation());
+                            $desc = sprintf('The collation (%s.%s) of the table %s differs from the model.', $modeltable->getCharset(), $table->getCollation(), $table->getName());
                             $errorid = $ul->addMessage($desc);
                             $sqllist = new SQLList;
                             $sqllist->addItem(new SQL(sprintf("ALTER TABLE `%s` CHARACTER SET %s COLLATE %s", $table->getName(), $modeltable->getCharset(), $modeltable->getCollation())));
-                            $ul->addItem(new Unconformance($sqllist, $desc));
+
+                            $measure = sprintf('Changing the collation of the table %s to %s.%s', $table->getName(), $modeltable->getCharset(), $modeltable->getCollation());
+
+                            $ul->addItem(new Unconformance($sqllist, $measure));
                             $ul->addSolution(sprintf("ALTER TABLE `%s` CHARACTER SET %s COLLATE %s", $table->getName(), $modeltable->getCharset(), $modeltable->getCollation()), $errorid);
                         }
 
                         // Confere o Checksum da tabela.
                         if($table->getChecksum() != $modeltable->getChecksum()) {
-                            $desc = sprintf('Checksum da tabela %s (%s) difere do modelo.', $table->getName(), $table->getChecksum());
+                            $desc = sprintf('The checksum (%s) of the table %s differs from the model.', $table->getChecksum(), $table->getName());
                             $errorid = $ul->addMessage($desc);
                             $sqllist = new SQLList;
                             $sqllist->addItem(new SQL(sprintf("ALTER TABLE `%s` CHECKSUM = %s", $table->getName(), $modeltable->getChecksum())));
-                            $ul->addItem(new Unconformance($sqllist, $desc));
+
+                            $measure = sprintf('Changing the checksum of the table %s to %s', $table->getName(), $modeltable->getChecksum());
+
+                            $ul->addItem(new Unconformance($sqllist, $measure));
                             $ul->addSolution(sprintf("ALTER TABLE `%s` CHECKSUM = %s", $table->getName(), $modeltable->getChecksum()), $errorid);
                         }
 
@@ -273,12 +288,15 @@ class DatabaseImplementation extends Database
 
                                     // Excluir o valor default quando for o caso.
                                     if(!$modelfield->getDefault() && $tablefield->getDefault()) {
-                                        $desc = sprintf('Default do campo %s.%s (%s) difere do modelo.', $table->getName(), $tablefield->getField(), $tablefield->getDefault());
+                                        $desc = sprintf('The field %s.%s should not have a default value. "%s" was found.', $table->getName(), $tablefield->getField(), $tablefield->getDefault());
                                         $errorid = $ul->addMessage($desc);
                                         $sqllist = new SQLList;
                                         $sqllist->addItem(new SQL(sprintf("ALTER TABLE `%s` ALTER COLUMN `%s` DROP DEFAULT", $table->getName(), $tablefield->getField())));
-                                        $ul->addSolution(sprintf("ALTER TABLE `%s` CHECKSUM = %s", $table->getName(), $modeltable->getChecksum()), $errorid);
-                                        $ul->addItem(new Unconformance($sqllist, $desc));
+                                        $ul->addSolution(sprintf("ALTER TABLE `%s` ALTER COLUMN `%s` DROP DEFAULT", $table->getName(), $tablefield->getField()));
+
+                                        $measure = sprintf('Removing the default value of the field %s.%s', $table->getName(), $tablefield->getField());
+
+                                        $ul->addItem(new Unconformance($sqllist, $measure));
                                     }
 
                                     // Se houver alguma diferença nos campos.
@@ -290,7 +308,7 @@ class DatabaseImplementation extends Database
                                         $tablefield->getExtra() != $modelfield->getExtra() ||
                                         $tablefield->getComment() != $modelfield->getComment()
                                     ) {
-                                        $desc = sprintf('A declaracao do campo %s.%s difere do modelo.', $table->getName(), $tablefield->getField());
+                                        $desc = sprintf('The declaration of the field %s.%s differs from the model.', $table->getName(), $tablefield->getField());
                                         $errorid = $ul->addMessage($desc);
                                         $sqllist = new SQLList;
 
@@ -334,7 +352,9 @@ class DatabaseImplementation extends Database
                                             $modelfield->getComment() ? " COMMENT '" . $modelfield->getComment() . "'" : ""
                                         ), $errorid);
 
-                                        $ul->addItem(new Unconformance($sqllist, $desc));
+                                        $measure = sprintf('Modifying the field %s.%s to comply to the model', $table->getName(), $tablefield->getField());
+
+                                        $ul->addItem(new Unconformance($sqllist, $measure));
                                     }
 
                                     continue 2;
@@ -342,7 +362,7 @@ class DatabaseImplementation extends Database
 
                             }
 
-                            $desc = sprintf('Nao foi encontrado o campo %s.%s na tabela.', $modeltable->getName(), $modelfield->getField());
+                            $desc = sprintf('The field %s.%s was not found.', $modeltable->getName(), $modelfield->getField());
                             $errorid = $ul->addMessage($desc);
                             $sqllist = new SQLList;
 
@@ -383,9 +403,12 @@ class DatabaseImplementation extends Database
                                 $modelfield->getComment() ? " COMMENT '" . $modelfield->getComment() . "'" : "",
                                 $positionword
                             ), $errorid);
-                            $ul->addItem(new Unconformance($sqllist, $desc));
 
-                            if($primeiro) $primeiro = false; 
+                            $measure = sprintf('Adding the field %s.%s acordingly to the model', $table->getName(), $modelfield->getField());
+
+                            $ul->addItem(new Unconformance($sqllist, $measure));
+
+                            if($primeiro) $primeiro = false;
                         }
 
                         // Verificando se existe algum campo na tabela que não está no modelo.
@@ -397,7 +420,7 @@ class DatabaseImplementation extends Database
                                 }
                             }
 
-                            $desc = sprintf('Nao foi encontrado o campo %s.%s no modelo.', $table->getName(), $tablefield->getField());
+                            $desc = sprintf('The field %s.%s should not exist.', $table->getName(), $tablefield->getField());
                             $errorid = $ul->addMessage($desc);
                             $sqllist = new SQLList;
 
@@ -429,7 +452,9 @@ class DatabaseImplementation extends Database
                             $sqllist->addItem(new SQL(sprintf("ALTER TABLE `%s` DROP COLUMN `%s`", $table->getName(), $tablefield->getField())));
                             $ul->addSolution(sprintf("ALTER TABLE `%s` DROP COLUMN `%s`", $table->getName(), $tablefield->getField()), $errorid);
 
-                            $ul->addItem(new Unconformance($sqllist, $desc));
+                            $measure = sprintf('Removing the field %s.%s to comply to the model', $table->getName(), $tablefield->getField());
+
+                            $ul->addItem(new Unconformance($sqllist, $measure));
                         }
 
                         // Verificar a ordem dos campos de acordo com a ordem do modelo
@@ -439,7 +464,7 @@ class DatabaseImplementation extends Database
                                 && $table->getFields()->item($key)->getField() != $modelfield->getField()
                                 && $table->getFields()->length() == $modeltable->getFields()->length()) {
 
-                                $desc = sprintf('O campo %s.%s nao se encontra na mesma posicao no modelo.', $table->getName(), $table->getFields()->item($key)->getField());
+                                $desc = sprintf('The field %s.%s is not in the same order as in the model.', $table->getName(), $table->getFields()->item($key)->getField());
                                 $errorid = $ul->addMessage($desc);
                                 $sqllist = new SQLList;
 
@@ -502,7 +527,10 @@ class DatabaseImplementation extends Database
                                         $modelfield->getComment() ? " COMMENT '" . $modelfield->getComment() . "'" : ""
                                     ), $errorid);
                                 }
-                                $ul->addItem(new Unconformance($sqllist, $desc));
+
+                                $measure = sprintf('Changing the order of the field %s.%s to comply to the model', $table->getName(), $modelfield->getField());
+
+                                $ul->addItem(new Unconformance($sqllist, $measure));
                             }
                         }
 
@@ -553,7 +581,7 @@ class DatabaseImplementation extends Database
                 }
 
                 // A tabela do modelo não existe no banco e precisa ser criada.
-                $desc = sprintf('A tabela %s nao existe no banco.', $modeltable->getName());
+                $desc = sprintf('The table %s was not found.', $modeltable->getName());
                 $errorid = $ul->addMessage($desc);
                 $sqllist = new SQLList;
 
@@ -604,7 +632,9 @@ class DatabaseImplementation extends Database
                     $wrongkey = true;
                 }
 
-                $ul->addItem(new Unconformance($sqllist, $desc));
+                $measure = sprintf('Creating the table %s', $modeltable->getName());
+
+                $ul->addItem(new Unconformance($sqllist, $measure));
             }
 
             // Verificando se as tabela do banco existem no modelo.
@@ -616,7 +646,7 @@ class DatabaseImplementation extends Database
                 }
 
                 // Preparando objeto de correção de problemas.
-                $desc = sprintf('A tabela %s nao existe no modelo.', $table->getName());
+                $desc = sprintf('The table %s should not exist.', $table->getName());
                 $errorid = $ul->addMessage($desc);
                 $sqllist = new SQLList;
 
@@ -650,14 +680,16 @@ class DatabaseImplementation extends Database
                 $sqllist->addItem(new SQL(sprintf("DROP TABLE `%s`", $table->getName())));
                 $ul->addSolution(sprintf("DROP TABLE `%s`", $table->getName()), $errorid);
 
+                $measure = sprintf('Removing the table %s to comply to the model', $table->getName());
+
                 // Adicionado à lista de informidades a serem corrigidas.
-                $ul->addItem(new Unconformance($sqllist, $desc));
+                $ul->addItem(new Unconformance($sqllist, $measure));
             }
 
             // Wrongkey é true quando alguma chave em alguma tabela apresentou erro ou uma nova tabela com chaves foi criada.
             // Recria todas as chaves do banco.
             if($wrongkey) {
-                $desc = 'Problemas em relacionamentos ou indices';
+                $desc = 'Index or relationship problems';
                 $errorid = $ul->addMessage($desc);
                 $sqllist = new SQLList;
 
@@ -748,7 +780,9 @@ class DatabaseImplementation extends Database
                     }
                 }
 
-                $ul->addItem(new Unconformance($sqllist, $desc));
+                $measure = 'Correcting relationship and index problems';
+
+                $ul->addItem(new Unconformance($sqllist, $measure));
             }
 
         }
