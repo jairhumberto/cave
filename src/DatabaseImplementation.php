@@ -13,7 +13,7 @@ class DatabaseImplementation extends Database
 {
     protected $connection;
 
-    public function __construct(mysqli $connection)
+    public function __construct(\mysqli $connection)
     {
         $this->connection = $connection;
         parent::__construct();

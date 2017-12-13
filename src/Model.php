@@ -18,7 +18,7 @@ class Model extends Database
         return $this->xml->actualEncoding;
     }
 
-    public function __construct(DOMDocument $xml)
+    public function __construct(\DOMDocument $xml)
     {
         // Carregando o modelo.
         $this->xml = $xml;

@@ -18,7 +18,7 @@ class Unconformance
         $this->corrections = $corrections;
     }
 
-    public function fix(mysqli $connection)
+    public function fix(\mysqli $connection)
     {
         foreach($this->corrections->getItens() as $correction) {
             $connection->query($correction->getSQL());
