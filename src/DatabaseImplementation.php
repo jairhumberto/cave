@@ -780,7 +780,7 @@ class DatabaseImplementation extends Database
                     }
                 }
 
-                $measure = 'Correcting relationship and index problems';
+                $measure = 'Lining up the relationships and indexes';
 
                 $ul->addItem(new Unconformance($sqllist, $measure));
             }
