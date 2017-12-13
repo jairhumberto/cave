@@ -89,6 +89,12 @@ class DatabaseImplementation extends Database
             $subreg = $subresult->fetchAll(\PDO::FETCH_NUM);
             $subresult->closeCursor();
 
+            if (!count($subreg)) {
+                continue;
+            }
+
+            $subreg = $subreg[0];
+
             // A consulta retorna o código de criação da tabela separado por new lines
             if (!isset($subreg[1])) {
                 continue;
