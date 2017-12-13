@@ -9,7 +9,7 @@
 
 namespace Squille\Cave;
 
-class UnconformanceList extends DOMDocument
+class UnconformanceList extends \DOMDocument
 {
     protected $itens;
     protected $initmess;
