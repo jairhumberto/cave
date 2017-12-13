@@ -1,4 +1,75 @@
 #!/usr/bin/env php
 <?php
 
-echo 'cave command test ok!';
+$configFile = getcwd()
+            . DIRECTORY_SEPARATOR . 'source'
+            . DIRECTORY_SEPARATOR . 'config.php';
+
+if (!file_exists($configFile)) {
+    print "Config file not found at $configFile";
+    exit(1);
+}
+
+$config = include $configFile;
+
+if (!array_key_exists('database', $config)) {
+    print 'Key "database" not found in the configuration file';
+    exit(1);
+}
+
+$database = $config['database'];
+
+if (!array_key_exists('dbhost', $database)) {
+    print 'Key "dbhost" not found inside the "database" key';
+    exit(1);
+}
+
+$dbhost = $database['dbhost'];
+
+if (!array_key_exists('dbuser', $database)) {
+    print 'Key "dbuser" not found inside the "database" key';
+    exit(1);
+}
+
+$dbuser = $database['dbuser'];
+
+if (!array_key_exists('dbpassword', $database)) {
+    print 'Key "dbpassword" not found inside the "database" key';
+    exit(1);
+}
+
+$dbpassword = $database['dbpassword'];
+
+if (!array_key_exists('dbname', $database)) {
+    print 'Key "dbname" not found inside the "database" key';
+    exit(1);
+}
+
+$dbname = $database['dbname'];
+$xmlFile = getcwd() . DIRECTORY_SEPARATOR . 'cave.xml';
+
+if (!file_exists($xmlFile)) {
+    print "XML file not found at $xmlFile";
+    exit(1);
+}
+
+$xml = new DOMDocument();
+$loaded = $xml->load($xmlFile);
+
+if (!$loaded) {
+    print 'Mal formed XML file';
+    exit(1);
+}
+
+$model = new Squille\Cave\Model($xml);
+
+$connection = new mysqli($dbhost, $dbuser, $dbpassword, $dbname);
+$impl = new Squille\Cave\DatabaseImplementation($connection);
+
+$ul = $impl->integrity($model);
+
+if ($ul->length()) {
+    foreach ($ul->getItens() as $unconformance) {
+        $unconformance->fix($connection);
+    }
+}
