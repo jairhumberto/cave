@@ -12,10 +12,12 @@ namespace Squille\Cave;
 class Unconformance
 {
     protected $corrections;
+    protected $description;
 
-    public function __construct(SQLList $corrections)
+    public function __construct(SQLList $corrections, $description)
     {
         $this->corrections = $corrections;
+        $this->description = $description;
     }
 
     public function fix(\PDO $connection)
@@ -23,5 +25,10 @@ class Unconformance
         foreach($this->corrections->getItens() as $correction) {
             $connection->query($correction->getSQL());
         }
+    }
+    
+    public function getDescription()
+    {
+        return $this->description;
     }
 }
