@@ -705,7 +705,7 @@ class DatabaseImplementation extends Database
 
             // Wrongkey é true quando alguma chave em alguma tabela apresentou erro ou uma nova tabela com chaves foi criada.
             // Recria todas as chaves do banco.
-            if($wrongkey) {
+            if(isset($wrongkey) && $wrongkey) {
                 $desc = 'Index or relationship problems';
                 $errorid = $ul->addMessage($desc);
                 $sqllist = new SQLList;
