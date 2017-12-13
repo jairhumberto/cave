@@ -75,8 +75,12 @@ $ul = $impl->integrity($model);
 if ($ul->length()) {
     foreach ($ul->getItens() as $unconformance) {
         $unconformance->fix($connection);
-        echo $unconformance->getDescription() . "\n";
+        echo ' == ' . $unconformance->getDescription() . ' == ' . "\n";
     }
+
+    echo ' == Done == ';
+} else {
+    echo 'The database is lined up with the model';
 }
 
 //
