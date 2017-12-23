@@ -123,6 +123,6 @@ if (file_exists($seedFile)) {
             $seedObj->update();
         break;
         default:
-            throw new Exception('Unknow cave argument');
+            throw new Exception('Invalid cave argument');
     }
 }
