@@ -99,8 +99,8 @@ $ul = $impl->integrity($model);
 
 if ($ul->length()) {
     foreach ($ul->getItens() as $unconformance) {
-        $unconformance->fix($connection);
         echo ' == ' . $unconformance->getDescription() . ' == ' . "\n";
+        $unconformance->fix($connection);
     }
 
     echo ' == Done == ';
@@ -111,7 +111,7 @@ if ($ul->length()) {
 //
 // Initial seeding.
 //
-$seedFile = getcwd() . DIRECTORY_SEPARATOR . 'Seed.php';
+$seedFile = getcwd() . DIRECTORY_SEPARATOR . 'Cave.php';
 if (file_exists($seedFile)) {
     $seedObj = require $seedFile;
 
