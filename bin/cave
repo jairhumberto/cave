@@ -111,7 +111,18 @@ if ($ul->length()) {
 //
 // Initial seeding.
 //
-if ($argv[1] == 'create') {
-    $seedObj = require getcwd() . DIRECTORY_SEPARATOR . 'Seed.php';
-    $seedObj->seed();
+$seedFile = getcwd() . DIRECTORY_SEPARATOR . 'Seed.php';
+if (file_exists($seedFile)) {
+    $seedObj = require $seedFile;
+
+    switch ($argv[1]) {
+        case 'create':
+            $seedObj->create();
+        break;
+        case 'update':
+            $seedObj->update();
+        break;
+        default:
+            throw new Exception('Unknow cave argument');
+    }
 }
