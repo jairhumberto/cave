@@ -117,10 +117,10 @@ if (file_exists($seedFile)) {
 
     switch ($argv[1]) {
         case 'create':
-            $seedObj->create();
+            $seedObj->create($connection);
         break;
         case 'update':
-            $seedObj->update();
+            $seedObj->update($connection);
         break;
         default:
             throw new Exception('Invalid cave argument');
