@@ -432,7 +432,8 @@ class DatabaseImplementation extends Database
 
                             $ul->addItem(new Unconformance($sqllist, $measure));
 
-                            if($primeiro) $primeiro = false;
+                            // FIXME: essa variavel aparentemente não faz nada. Remover se não houver efeito colateral.
+                            // if($primeiro) $primeiro = false;
                         }
 
                         // Verificando se existe algum campo na tabela que não está no modelo.
