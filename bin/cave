@@ -102,6 +102,13 @@ if ($ul->length()) {
         echo ' == ' . $unconformance->getDescription() . ' == ' . "\n";
         $unconformance->fix($connection);
     }
+    
+    $impl2 = new Squille\Cave\DatabaseImplementation($connection);
+    $ul2 = $impl2->integrity($model); // improve it later, the problem here was the auto_increment that is not created at first loop.
+    
+    foreach ($ul2->getItens() as $unconformance2) {
+        $unconformance2->fix($connection);
+    }
 
     echo ' == Done == ';
 } else {
@@ -123,6 +130,6 @@ if (file_exists($seedFile)) {
             $seedObj->update($connection);
         break;
         default:
-            throw new Exception('Invalid cave argument');
+            throw new Exception('Invalid cave argument: ' . $argv[1]);
     }
 }
