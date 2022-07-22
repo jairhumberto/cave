@@ -1,19 +1,20 @@
 {
     "name": "squille/cave",
     "type": "library",
-    "description": "Cave is a database migration PHP tool",
+    "description": "Cave is a database migration tool",
     "keywords": ["php", "migrate"],
-    "homepage": "http://cave.squille.org/",
+    "homepage": "https://github.com/jairhumberto/cave",
     "license": "MIT",
     "authors": [
         {
-            "name": "Jair Humberto",
+            "name": "Jair Humberto :)",
             "email": "jairhumberto@gmail.com",
             "homepage": "https://github.com/jairhumberto"
         }
     ],
     "require": {
-        "php": ">=5.3"
+        "php": ">=5.3",
+        "ext-dom": "*"
     },
     "autoload": {
         "psr-4": {
