@@ -26,7 +26,9 @@
  * SOFTWARE.
  */
 
-$configFile = getcwd() . DIRECTORY_SEPARATOR . 'config-cave.php';
+define("CAVE_DIR", getcwd() . DIRECTORY_SEPARATOR . "cave" . DIRECTORY_SEPARATOR);
+
+$configFile = CAVE_DIR . "config.php";
 
 if (!file_exists($configFile)) {
     print "Config file not found at $configFile";
@@ -35,41 +37,41 @@ if (!file_exists($configFile)) {
 
 $config = include $configFile;
 
-if (!array_key_exists('database', $config)) {
-    print 'Key "database" not found in the configuration file';
+if (!array_key_exists("database", $config)) {
+    print "Key 'database' not found in the configuration file";
     exit(1);
 }
 
-$database = $config['database'];
+$database = $config["database"];
 
-if (!array_key_exists('dbhost', $database)) {
-    print 'Key "dbhost" not found inside the "database" key';
+if (!array_key_exists("dbhost", $database)) {
+    print "Key 'dbhost' not found inside the 'database' key";
     exit(1);
 }
 
-$dbhost = $database['dbhost'];
+$dbhost = $database["dbhost"];
 
-if (!array_key_exists('dbuser', $database)) {
-    print 'Key "dbuser" not found inside the "database" key';
+if (!array_key_exists("dbuser", $database)) {
+    print "Key 'dbuser' not found inside the 'database' key";
     exit(1);
 }
 
-$dbuser = $database['dbuser'];
+$dbuser = $database["dbuser"];
 
-if (!array_key_exists('dbpassword', $database)) {
-    print 'Key "dbpassword" not found inside the "database" key';
+if (!array_key_exists("dbpassword", $database)) {
+    print "Key 'dbpassword' not found inside the 'database' key";
     exit(1);
 }
 
-$dbpassword = $database['dbpassword'];
+$dbpassword = $database["dbpassword"];
 
-if (!array_key_exists('dbname', $database)) {
-    print 'Key "dbname" not found inside the "database" key';
+if (!array_key_exists("dbname", $database)) {
+    print "Key 'dbname' not found inside the 'database' key";
     exit(1);
 }
 
-$dbname = $database['dbname'];
-$xmlFile = getcwd() . DIRECTORY_SEPARATOR . 'cave.xml';
+$dbname = $database["dbname"];
+$xmlFile = CAVE_DIR . "database.xml";
 
 if (!file_exists($xmlFile)) {
     print "XML file not found at $xmlFile";
@@ -80,7 +82,7 @@ $xml = new DOMDocument();
 $loaded = $xml->load($xmlFile);
 
 if (!$loaded) {
-    print 'Malformed XML file';
+    print "Malformed XML file";
     exit(1);
 }
 
@@ -90,14 +92,14 @@ require getcwd()
 
 $model = new Squille\Cave\Model($xml);
 
-$connection = new \PDO("mysql:host={$dbhost};dbname={$dbname}", $dbuser, $dbpassword);
+$connection = new PDO("mysql:host={$dbhost};dbname={$dbname}", $dbuser, $dbpassword);
 $impl = new Squille\Cave\DatabaseImplementation($connection);
 
 $ul = $impl->integrity($model);
 
 if ($ul->length()) {
     foreach ($ul->getItens() as $unconformance) {
-        echo ' == ' . $unconformance->getDescription() . ' == ' . "\n";
+        echo " == " . $unconformance->getDescription() . " == " . "\n";
         $unconformance->fix($connection);
     }
     
@@ -108,26 +110,26 @@ if ($ul->length()) {
         $unconformance2->fix($connection);
     }
 
-    echo ' == Done == ';
+    echo " == Done == ";
 } else {
-    echo 'The database is lined up with the model';
+    echo "The database is lined up with the model";
 }
 
 //
 // Initial seeding.
 //
-$seedFile = getcwd() . DIRECTORY_SEPARATOR . 'Cave.php';
+$seedFile = CAVE_DIR . "seed.php";
 if (file_exists($seedFile)) {
     $seedObj = require $seedFile;
 
     switch ($argv[1]) {
-        case 'create':
+        case "create":
             $seedObj->create($connection);
         break;
-        case 'update':
+        case "update":
             $seedObj->update($connection);
         break;
         default:
-            throw new Exception('Invalid cave argument: ' . $argv[1]);
+            throw new Exception("Invalid cave argument: " . $argv[1]);
     }
 }
