@@ -2,60 +2,11 @@
 
 namespace Squille\Cave\Models;
 
+use Squille\Cave\IList;
 use Squille\Cave\UnconformitiesList;
 
-interface IKeyModel
+interface IKeyModel extends IList
 {
-    /**
-     * @return int
-     */
-    public function getNonUnique();
-
-    /**
-     * @return string
-     */
-    public function getKeyName();
-
-    /**
-     * @return int
-     */
-    public function getSeqInIndex();
-
-    /**
-     * @return string
-     */
-    public function getColumnName();
-
-    /**
-     * @return string
-     */
-    public function getCollation();
-
-    /**
-     * @return string
-     */
-    public function getSubPart();
-
-    /**
-     * @return string
-     */
-    public function getPacked();
-
-    /**
-     * @return string
-     */
-    public function getNull();
-
-    /**
-     * @return string
-     */
-    public function getIndexType();
-
-    /**
-     * @return string
-     */
-    public function getComment();
-
     /**
      * @param IKeyModel $model
      * @return UnconformitiesList

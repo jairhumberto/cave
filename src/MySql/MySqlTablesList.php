@@ -67,10 +67,6 @@ class MySqlTablesList extends ArrayList implements ITablesListModel
             $tblName = $modelTable->getName();
             $createDefinitions = $modelTable->getFields()->merge($modelTable->getKeys());
             $tableOptions = $this->getTableOptions($modelTable);
-            echo "
-                CREATE TABLE `$tblName`
-                ($createDefinitions) $tableOptions
-            ";
             $this->pdo->query("
                 CREATE TABLE `$tblName`
                 ($createDefinitions) $tableOptions

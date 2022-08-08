@@ -25,12 +25,34 @@ class MySqlKeysList extends ArrayList implements IKeysListModel
     {
         try {
             $result = $this->pdo->query("SHOW KEYS IN `{$this->table->getName()}`");
-            return $result->fetchAll(PDO::FETCH_CLASS, MySqlKey::class, [$this->pdo]) ?: [];
+            return $this->groupKeys($result->fetchAll(PDO::FETCH_CLASS, MySqlKeyPart::class, [$this->pdo]) ?: []);
         } finally {
             if ($result instanceof PDOStatement) {
                 $result->closeCursor();
             }
         }
+    }
+
+    private function groupKeys(array $keyParts)
+    {
+        $keys = [];
+        $groups = $this->groupKeyParts($keyParts);
+        foreach ($groups as $group) {
+            $keys[] = new MySqlKey($this->pdo, $group);
+        }
+        return $keys;
+    }
+
+    private function groupKeyParts(array $keyParts)
+    {
+        $groups = [];
+        foreach($keyParts as $part) {
+            if (!array_key_exists($part->getKeyName(), $groups)) {
+                $groups[$part->getKeyName()] = [];
+            }
+            $groups[$part->getKeyName()][] = $part;
+        }
+        return $groups;
     }
 
     /**
