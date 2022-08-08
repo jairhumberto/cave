@@ -25,42 +25,43 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
-class Database
+class IndexList
 {
-    protected $charset;
-    protected $collation;
-
-    protected $tables;
+    protected $itens;
 
     public function __construct()
     {
-        $this->tables = new TableList;
+        $this->itens = array();
     }
 
-    public function getCharset()
+    public function length()
     {
-        return $this->charset;
+        return count($this->itens);
     }
 
-    public function setCharset($charset)
+    public function item($index)
     {
-        $this->charset = $charset;
+        return $this->itens[$index];
     }
 
-    public function getCollation()
+    public function addItem(Index $item)
     {
-        return $this->collation;
+        $this->itens[] = $item;
     }
 
-    public function setCollation($collation)
+    public function getItens()
     {
-        $this->collation = $collation;
+        return $this->itens;
     }
 
-    public function getTables()
+    public function join($separator)
     {
-        return $this->tables;
+        foreach($this->itens as $index) {
+            $itens[] = $index->getColumn_name();
+        }
+
+        return implode($separator, $itens);
     }
 }

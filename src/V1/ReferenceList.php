@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
 class ReferenceList extends IndexList
 {

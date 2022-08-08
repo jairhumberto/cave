@@ -25,19 +25,34 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
-class SQL
+class FKList
 {
-    protected $sql;
+    protected $itens;
 
-    public function __construct($sql)
+    public function __construct()
     {
-        $this->sql = $sql;
+        $this->itens = array();
     }
 
-    public function getSQL()
+    public function length()
     {
-        return $this->sql;
+        return count($this->itens);
+    }
+
+    public function item($index)
+    {
+        return $this->itens[$index];
+    }
+
+    public function addItem(FK $item)
+    {
+        $this->itens[] = $item;
+    }
+
+    public function getItens()
+    {
+        return $this->itens;
     }
 }

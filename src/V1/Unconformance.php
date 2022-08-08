@@ -25,24 +25,28 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
-class SQLList
+class Unconformance
 {
-    protected $itens;
+    protected $corrections;
+    protected $description;
 
-    public function __construct()
+    public function __construct(SQLList $corrections, $description)
     {
-        $this->itens = array();
+        $this->corrections = $corrections;
+        $this->description = $description;
     }
 
-    public function addItem(SQL $sql)
+    public function fix(\PDO $connection)
     {
-        $this->itens[] = $sql;
+        foreach($this->corrections->getItens() as $correction) {
+            $connection->query($correction->getSQL());
+        }
     }
 
-    public function getItens()
+    public function getDescription()
     {
-        return $this->itens;
+        return $this->description;
     }
 }

@@ -25,38 +25,24 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
-class FK
+class SQLList
 {
-    protected $symbol;
-
-    protected $indexes;
-    protected $references;
+    protected $itens;
 
     public function __construct()
     {
-        $this->indexes = new IndexList;
-        $this->references = new ReferenceList;
+        $this->itens = array();
     }
 
-    public function getSymbol()
+    public function addItem(SQL $sql)
     {
-        return $this->symbol;
+        $this->itens[] = $sql;
     }
 
-    public function setSymbol($value)
+    public function getItens()
     {
-        $this->symbol = $value;
-    }
-
-    public function getIndexes()
-    {
-        return $this->indexes;
-    }
-
-    public function getReferences()
-    {
-        return $this->references;
+        return $this->itens;
     }
 }

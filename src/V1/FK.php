@@ -25,43 +25,38 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
-class IndexList
+class FK
 {
-    protected $itens;
+    protected $symbol;
+
+    protected $indexes;
+    protected $references;
 
     public function __construct()
     {
-        $this->itens = array();
+        $this->indexes = new IndexList;
+        $this->references = new ReferenceList;
     }
 
-    public function length()
+    public function getSymbol()
     {
-        return count($this->itens);
+        return $this->symbol;
     }
 
-    public function item($index)
+    public function setSymbol($value)
     {
-        return $this->itens[$index];
+        $this->symbol = $value;
     }
 
-    public function addItem(Index $item)
+    public function getIndexes()
     {
-        $this->itens[] = $item;
+        return $this->indexes;
     }
 
-    public function getItens()
+    public function getReferences()
     {
-        return $this->itens;
-    }
-
-    public function join($separator)
-    {
-        foreach($this->itens as $index) {
-            $itens[] = $index->getColumn_name();
-        }
-
-        return implode($separator, $itens);
+        return $this->references;
     }
 }

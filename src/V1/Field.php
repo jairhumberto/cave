@@ -25,59 +25,48 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
-class Index
+class Field
 {
-    protected $Non_unique;
-    protected $Key_name;
-    protected $Seq_in_index;
-    protected $Column_name;
+    protected $Field;
+    protected $Type;
+    protected $Charset;
     protected $Collation;
-    protected $Sub_part;
-    protected $Packed;
     protected $Null;
-    protected $Index_type;
+    protected $Key;
+    protected $Default;
+    protected $Extra;
     protected $Comment;
 
-    public function getNon_unique()
+    public function getField()
     {
-        return $this->Non_unique;
+        return $this->Field;
     }
 
-    public function setNon_unique($value)
+    public function setField($value)
     {
-        $this->Non_unique = $value;
+        $this->Field = $value;
     }
 
-    public function getKey_name()
+    public function getType()
     {
-        return $this->Key_name;
+        return $this->Type;
     }
 
-    public function setKey_name($value)
+    public function setType($value)
     {
-        $this->Key_name = $value;
+        $this->Type = $value;
     }
 
-    public function getSeq_in_index()
+    public function getCharset()
     {
-        return $this->Seq_in_index;
+        return $this->Charset;
     }
 
-    public function setSeq_in_index($value)
+    public function setCharset($value)
     {
-        $this->Seq_in_index = $value;
-    }
-
-    public function getColumn_name()
-    {
-        return $this->Column_name;
-    }
-
-    public function setColumn_name($value)
-    {
-        $this->Column_name = $value;
+        $this->Charset = $value;
     }
 
     public function getCollation()
@@ -90,26 +79,6 @@ class Index
         $this->Collation = $value;
     }
 
-    public function getSub_part()
-    {
-        return $this->Sub_part;
-    }
-
-    public function setSub_part($value)
-    {
-        $this->Sub_part = $value;
-    }
-
-    public function getPacked()
-    {
-        return $this->Packed;
-    }
-
-    public function setPacked($value)
-    {
-        $this->Packed = $value;
-    }
-
     public function getNull()
     {
         return $this->Null;
@@ -120,23 +89,43 @@ class Index
         $this->Null = $value;
     }
 
-    public function getIndex_type()
+    public function getKey()
     {
-        return $this->Index_type;
+        return $this->Key;
     }
 
-    public function setIndex_type($value)
+    public function setKey($value)
     {
-        $this->Index_type = $value;
+        $this->Key = $value;
     }
 
-    public function setComment($value)
+    public function getDefault()
     {
-        $this->Comment = $value;
+        return $this->Default;
+    }
+
+    public function setDefault($value)
+    {
+        $this->Default = $value;
+    }
+
+    public function getExtra()
+    {
+        return $this->Extra;
+    }
+
+    public function setExtra($value)
+    {
+        $this->Extra = $value;
     }
 
     public function getComment()
     {
         return $this->Comment;
+    }
+
+    public function setComment($value)
+    {
+        $this->Comment = $value;
     }
 }

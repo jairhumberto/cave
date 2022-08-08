@@ -25,9 +25,9 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
-class TableList
+class FieldList
 {
     protected $itens;
 
@@ -43,10 +43,11 @@ class TableList
 
     public function item($index)
     {
-        return $this->itens[$index];
+        // FIXME: Adicionado @ para ignorar o erro, mas procurar depois: PHP Notice:  Undefined offset: 5 in D:\Humberto\Empreendimentos\Uzer\Projects\PortalSite\vendor\squille\cave\src\FieldList.php on line 47
+        return @$this->itens[$index];
     }
 
-    public function addItem(Table $item)
+    public function addItem(Field $item)
     {
         $this->itens[] = $item;
     }

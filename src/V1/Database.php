@@ -25,28 +25,42 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
-class Unconformance
+class Database
 {
-    protected $corrections;
-    protected $description;
+    protected $charset;
+    protected $collation;
 
-    public function __construct(SQLList $corrections, $description)
+    protected $tables;
+
+    public function __construct()
     {
-        $this->corrections = $corrections;
-        $this->description = $description;
+        $this->tables = new TableList;
     }
 
-    public function fix(\PDO $connection)
+    public function getCharset()
     {
-        foreach($this->corrections->getItens() as $correction) {
-            $connection->query($correction->getSQL());
-        }
+        return $this->charset;
     }
 
-    public function getDescription()
+    public function setCharset($charset)
     {
-        return $this->description;
+        $this->charset = $charset;
+    }
+
+    public function getCollation()
+    {
+        return $this->collation;
+    }
+
+    public function setCollation($collation)
+    {
+        $this->collation = $collation;
+    }
+
+    public function getTables()
+    {
+        return $this->tables;
     }
 }

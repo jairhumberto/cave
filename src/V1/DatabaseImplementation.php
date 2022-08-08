@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-namespace Squille\Cave;
+namespace Squille\Cave\V1;
 
 class DatabaseImplementation extends Database
 {
@@ -428,7 +428,7 @@ class DatabaseImplementation extends Database
                                 $positionword
                             ), $errorid);
 
-                            $measure = sprintf('Adding the field %s.%s acordingly to the model', $table->getName(), $modelfield->getField());
+                            $measure = sprintf('Adding the field %s.%s accordingly to the model', $table->getName(), $modelfield->getField());
 
                             $ul->addItem(new Unconformance($sqllist, $measure));
 
