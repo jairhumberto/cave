@@ -8,6 +8,4 @@ use Squille\Cave\Models\IKeyModel;
 use Squille\Cave\UnconformitiesList;
 
 abstract class AbstractMySqlKey extends ArrayList implements IKeyModel
-{
-    const PRIMARY_KEY = "PRIMARY";
-}
+{}
