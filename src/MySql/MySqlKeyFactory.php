@@ -22,6 +22,10 @@ class MySqlKeyFactory
             return new MySqlPrimaryKey($pdo, $keyParts);
         }
 
+        if ($firstKeyPart->getIndexType() == "FULLTEXT") {
+            return new MySqlFullTextKey($pdo, $keyParts);
+        }
+
         if ($firstKeyPart->getNonUnique() == 1) {
             return new MySqlKey($pdo, $keyParts);
         }
