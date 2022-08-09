@@ -37,8 +37,8 @@ class MySqlKeysList extends ArrayList implements IKeysListModel
     {
         $keys = [];
         $groups = $this->groupKeyParts($keyParts);
-        foreach ($groups as $group) {
-            $keys[] = new MySqlKey($this->pdo, $group);
+        foreach ($groups as $name => $group) {
+            $keys[] = MySqlKeyFactory::createInstance($this->pdo, $group, $name);
         }
         return $keys;
     }

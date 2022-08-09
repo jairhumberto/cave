@@ -3,11 +3,10 @@
 namespace Squille\Cave\MySql;
 
 use PDO;
-use Squille\Cave\ArrayList;
 use Squille\Cave\Models\IKeyModel;
 use Squille\Cave\UnconformitiesList;
 
-class MySqlKey extends ArrayList implements IKeyModel
+class MySqlPrimaryKey extends AbstractMySqlKey
 {
     private $pdo;
 
