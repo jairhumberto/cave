@@ -1,9 +1,10 @@
 <?php
 
-namespace Squille\Cave\MySql;
+namespace Squille\Cave\MySql\Keys;
 
 use PDO;
 use Squille\Cave\Models\IKeyPartModel;
+use Squille\Cave\MySql\AbstractMySqlKey;
 
 class MySqlKeyFactory
 {

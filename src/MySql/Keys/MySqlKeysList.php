@@ -1,6 +1,6 @@
 <?php
 
-namespace Squille\Cave\MySql;
+namespace Squille\Cave\MySql\Keys;
 
 use PDO;
 use PDOStatement;

@@ -1,9 +1,10 @@
 <?php
 
-namespace Squille\Cave\MySql;
+namespace Squille\Cave\MySql\Keys;
 
 use PDO;
 use Squille\Cave\Models\IKeyModel;
+use Squille\Cave\MySql\AbstractMySqlKey;
 use Squille\Cave\UnconformitiesList;
 
 class MySqlPrimaryKey extends AbstractMySqlKey
