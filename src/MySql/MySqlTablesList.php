@@ -94,13 +94,16 @@ class MySqlTablesList extends ArrayList implements ITablesListModel
 
         /** @var MySqlTable $table */
         foreach ($this as $table) {
-            $tableModel = $model->search(function (ITableModel $item) use ($table) {
+            $callback = function ($item) use ($table) {
                 return $item->getName() == $table->getName();
-            });
-            if ($tableModel == null) {
+            };
+
+            $exceedingTableFound = $model->search($callback);
+
+            if ($exceedingTableFound == null) {
                 $unconformities->add($this->exceedingTableUnconformity($table));
             } else {
-                $unconformities->merge($table->checkIntegrity($tableModel));
+                $unconformities->merge($table->checkIntegrity($exceedingTableFound));
             }
         }
 

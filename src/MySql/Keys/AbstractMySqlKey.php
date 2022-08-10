@@ -1,11 +1,9 @@
 <?php
 
-namespace Squille\Cave\MySql;
+namespace Squille\Cave\MySql\Keys;
 
-use PDO;
 use Squille\Cave\ArrayList;
 use Squille\Cave\Models\IKeyModel;
-use Squille\Cave\UnconformitiesList;
 
 abstract class AbstractMySqlKey extends ArrayList implements IKeyModel
 {}

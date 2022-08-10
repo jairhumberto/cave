@@ -4,7 +4,6 @@ namespace Squille\Cave\MySql\Keys;
 
 use PDO;
 use Squille\Cave\Models\IKeyPartModel;
-use Squille\Cave\MySql\AbstractMySqlKey;
 
 class MySqlKeyFactory
 {

@@ -4,7 +4,6 @@ namespace Squille\Cave\MySql\Keys;
 
 use PDO;
 use Squille\Cave\Models\IKeyModel;
-use Squille\Cave\MySql\AbstractMySqlKey;
 use Squille\Cave\UnconformitiesList;
 
 class MySqlKey extends AbstractMySqlKey
