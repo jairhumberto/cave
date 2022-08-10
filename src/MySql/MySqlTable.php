@@ -66,10 +66,13 @@ class MySqlTable implements ITableModel
 
     private function engineUnconformity(ITableModel $model)
     {
-        $description = "alter table `{$model->getName()}` engine = {`{$this->getEngine()}` -> `{$model->getEngine()}`}";
+        $description = "alter table `{$model->getName()}` engine {`{$this->getEngine()}` -> `{$model->getEngine()}`}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($model) {
-            $this->pdo->query("ALTER TABLE `{$model->getName()}` ENGINE = `{$model->getEngine()}`");
+            $this->pdo->query("
+                ALTER TABLE `{$model->getName()}`
+                ENGINE `{$model->getEngine()}`
+            ");
         });
         return new Unconformity($description, $instructions);
     }
@@ -92,10 +95,13 @@ class MySqlTable implements ITableModel
 
     private function rowFormatUnconformity(ITableModel $model)
     {
-        $description = "alter table `{$model->getName()}` row_format = {`{$this->getRowFormat()}` -> `{$model->getRowFormat()}`}";
+        $description = "alter table `{$model->getName()}` row_format {`{$this->getRowFormat()}` -> `{$model->getRowFormat()}`}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($model) {
-            $this->pdo->query("ALTER TABLE `{$model->getName()}` ROW_FORMAT = `{$model->getEngine()}`");
+            $this->pdo->query("
+                ALTER TABLE `{$model->getName()}`
+                ROW_FORMAT `{$model->getEngine()}`
+            ");
         });
         return new Unconformity($description, $instructions);
     }
@@ -110,10 +116,13 @@ class MySqlTable implements ITableModel
 
     private function collateUnconformity(ITableModel $model)
     {
-        $description = "alter table `{$model->getName()}` collate = {`{$this->getCollation()}` -> `{$model->getCollation()}`}";
+        $description = "alter table `{$model->getName()}` collate {`{$this->getCollation()}` -> `{$model->getCollation()}`}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($model) {
-            $this->pdo->query("ALTER TABLE `{$model->getName()}` COLLATE = `{$model->getCollation()}`");
+            $this->pdo->query("
+                ALTER TABLE `{$model->getName()}`
+                COLLATE `{$model->getCollation()}`
+            ");
         });
         return new Unconformity($description, $instructions);
     }
@@ -128,10 +137,13 @@ class MySqlTable implements ITableModel
 
     private function checksumUnconformity(ITableModel $model)
     {
-        $description = "alter table `{$model->getName()}` checksum = {`{$this->getChecksum()}` -> `{$model->getChecksum()}`}";
+        $description = "alter table `{$model->getName()}` checksum {`{$this->getChecksum()}` -> `{$model->getChecksum()}`}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($model) {
-            $this->pdo->query("ALTER TABLE `{$model->getName()}` CHECKSUM {$model->getChecksum()}");
+            $this->pdo->query("
+                ALTER TABLE `{$model->getName()}`
+                CHECKSUM {$model->getChecksum()}
+            ");
         });
         return new Unconformity($description, $instructions);
     }

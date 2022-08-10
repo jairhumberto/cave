@@ -46,32 +46,37 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
             ->merge($this->orderFieldsUnconformities($model));
     }
 
-    private function missingFieldsUnconformities(IFieldsListModel $model)
+    private function missingFieldsUnconformities(IFieldsListModel $fieldListModel)
     {
         $unconformities = new UnconformitiesList();
-        foreach ($model as $key => $modelField) {
-            $searchCallback = function (IFieldModel $item) use ($modelField) {
-                return $item->getField() == $modelField->getField();
+        foreach ($fieldListModel as $key => $fieldModel) {
+            $callback = function ($item) use ($fieldModel) {
+                return $item->getField() == $fieldModel->getField();
             };
 
-            $field = $this->search($searchCallback);
+            $fieldFound = $this->search($callback);
 
-            if (is_null($field)) {
-                $unconformities->add($this->missingFieldUnconformity($modelField, $key > 0 ? $model->get($key - 1) : null));
+            if ($fieldFound == null) {
+                if ($key == 0) {
+                    $previousFieldModel = null;
+                } else {
+                    $previousFieldModel = $fieldListModel->get($key - 1);
+                }
+                $unconformities->add($this->missingFieldUnconformity($fieldModel, $previousFieldModel));
             }
         }
         return $unconformities;
     }
 
-    private function missingFieldUnconformity(IFieldModel $currentModelField, IFieldModel $previousModelField)
+    private function missingFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
     {
-        $description = "alter table `{$this->table->getName()}` add `{$currentModelField->getField()}`";
+        $description = "alter table `{$this->table->getName()}` add `{$currentFieldModel->getField()}`";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($currentModelField, $previousModelField) {
-            $position = is_null($previousModelField) ? "FIRST" : "AFTER {$previousModelField->getField()}";
+        $instructions->add(function () use ($currentFieldModel, $previousFieldModel) {
+            $position = $previousFieldModel == null ? "FIRST" : "AFTER {$previousFieldModel->getField()}";
             $this->pdo->query("
                 ALTER TABLE `{$this->table->getName()}`
-                ADD COLUMN $currentModelField $position
+                ADD COLUMN $currentFieldModel $position
             ");
         });
         return new Unconformity($description, $instructions);
@@ -80,22 +85,19 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
     private function generalFieldsUnconformities(IFieldsListModel $model)
     {
         $unconformities = new UnconformitiesList();
-
-        /** @var MySqlField $field */
         foreach ($this as $field) {
-            $searchCallback = function (IFieldModel $item) use ($field) {
+            $callback = function ($item) use ($field) {
                 return $item->getField() == $field->getField();
             };
 
-            $fieldModel = $model->search($searchCallback);
+            $exceedingFieldModel = $model->search($callback);
 
-            if (is_null($fieldModel)) {
+            if ($exceedingFieldModel == null) {
                 $unconformities->add($this->exceedingFieldUnconformity($field));
             } else {
-                $unconformities->merge($field->checkIntegrity($fieldModel));
+                $unconformities->merge($field->checkIntegrity($exceedingFieldModel));
             }
         }
-
         return $unconformities;
     }
 
@@ -104,41 +106,40 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
         $description = "alter table `{$this->table->getName()}` drop column `{$field->getField()}`";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($field) {
-            $this->pdo->query("ALTER TABLE `{$this->table->getName()}` DROP COLUMN `{$field->getField()}`");
+            $this->pdo->query("
+                ALTER TABLE `{$this->table->getName()}`
+                DROP COLUMN `{$field->getField()}`
+            ");
         });
         return new Unconformity($description, $instructions);
     }
 
     private function orderFieldsUnconformities(IFieldsListModel $model)
     {
-        /**
-         * @var IFieldModel $currentFieldModel
-         * @var IFieldModel $previousFieldModel
-         * @var IFieldModel $currentField
-         */
-
         $unconformities = new UnconformitiesList();
-
         foreach ($model as $key => $currentFieldModel) {
             $currentField = $this->get($key);
             if ($currentField->getField() != $currentFieldModel->getField()) {
-                $previousFieldModel = $key > 0 ? $model->get($key - 1) : null;
+                if ($key == 0) {
+                    $previousFieldModel = null;
+                } else {
+                    $previousFieldModel = $model->get($key - 1);
+                }
                 $unconformities->add($this->orderFieldUnconformity($currentFieldModel, $previousFieldModel));
             }
         }
-
         return $unconformities;
     }
 
-    private function orderFieldUnconformity(IFieldModel $currentModelField, IFieldModel $previousModelField)
+    private function orderFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
     {
-        $description = "alter table `{$this->table->getName()}` modify `{$currentModelField->getField()}`";
+        $description = "alter table `{$this->table->getName()}` modify `{$currentFieldModel->getField()}`";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($currentModelField, $previousModelField) {
-            $position = is_null($previousModelField) ? "FIRST" : "AFTER {$previousModelField->getField()}";
+        $instructions->add(function () use ($currentFieldModel, $previousFieldModel) {
+            $position = $previousFieldModel == null ? "FIRST" : "AFTER {$previousFieldModel->getField()}";
             $this->pdo->query("
                 ALTER TABLE `{$this->table->getName()}`
-                MODIFY $currentModelField $position
+                MODIFY $currentFieldModel $position
             ");
         });
         return new Unconformity($description, $instructions);

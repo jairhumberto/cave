@@ -75,10 +75,10 @@ class MySqlDatabase implements IDatabaseModel
 
     private function charsetUnconformity(IDatabaseModel $model)
     {
-        $description = "alter database character set = {`{$this->getCharset()}` -> `{$model->getCharset()}`}";
+        $description = "alter database character set {`{$this->getCharset()}` -> `{$model->getCharset()}`}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($model) {
-            $this->pdo->query("ALTER DATABASE CHARACTER SET = `{$model->getCharset()}`");
+            $this->pdo->query("ALTER DATABASE CHARACTER SET `{$model->getCharset()}`");
         });
         return new Unconformity($description, $instructions);
     }
@@ -93,10 +93,10 @@ class MySqlDatabase implements IDatabaseModel
 
     private function collateUnconformity(IDatabaseModel $model)
     {
-        $description = "alter database collate = {`{$this->getCollation()}` -> `{$model->getCollation()}`}";
+        $description = "alter database collate {`{$this->getCollation()}` -> `{$model->getCollation()}`}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($model) {
-            $this->pdo->query("ALTER DATABASE COLLATE = `{$model->getCollation()}`");
+            $this->pdo->query("ALTER DATABASE COLLATE `{$model->getCollation()}`");
         });
         return new Unconformity($description, $instructions);
     }
