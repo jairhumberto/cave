@@ -57,8 +57,8 @@ interface IKeyPartModel
     public function getComment();
 
     /**
-     * @param IKeyPartModel $model
+     * @param IKeyPartModel $keyPartModel
      * @return UnconformitiesList
      */
-    public function checkIntegrity(IKeyPartModel $model);
+    public function checkIntegrity(IKeyPartModel $keyPartModel);
 }

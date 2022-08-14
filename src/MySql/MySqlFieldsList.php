@@ -8,7 +8,6 @@ use Squille\Cave\ArrayList;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\IFieldModel;
 use Squille\Cave\Models\IFieldsListModel;
-use Squille\Cave\Models\ITableModel;
 use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
@@ -17,7 +16,7 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
     private $pdo;
     private $table;
 
-    public function __construct(PDO $pdo, ITableModel $table)
+    public function __construct(PDO $pdo, MySqlTable $table)
     {
         $this->pdo = $pdo;
         $this->table = $table;
@@ -27,7 +26,7 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
     private function retrieveFields()
     {
         try {
-            $result = $this->pdo->query("SHOW FULL FIELDS IN `{$this->table->getName()}`");
+            $result = $this->pdo->query("SHOW FULL FIELDS IN {$this->table->getName()}");
             return $result->fetchAll(PDO::FETCH_CLASS, MySqlField::class, [$this->pdo, $this->table]) ?: [];
         } finally {
             if ($result instanceof PDOStatement) {
@@ -36,20 +35,17 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(IFieldsListModel $model)
+    public function checkIntegrity(IFieldsListModel $fieldsListModel)
     {
-        return $this->missingFieldsUnconformities($model)
-            ->merge($this->generalFieldsUnconformities($model))
-            ->merge($this->orderFieldsUnconformities($model));
+        return $this->missingFieldsUnconformities($fieldsListModel)
+            ->merge($this->generalFieldsUnconformities($fieldsListModel))
+            ->merge($this->orderFieldsUnconformities($fieldsListModel));
     }
 
-    private function missingFieldsUnconformities(IFieldsListModel $fieldListModel)
+    private function missingFieldsUnconformities(IFieldsListModel $fieldsListModel)
     {
         $unconformities = new UnconformitiesList();
-        foreach ($fieldListModel as $key => $fieldModel) {
+        foreach ($fieldsListModel as $key => $fieldModel) {
             $callback = function ($item) use ($fieldModel) {
                 return $item->getField() == $fieldModel->getField();
             };
@@ -60,7 +56,7 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
                 if ($key == 0) {
                     $previousFieldModel = null;
                 } else {
-                    $previousFieldModel = $fieldListModel->get($key - 1);
+                    $previousFieldModel = $fieldsListModel->get($key - 1);
                 }
                 $unconformities->add($this->missingFieldUnconformity($fieldModel, $previousFieldModel));
             }
@@ -70,19 +66,19 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
 
     private function missingFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
     {
-        $description = "alter table `{$this->table->getName()}` add `{$currentFieldModel->getField()}`";
+        $description = "alter table {$this->table->getName()} add {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($currentFieldModel, $previousFieldModel) {
             $position = $previousFieldModel == null ? "FIRST" : "AFTER {$previousFieldModel->getField()}";
             $this->pdo->query("
-                ALTER TABLE `{$this->table->getName()}`
+                ALTER TABLE {$this->table->getName()}
                 ADD COLUMN $currentFieldModel $position
             ");
         });
         return new Unconformity($description, $instructions);
     }
 
-    private function generalFieldsUnconformities(IFieldsListModel $model)
+    private function generalFieldsUnconformities(IFieldsListModel $fieldsListModel)
     {
         $unconformities = new UnconformitiesList();
         foreach ($this as $field) {
@@ -90,42 +86,42 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
                 return $item->getField() == $field->getField();
             };
 
-            $exceedingFieldModel = $model->search($callback);
+            $fieldModelFound = $fieldsListModel->search($callback);
 
-            if ($exceedingFieldModel == null) {
+            if ($fieldModelFound == null) {
                 $unconformities->add($this->exceedingFieldUnconformity($field));
             } else {
-                $unconformities->merge($field->checkIntegrity($exceedingFieldModel));
+                $unconformities->merge($field->checkIntegrity($fieldModelFound));
             }
         }
         return $unconformities;
     }
 
-    private function exceedingFieldUnconformity(IFieldModel $field)
+    private function exceedingFieldUnconformity(MySqlField $mySqlField)
     {
-        $description = "alter table `{$this->table->getName()}` drop column `{$field->getField()}`";
+        $description = "alter table {$this->table->getName()} drop column {$mySqlField->getField()}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($field) {
+        $instructions->add(function () use ($mySqlField) {
             $this->pdo->query("
-                ALTER TABLE `{$this->table->getName()}`
-                DROP COLUMN `{$field->getField()}`
+                ALTER TABLE {$this->table->getName()}
+                DROP COLUMN {$mySqlField->getField()}
             ");
         });
         return new Unconformity($description, $instructions);
     }
 
-    private function orderFieldsUnconformities(IFieldsListModel $model)
+    private function orderFieldsUnconformities(IFieldsListModel $fieldsListModel)
     {
         $unconformities = new UnconformitiesList();
-        foreach ($model as $key => $currentFieldModel) {
-            $currentField = $this->get($key);
-            if ($currentField->getField() != $currentFieldModel->getField()) {
+        foreach ($fieldsListModel as $key => $fieldModel) {
+            $field = $this->get($key);
+            if ($field->getField() != $fieldModel->getField()) {
                 if ($key == 0) {
                     $previousFieldModel = null;
                 } else {
-                    $previousFieldModel = $model->get($key - 1);
+                    $previousFieldModel = $fieldsListModel->get($key - 1);
                 }
-                $unconformities->add($this->orderFieldUnconformity($currentFieldModel, $previousFieldModel));
+                $unconformities->add($this->orderFieldUnconformity($fieldModel, $previousFieldModel));
             }
         }
         return $unconformities;
@@ -133,12 +129,12 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
 
     private function orderFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
     {
-        $description = "alter table `{$this->table->getName()}` modify `{$currentFieldModel->getField()}`";
+        $description = "alter table {$this->table->getName()} modify {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($currentFieldModel, $previousFieldModel) {
             $position = $previousFieldModel == null ? "FIRST" : "AFTER {$previousFieldModel->getField()}";
             $this->pdo->query("
-                ALTER TABLE `{$this->table->getName()}`
+                ALTER TABLE {$this->table->getName()}
                 MODIFY $currentFieldModel $position
             ");
         });

@@ -47,27 +47,21 @@ class XmlDatabase implements IDatabaseModel
         $this->collation = $this->xml->firstChild->getAttribute("collation");
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(IDatabaseModel $model)
+    public function checkIntegrity(IDatabaseModel $databaseModel)
     {
         $unconformities = new UnconformitiesList();
 
-        if ($this->getCharset() != $model->getCharset()) {
-            $unconformities->add($this->addCharsetUnconformity($model));
+        if ($this->getCharset() != $databaseModel->getCharset()) {
+            $unconformities->add($this->addCharsetUnconformity($databaseModel));
         }
 
-        if ($this->getCollation() != $model->getCollation()) {
-            $unconformities->add($this->addCollateUnconformity($model));
+        if ($this->getCollation() != $databaseModel->getCollation()) {
+            $unconformities->add($this->addCollateUnconformity($databaseModel));
         }
 
         return $unconformities;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getCharset()
     {
         return $this->charset;
@@ -83,9 +77,6 @@ class XmlDatabase implements IDatabaseModel
         return new Unconformity($description, $instructions);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getCollation()
     {
         return $this->collation;

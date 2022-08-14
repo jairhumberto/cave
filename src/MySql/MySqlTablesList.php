@@ -24,28 +24,25 @@ class MySqlTablesList extends ArrayList implements ITablesListModel
     private function retrieveTables()
     {
         try {
-            $result = $this->pdo->query("SHOW TABLE STATUS");
-            return $result->fetchAll(PDO::FETCH_CLASS, MySqlTable::class, [$this->pdo]) ?: [];
+            $stm = $this->pdo->query("SHOW TABLE STATUS");
+            return $stm->fetchAll(PDO::FETCH_CLASS, MySqlTable::class, [$this->pdo]) ?: [];
         } finally {
-            if ($result instanceof PDOStatement) {
-                $result->closeCursor();
+            if ($stm instanceof PDOStatement) {
+                $stm->closeCursor();
             }
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(ITablesListModel $model)
+    public function checkIntegrity(ITablesListModel $tablesListModel)
     {
-        return $this->missingTablesUnconformities($model)
-            ->merge($this->generalTablesUnconformities($model));
+        return $this->missingTablesUnconformities($tablesListModel)
+            ->merge($this->generalTablesUnconformities($tablesListModel));
     }
 
-    private function missingTablesUnconformities(ITablesListModel $tableListModel)
+    private function missingTablesUnconformities(ITablesListModel $tablesListModel)
     {
         $unconformities = new UnconformitiesList();
-        foreach ($tableListModel as $tableModel) {
+        foreach ($tablesListModel as $tableModel) {
             $callback = function ($item) use ($tableModel) {
                 return $item->getName() == $tableModel->getName();
             };
@@ -61,14 +58,16 @@ class MySqlTablesList extends ArrayList implements ITablesListModel
 
     private function missingTableUnconformity(ITableModel $modelTable)
     {
-        $description = "create table `{$modelTable->getName()}`";
+        $description = "create table {$modelTable->getName()}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($modelTable) {
             $tblName = $modelTable->getName();
-            $createDefinitions = $modelTable->getFields()->merge($modelTable->getKeys());
+            $createDefinitions = $modelTable->getFields()
+                ->merge($modelTable->getConstraints())
+                ->merge($modelTable->getIndexes());
             $tableOptions = $this->getTableOptions($modelTable);
             $this->pdo->query("
-                CREATE TABLE `$tblName`
+                CREATE TABLE $tblName
                 ($createDefinitions) $tableOptions
             ");
         });
@@ -83,39 +82,36 @@ class MySqlTablesList extends ArrayList implements ITablesListModel
             "COLLATE {$modelTable->getCollation()}"
         ];
         if ($modelTable->getChecksum()) {
-            $tableOptionsArray[] = "CHECKSUM `{$modelTable->getChecksum()}`";
+            $tableOptionsArray[] = "CHECKSUM {$modelTable->getChecksum()}";
         }
         return join(",", $tableOptionsArray);
     }
 
-    private function generalTablesUnconformities(ITablesListModel $model)
+    private function generalTablesUnconformities(ITablesListModel $tablesListModel)
     {
         $unconformities = new UnconformitiesList();
-
-        /** @var MySqlTable $table */
         foreach ($this as $table) {
             $callback = function ($item) use ($table) {
                 return $item->getName() == $table->getName();
             };
 
-            $exceedingTableFound = $model->search($callback);
+            $tableModelFound = $tablesListModel->search($callback);
 
-            if ($exceedingTableFound == null) {
+            if ($tableModelFound == null) {
                 $unconformities->add($this->exceedingTableUnconformity($table));
             } else {
-                $unconformities->merge($table->checkIntegrity($exceedingTableFound));
+                $unconformities->merge($table->checkIntegrity($tableModelFound));
             }
         }
-
         return $unconformities;
     }
 
-    private function exceedingTableUnconformity(ITableModel $table)
+    private function exceedingTableUnconformity(MySqlTable $mySqlTable)
     {
-        $description = "drop table `{$table->getName()}`";
+        $description = "drop table {$mySqlTable->getName()}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($table) {
-            $this->pdo->query("DROP TABLE `{$table->getName()}`");
+        $instructions->add(function () use ($mySqlTable) {
+            $this->pdo->query("DROP TABLE {$mySqlTable->getName()}");
         });
         return new Unconformity($description, $instructions);
     }

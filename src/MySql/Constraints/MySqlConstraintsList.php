@@ -1,20 +1,22 @@
 <?php
 
-namespace Squille\Cave\MySql\Keys;
+namespace Squille\Cave\MySql\Constraints;
 
 use PDO;
 use PDOStatement;
 use Squille\Cave\ArrayList;
-use Squille\Cave\Models\IKeysListModel;
-use Squille\Cave\Models\ITableModel;
+use Squille\Cave\Models\IConstraintsListModel;
+use Squille\Cave\MySql\Indexes\MySqlIndexFactory;
+use Squille\Cave\MySql\Indexes\MySqlKeyPart;
+use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\UnconformitiesList;
 
-class MySqlKeysList extends ArrayList implements IKeysListModel
+class MySqlConstraintsList extends ArrayList implements IConstraintsListModel
 {
     private $pdo;
     private $table;
 
-    public function __construct(PDO $pdo, ITableModel $table)
+    public function __construct(PDO $pdo, MySqlTable $table)
     {
         $this->pdo = $pdo;
         $this->table = $table;
@@ -24,11 +26,11 @@ class MySqlKeysList extends ArrayList implements IKeysListModel
     private function retrieveKeys()
     {
         try {
-            $result = $this->pdo->query("SHOW KEYS IN `{$this->table->getName()}`");
-            return $this->groupKeys($result->fetchAll(PDO::FETCH_CLASS, MySqlKeyPart::class, [$this->pdo]) ?: []);
+            $stm = $this->pdo->query("SHOW KEYS IN {$this->table->getName()}");
+            return $this->groupKeys($stm->fetchAll(PDO::FETCH_CLASS, MySqlKeyPart::class, [$this->pdo]) ?: []);
         } finally {
-            if ($result instanceof PDOStatement) {
-                $result->closeCursor();
+            if ($stm instanceof PDOStatement) {
+                $stm->closeCursor();
             }
         }
     }
@@ -38,7 +40,7 @@ class MySqlKeysList extends ArrayList implements IKeysListModel
         $keys = [];
         $groups = $this->groupKeyParts($keyParts);
         foreach ($groups as $group) {
-            $keys[] = MySqlKeyFactory::createInstance($this->pdo, $group);
+            $keys[] = MySqlIndexFactory::createInstance($this->pdo, $group);
         }
         return $keys;
     }
@@ -46,7 +48,7 @@ class MySqlKeysList extends ArrayList implements IKeysListModel
     private function groupKeyParts(array $keyParts)
     {
         $groups = [];
-        foreach($keyParts as $part) {
+        foreach ($keyParts as $part) {
             if (!array_key_exists($part->getKeyName(), $groups)) {
                 $groups[$part->getKeyName()] = [];
             }
@@ -55,10 +57,7 @@ class MySqlKeysList extends ArrayList implements IKeysListModel
         return $groups;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(IKeysListModel $model)
+    public function checkIntegrity(IConstraintsListModel $constraintsListModel)
     {
         return new UnconformitiesList();
     }

@@ -5,12 +5,13 @@ namespace Squille\Cave\MySql;
 use PDO;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\IFieldModel;
-use Squille\Cave\Models\ITableModel;
 use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
 class MySqlField implements IFieldModel
 {
+    private $pdo;
+    private $table;
     private $Field;
     private $Type;
     private $Collation;
@@ -20,160 +21,130 @@ class MySqlField implements IFieldModel
     private $Extra;
     private $Comment;
 
-    private $pdo;
-    private $table;
-
-    public function __construct(PDO $pdo, ITableModel $table)
+    public function __construct(PDO $pdo, MySqlTable $table)
     {
         $this->pdo = $pdo;
         $this->table = $table;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(IFieldModel $model)
+    public function checkIntegrity(IFieldModel $fieldModel)
     {
         $unconformities = new UnconformitiesList();
 
-        if ($this->getType() != $model->getType()) {
-            $unconformities->add($this->typeUnconformity($model));
+        if ($this->getType() != $fieldModel->getType()) {
+            $unconformities->add($this->typeUnconformity($fieldModel));
         }
 
-        if ($this->getCollation() != $model->getCollation()) {
-            $unconformities->add($this->collationUnconformity($model));
+        if ($this->getCollation() != $fieldModel->getCollation()) {
+            $unconformities->add($this->collationUnconformity($fieldModel));
         }
 
-        if ($this->getNull() != $model->getNull()) {
-            $unconformities->add($this->nullUnconformity($model));
+        if ($this->getNull() != $fieldModel->getNull()) {
+            $unconformities->add($this->nullUnconformity($fieldModel));
         }
 
-        if ($this->getDefault() != $model->getDefault()) {
-            $unconformities->add($this->defaultUnconformity($model));
+        if ($this->getDefault() != $fieldModel->getDefault()) {
+            $unconformities->add($this->defaultUnconformity($fieldModel));
         }
 
-        if ($this->getExtra() != $model->getExtra()) {
-            $unconformities->add($this->extraUnconformity($model));
+        if ($this->getExtra() != $fieldModel->getExtra()) {
+            $unconformities->add($this->extraUnconformity($fieldModel));
         }
 
-        if ($this->getComment() != $model->getComment()) {
-            $unconformities->add($this->commentUnconformity($model));
+        if ($this->getComment() != $fieldModel->getComment()) {
+            $unconformities->add($this->commentUnconformity($fieldModel));
         }
 
         if ($unconformities->any()) {
-            $unconformities->add($this->definitionUnconformity($model));
+            $unconformities->add($this->definitionUnconformity($fieldModel));
         }
 
         return $unconformities;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getType()
     {
         return $this->Type;
     }
 
-    private function typeUnconformity(IFieldModel $model)
+    private function typeUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify `{$model->getField()}` type = {`{$this->getType()}` -> `{$model->getType()}`}";
+        $description = "alter table modify {$fieldModel->getField()} type {{$this->getType()} -> {$fieldModel->getType()}}";
         return new Unconformity($description);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getField()
     {
         return $this->Field;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getCollation()
     {
         return $this->Collation;
     }
 
-    private function collationUnconformity(IFieldModel $model)
+    private function collationUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify `{$model->getField()}` collate = {`{$this->getCollation()}` -> `{$model->getCollation()}`}";
+        $description = "alter table modify {$fieldModel->getField()} collate {{$this->getCollation()} -> {$fieldModel->getCollation()}}";
         return new Unconformity($description);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getNull()
     {
         return $this->Null;
     }
 
-    private function nullUnconformity(IFieldModel $model)
+    private function nullUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify `{$model->getField()}` null = {{$this->getNull()} -> {$model->getNull()}}";
+        $description = "alter table modify {$fieldModel->getField()} null {{$this->getNull()} -> {$fieldModel->getNull()}}";
         return new Unconformity($description);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getDefault()
     {
         return $this->Default;
     }
 
-    private function defaultUnconformity(IFieldModel $model)
+    private function defaultUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify `{$model->getField()}` default = {'{$this->getDefault()}' -> '{$model->getDefault()}'}";
+        $description = "alter table modify {$fieldModel->getField()} default {'{$this->getDefault()}' -> '{$fieldModel->getDefault()}'}";
         return new Unconformity($description);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getExtra()
     {
         return $this->Extra;
     }
 
-    private function extraUnconformity(IFieldModel $model)
+    private function extraUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify `{$model->getField()}` extra = {`{$this->getExtra()}` -> `{$model->getExtra()}`}";
+        $description = "alter table modify {$fieldModel->getField()} extra {{$this->getExtra()} -> {$fieldModel->getExtra()}}";
         return new Unconformity($description);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getComment()
     {
         return $this->Comment;
     }
 
-    private function commentUnconformity(IFieldModel $model)
+    private function commentUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify `{$model->getField()}` comment = {'{$this->getComment()}' -> '{$model->getComment()}'}";
+        $description = "alter table modify {$fieldModel->getField()} comment {'{$this->getComment()}' -> '{$fieldModel->getComment()}'}";
         return new Unconformity($description);
     }
 
-    private function definitionUnconformity(IFieldModel $model)
+    private function definitionUnconformity(IFieldModel $fieldModel)
     {
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($model) {
+        $instructions->add(function () use ($fieldModel) {
             $this->pdo->query("
-                ALTER TABLE `{$this->table->getName()}`
-                MODIFY $model
+                ALTER TABLE {$this->table->getName()}
+                MODIFY $fieldModel
             ");
         });
         return new Unconformity("", $instructions);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getKey()
     {
         return $this->Key;
@@ -182,7 +153,7 @@ class MySqlField implements IFieldModel
     public function __toString()
     {
         $columnDefinition = $this->getColumnDefinition();
-        return "`{$this->getField()}` $columnDefinition";
+        return "{$this->getField()} $columnDefinition";
     }
 
     private function getColumnDefinition()
@@ -203,7 +174,7 @@ class MySqlField implements IFieldModel
             $columnDefinition[] = "COMMENT '{$this->getComment()}'";
         }
         if ($this->getCollation()) {
-            $columnDefinition[] = "COLLATE `{$this->getCollation()}`";
+            $columnDefinition[] = "COLLATE {$this->getCollation()}";
         }
         return join(" ", $columnDefinition);
     }

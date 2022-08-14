@@ -8,8 +8,8 @@ use Squille\Cave\IList;
 interface ITablesListModel extends IList
 {
     /**
-     * @param ITablesListModel $model
+     * @param ITablesListModel $tablesListModel
      * @return UnconformitiesList
      */
-    public function checkIntegrity(ITablesListModel $model);
+    public function checkIntegrity(ITablesListModel $tablesListModel);
 }

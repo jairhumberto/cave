@@ -5,162 +5,146 @@ namespace Squille\Cave\MySql;
 use PDO;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\ITableModel;
-use Squille\Cave\MySql\Keys\MySqlKeysList;
+use Squille\Cave\MySql\Constraints\MySqlConstraintsList;
+use Squille\Cave\MySql\Indexes\MySqlIndexesList;
 use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
 class MySqlTable implements ITableModel
 {
+    private $pdo;
+    private $fields;
+    private $constraints;
+    private $indexes;
     private $Name;
     private $Engine;
     private $Row_format;
     private $Collation;
     private $Checksum;
 
-    private $pdo;
-    private $fields;
-    private $keys;
-
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
         $this->fields = new MySqlFieldsList($this->pdo, $this);
-        $this->keys = new MySqlKeysList($this->pdo, $this);
+        $this->constraints = new MySqlConstraintsList($this->pdo, $this);
+        $this->indexes = new MySqlIndexesList($this->pdo, $this);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(ITableModel $model)
+    public function checkIntegrity(ITableModel $tableModel)
     {
         $unconformities = new UnconformitiesList();
 
-        if ($this->getEngine() != $model->getEngine()) {
-            $unconformities->add($this->engineUnconformity($model));
+        if ($this->getEngine() != $tableModel->getEngine()) {
+            $unconformities->add($this->engineUnconformity($tableModel));
         }
 
-        if ($this->getRowFormat() != $model->getRowFormat()) {
-            $unconformities->add($this->rowFormatUnconformity($model));
+        if ($this->getRowFormat() != $tableModel->getRowFormat()) {
+            $unconformities->add($this->rowFormatUnconformity($tableModel));
         }
 
-        if ($this->getCollation() != $model->getCollation()) {
-            $unconformities->add($this->collateUnconformity($model));
+        if ($this->getCollation() != $tableModel->getCollation()) {
+            $unconformities->add($this->collateUnconformity($tableModel));
         }
 
-        if ($this->getChecksum() != $model->getChecksum()) {
-            $unconformities->add($this->checksumUnconformity($model));
+        if ($this->getChecksum() != $tableModel->getChecksum()) {
+            $unconformities->add($this->checksumUnconformity($tableModel));
         }
 
         return $unconformities
-            ->merge($this->getFields()->checkIntegrity($model->getFields()))
-            ->merge($this->getKeys()->checkIntegrity($model->getKeys()));
+            ->merge($this->getFields()->checkIntegrity($tableModel->getFields()))
+            ->merge($this->getConstraints()->checkIntegrity($tableModel->getConstraints()))
+            ->merge($this->getIndexes()->checkIntegrity($tableModel->getIndexes()));
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getEngine()
     {
         return $this->Engine;
     }
 
-    private function engineUnconformity(ITableModel $model)
+    private function engineUnconformity(ITableModel $tableModel)
     {
-        $description = "alter table `{$model->getName()}` engine {`{$this->getEngine()}` -> `{$model->getEngine()}`}";
+        $description = "alter table {$tableModel->getName()} engine {{$this->getEngine()} -> {$tableModel->getEngine()}}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($model) {
+        $instructions->add(function () use ($tableModel) {
             $this->pdo->query("
-                ALTER TABLE `{$model->getName()}`
-                ENGINE `{$model->getEngine()}`
+                ALTER TABLE {$tableModel->getName()}
+                ENGINE {$tableModel->getEngine()}
             ");
         });
         return new Unconformity($description, $instructions);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getName()
     {
         return $this->Name;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getRowFormat()
     {
         return $this->Row_format;
     }
 
-    private function rowFormatUnconformity(ITableModel $model)
+    private function rowFormatUnconformity(ITableModel $tableModel)
     {
-        $description = "alter table `{$model->getName()}` row_format {`{$this->getRowFormat()}` -> `{$model->getRowFormat()}`}";
+        $description = "alter table {$tableModel->getName()} row_format {{$this->getRowFormat()} -> {$tableModel->getRowFormat()}}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($model) {
+        $instructions->add(function () use ($tableModel) {
             $this->pdo->query("
-                ALTER TABLE `{$model->getName()}`
-                ROW_FORMAT `{$model->getEngine()}`
+                ALTER TABLE {$tableModel->getName()}
+                ROW_FORMAT {$tableModel->getRowFormat()}
             ");
         });
         return new Unconformity($description, $instructions);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getCollation()
     {
         return $this->Collation;
     }
 
-    private function collateUnconformity(ITableModel $model)
+    private function collateUnconformity(ITableModel $tableModel)
     {
-        $description = "alter table `{$model->getName()}` collate {`{$this->getCollation()}` -> `{$model->getCollation()}`}";
+        $description = "alter table {$tableModel->getName()} collate {{$this->getCollation()} -> {$tableModel->getCollation()}}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($model) {
+        $instructions->add(function () use ($tableModel) {
             $this->pdo->query("
-                ALTER TABLE `{$model->getName()}`
-                COLLATE `{$model->getCollation()}`
+                ALTER TABLE {$tableModel->getName()}
+                COLLATE {$tableModel->getCollation()}
             ");
         });
         return new Unconformity($description, $instructions);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getChecksum()
     {
         return $this->Checksum;
     }
 
-    private function checksumUnconformity(ITableModel $model)
+    private function checksumUnconformity(ITableModel $tableModel)
     {
-        $description = "alter table `{$model->getName()}` checksum {`{$this->getChecksum()}` -> `{$model->getChecksum()}`}";
+        $description = "alter table {$tableModel->getName()} checksum {{$this->getChecksum()} -> {$tableModel->getChecksum()}}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($model) {
+        $instructions->add(function () use ($tableModel) {
             $this->pdo->query("
-                ALTER TABLE `{$model->getName()}`
-                CHECKSUM {$model->getChecksum()}
+                ALTER TABLE {$tableModel->getName()}
+                CHECKSUM {$tableModel->getChecksum()}
             ");
         });
         return new Unconformity($description, $instructions);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getFields()
     {
         return $this->fields;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getKeys()
+    public function getIndexes()
     {
-        return $this->keys;
+        return $this->indexes;
+    }
+
+    public function getConstraints()
+    {
+        return $this->constraints;
     }
 }

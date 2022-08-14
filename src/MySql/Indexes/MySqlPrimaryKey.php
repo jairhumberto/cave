@@ -1,12 +1,12 @@
 <?php
 
-namespace Squille\Cave\MySql\Keys;
+namespace Squille\Cave\MySql\Indexes;
 
 use PDO;
-use Squille\Cave\Models\IKeyModel;
+use Squille\Cave\Models\IIndexModel;
 use Squille\Cave\UnconformitiesList;
 
-class MySqlPrimaryKey extends AbstractMySqlKey
+class MySqlPrimaryKey extends AbstractMySqlIndex
 {
     private $pdo;
 
@@ -16,10 +16,7 @@ class MySqlPrimaryKey extends AbstractMySqlKey
         parent::__construct($keyParts);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(IKeyModel $model)
+    public function checkIntegrity(IIndexModel $indexModel)
     {
         return new UnconformitiesList();
     }

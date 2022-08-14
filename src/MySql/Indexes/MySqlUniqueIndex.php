@@ -1,12 +1,12 @@
 <?php
 
-namespace Squille\Cave\MySql\Keys;
+namespace Squille\Cave\MySql\Indexes;
 
 use PDO;
-use Squille\Cave\Models\IKeyModel;
+use Squille\Cave\Models\IIndexModel;
 use Squille\Cave\UnconformitiesList;
 
-class MySqlUniqueKey extends AbstractMySqlKey
+class MySqlUniqueIndex extends AbstractMySqlIndex
 {
     private $pdo;
     private $name;
@@ -22,16 +22,13 @@ class MySqlUniqueKey extends AbstractMySqlKey
         parent::__construct($keyParts);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(IKeyModel $model)
+    public function checkIntegrity(IIndexModel $indexModel)
     {
         return new UnconformitiesList();
     }
 
     public function __toString()
     {
-        return sprintf("UNIQUE KEY `%s` USING %s (%s)", $this->name, $this->type, parent::__toString());
+        return sprintf("UNIQUE KEY %s USING %s (%s)", $this->name, $this->type, parent::__toString());
     }
 }

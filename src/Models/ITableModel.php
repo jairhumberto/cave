@@ -37,13 +37,18 @@ interface ITableModel
     public function getFields();
 
     /**
-     * @return IKeysListModel
+     * @return IConstraintsListModel
      */
-    public function getKeys();
+    public function getConstraints();
 
     /**
-     * @param ITableModel $model
+     * @return IIndexesListModel
+     */
+    public function getIndexes();
+
+    /**
+     * @param ITableModel $tableModel
      * @return UnconformitiesList
      */
-    public function checkIntegrity(ITableModel $model);
+    public function checkIntegrity(ITableModel $tableModel);
 }

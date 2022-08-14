@@ -1,21 +1,18 @@
 <?php
 
-namespace Squille\Cave\MySql\Keys;
+namespace Squille\Cave\MySql\Indexes;
 
 use PDO;
-use Squille\Cave\Models\IKeyPartModel;
 
-class MySqlKeyFactory
+class MySqlIndexFactory
 {
     /**
      * @param PDO $pdo
      * @param array $keyParts
-     * @param string $keyType
-     * @return AbstractMySqlKey
+     * @return AbstractMySqlIndex
      */
     public static function createInstance(PDO $pdo, array $keyParts)
     {
-        /** @var IKeyPartModel $firstKeyPart */
         $firstKeyPart = $keyParts[0];
 
         if ($firstKeyPart->getKeyName() == "PRIMARY") {
@@ -23,13 +20,13 @@ class MySqlKeyFactory
         }
 
         if ($firstKeyPart->getIndexType() == "FULLTEXT") {
-            return new MySqlFullTextKey($pdo, $keyParts);
+            return new MySqlFullTextIndex($pdo, $keyParts);
         }
 
         if ($firstKeyPart->getNonUnique() == 1) {
-            return new MySqlKey($pdo, $keyParts);
+            return new MySqlIndex($pdo, $keyParts);
         }
 
-        return new MySqlUniqueKey($pdo, $keyParts);
+        return new MySqlUniqueIndex($pdo, $keyParts);
     }
 }

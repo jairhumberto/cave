@@ -9,11 +9,6 @@ interface IDatabaseModel
     /**
      * @return string
      */
-    public function getCharset();
-
-    /**
-     * @return string
-     */
     public function getCollation();
 
     /**
@@ -22,8 +17,8 @@ interface IDatabaseModel
     public function getTables();
 
     /**
-     * @param IDatabaseModel $model
+     * @param IDatabaseModel $databaseModel
      * @return UnconformitiesList
      */
-    public function checkIntegrity(IDatabaseModel $model);
+    public function checkIntegrity(IDatabaseModel $databaseModel);
 }

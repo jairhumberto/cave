@@ -3,6 +3,7 @@
 namespace Squille\Cave\MySql;
 
 use PDO;
+use PDOStatement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\IDatabaseModel;
 use Squille\Cave\UnconformitiesList;
@@ -11,99 +12,54 @@ use Squille\Cave\Unconformity;
 class MySqlDatabase implements IDatabaseModel
 {
     private $pdo;
-    private $charset;
     private $collation;
     private $tables;
 
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
-        $this->init();
-    }
-
-    private function init()
-    {
-        $this->retrieveCharset();
-        $this->retrieveCollation();
-        $this->retrieveTables();
-    }
-
-    private function retrieveCharset()
-    {
-        $result = $this->pdo->query("SHOW VARIABLES LIKE 'character_set_database'");
-        $this->charset = $result->fetchObject()->Value;
-        $result->closeCursor();
+        $this->collation = $this->retrieveCollation();
+        $this->tables = new MySqlTablesList($pdo);
     }
 
     private function retrieveCollation()
     {
-        $result = $this->pdo->query("SHOW VARIABLES LIKE 'collation_database'");
-        $this->collation = $result->fetchObject()->Value;
-        $result->closeCursor();
+        try {
+            $stm = $this->pdo->query("SELECT @@collation_database");
+            return $stm->fetchColumn();
+        } finally {
+            if ($stm instanceof PDOStatement) {
+                $stm->closeCursor();
+            }
+        }
     }
 
-    private function retrieveTables()
-    {
-        $this->tables = new MySqlTablesList($this->pdo);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(IDatabaseModel $model)
+    public function checkIntegrity(IDatabaseModel $databaseModel)
     {
         $unconformities = new UnconformitiesList();
 
-        if ($this->getCharset() != $model->getCharset()) {
-            $unconformities->add($this->charsetUnconformity($model));
+        if ($this->getCollation() != $databaseModel->getCollation()) {
+            $unconformities->add($this->collationUnconformity($databaseModel));
         }
 
-        if ($this->getCollation() != $model->getCollation()) {
-            $unconformities->add($this->collateUnconformity($model));
-        }
-
-        return $unconformities->merge($this->getTables()->checkIntegrity($model->getTables()));
+        return $unconformities->merge($this->getTables()->checkIntegrity($databaseModel->getTables()));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getCharset()
-    {
-        return $this->charset;
-    }
-
-    private function charsetUnconformity(IDatabaseModel $model)
-    {
-        $description = "alter database character set {`{$this->getCharset()}` -> `{$model->getCharset()}`}";
-        $instructions = new InstructionsList();
-        $instructions->add(function () use ($model) {
-            $this->pdo->query("ALTER DATABASE CHARACTER SET `{$model->getCharset()}`");
-        });
-        return new Unconformity($description, $instructions);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getCollation()
     {
         return $this->collation;
     }
 
-    private function collateUnconformity(IDatabaseModel $model)
+    private function collationUnconformity(IDatabaseModel $databaseModel)
     {
-        $description = "alter database collate {`{$this->getCollation()}` -> `{$model->getCollation()}`}";
+        $description = "alter database collate {{$this->getCollation()} -> {$databaseModel->getCollation()}}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($model) {
-            $this->pdo->query("ALTER DATABASE COLLATE `{$model->getCollation()}`");
+        $instructions->add(function () use ($databaseModel) {
+            $this->pdo->query("ALTER DATABASE COLLATE {$databaseModel->getCollation()}");
         });
         return new Unconformity($description, $instructions);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getTables()
     {
         return $this->tables;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Squille\Cave\MySql\Keys;
+namespace Squille\Cave\MySql\Indexes;
 
 use PDO;
 use Squille\Cave\Models\IKeyPartModel;
@@ -25,96 +25,63 @@ class MySqlKeyPart implements IKeyPartModel
         $this->pdo = $pdo;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getNonUnique()
     {
         return $this->Non_unique;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getKeyName()
     {
         return $this->Key_name;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getSeqInIndex()
     {
         return $this->Seq_in_index;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getColumnName()
     {
         return $this->Column_name;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getCollation()
     {
         return $this->Collation;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getSubPart()
     {
         return $this->Sub_part;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getPacked()
     {
         return $this->Packed;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getNull()
     {
         return $this->Null;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getIndexType()
     {
         return $this->Index_type;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getComment()
     {
         return $this->Comment;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function checkIntegrity(IKeyPartModel $model)
+    public function checkIntegrity(IKeyPartModel $keyPartModel)
     {
         return new UnconformitiesList();
     }
 
     public function __toString()
     {
-        return "`{$this->getColumnName()}`";
+        return "{$this->getColumnName()}";
     }
 }

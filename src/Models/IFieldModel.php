@@ -47,8 +47,8 @@ interface IFieldModel
     public function getComment();
 
     /**
-     * @param IFieldModel $model
+     * @param IFieldModel $fieldModel
      * @return UnconformitiesList
      */
-    public function checkIntegrity(IFieldModel $model);
+    public function checkIntegrity(IFieldModel $fieldModel);
 }

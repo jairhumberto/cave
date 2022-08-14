@@ -15,25 +15,16 @@ abstract class ArrayList implements Iterator, IList
         $this->items = $items;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function any()
     {
         return count($this->items) > 0;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function get($index)
     {
         return $this->items[$index];
     }
 
-    /**
-     * @inheritDoc
-     */
     public function search($condition)
     {
         foreach ($this as $item) {
@@ -69,9 +60,6 @@ abstract class ArrayList implements Iterator, IList
         $this->index = 0;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function merge($list)
     {
         foreach ($list as $item) {
@@ -80,9 +68,6 @@ abstract class ArrayList implements Iterator, IList
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function add($item)
     {
         $this->items[] = $item;
