@@ -7,6 +7,11 @@ use Squille\Cave\UnconformitiesList;
 interface IFieldModel
 {
     /**
+     * @return ITableModel
+     */
+    public function getTable();
+
+    /**
      * @return string
      */
     public function getField();

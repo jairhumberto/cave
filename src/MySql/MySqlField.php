@@ -178,4 +178,9 @@ class MySqlField implements IFieldModel
         }
         return join(" ", $columnDefinition);
     }
+
+    public function getTable()
+    {
+        return $this->table;
+    }
 }

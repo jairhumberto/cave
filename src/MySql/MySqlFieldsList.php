@@ -66,12 +66,12 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
 
     private function missingFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
     {
-        $description = "alter table {$this->table->getName()} add {$currentFieldModel->getField()}";
+        $description = "alter table {$currentFieldModel->getTable()} add {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($currentFieldModel, $previousFieldModel) {
             $position = $previousFieldModel == null ? "FIRST" : "AFTER {$previousFieldModel->getField()}";
             $this->pdo->query("
-                ALTER TABLE {$this->table->getName()}
+                ALTER TABLE {$currentFieldModel->getTable()}
                 ADD COLUMN $currentFieldModel $position
             ");
         });
@@ -99,11 +99,11 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
 
     private function exceedingFieldUnconformity(MySqlField $mySqlField)
     {
-        $description = "alter table {$this->table->getName()} drop column {$mySqlField->getField()}";
+        $description = "alter table {$mySqlField->getTable()} drop column {$mySqlField->getField()}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($mySqlField) {
             $this->pdo->query("
-                ALTER TABLE {$this->table->getName()}
+                ALTER TABLE {$mySqlField->getTable()}
                 DROP COLUMN {$mySqlField->getField()}
             ");
         });
@@ -129,15 +129,20 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
 
     private function orderFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
     {
-        $description = "alter table {$this->table->getName()} modify {$currentFieldModel->getField()}";
+        $description = "alter table {$currentFieldModel->getTable()} modify {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($currentFieldModel, $previousFieldModel) {
             $position = $previousFieldModel == null ? "FIRST" : "AFTER {$previousFieldModel->getField()}";
             $this->pdo->query("
-                ALTER TABLE {$this->table->getName()}
+                ALTER TABLE {$currentFieldModel->getTable()}
                 MODIFY $currentFieldModel $position
             ");
         });
         return new Unconformity($description, $instructions);
+    }
+
+    public function getTable()
+    {
+        return $this->table;
     }
 }
