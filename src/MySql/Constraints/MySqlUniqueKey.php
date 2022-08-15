@@ -1,12 +1,12 @@
 <?php
 
-namespace Squille\Cave\MySql\Indexes;
+namespace Squille\Cave\MySql\Constraints;
 
 use PDO;
-use Squille\Cave\Models\IIndexModel;
+use Squille\Cave\Models\IConstraintModel;
 use Squille\Cave\UnconformitiesList;
 
-class MySqlUniqueIndex extends AbstractMySqlIndex
+class MySqlUniqueKey extends AbstractMySqlConstraint
 {
     private $pdo;
     private $name;
@@ -22,7 +22,7 @@ class MySqlUniqueIndex extends AbstractMySqlIndex
         parent::__construct($keyParts);
     }
 
-    public function checkIntegrity(IIndexModel $indexModel)
+    public function checkIntegrity(IConstraintModel $constraintModel)
     {
         return new UnconformitiesList();
     }

@@ -3,6 +3,8 @@
 namespace Squille\Cave\MySql\Indexes;
 
 use PDO;
+use Squille\Cave\MySql\Constraints\MySqlPrimaryKey;
+use Squille\Cave\MySql\Constraints\MySqlUniqueKey;
 
 class MySqlIndexFactory
 {
@@ -15,18 +17,10 @@ class MySqlIndexFactory
     {
         $firstKeyPart = $keyParts[0];
 
-        if ($firstKeyPart->getKeyName() == "PRIMARY") {
-            return new MySqlPrimaryKey($pdo, $keyParts);
-        }
-
         if ($firstKeyPart->getIndexType() == "FULLTEXT") {
             return new MySqlFullTextIndex($pdo, $keyParts);
         }
 
-        if ($firstKeyPart->getNonUnique() == 1) {
-            return new MySqlIndex($pdo, $keyParts);
-        }
-
-        return new MySqlUniqueIndex($pdo, $keyParts);
+        return new MySqlIndex($pdo, $keyParts);
     }
 }

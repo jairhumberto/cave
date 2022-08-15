@@ -6,6 +6,7 @@ use PDO;
 use PDOStatement;
 use Squille\Cave\ArrayList;
 use Squille\Cave\Models\IIndexesListModel;
+use Squille\Cave\MySql\MySqlKeyPart;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\UnconformitiesList;
 
@@ -24,7 +25,7 @@ class MySqlIndexesList extends ArrayList implements IIndexesListModel
     private function retrieveKeys()
     {
         try {
-            $stm = $this->pdo->query("SHOW KEYS IN {$this->table->getName()}");
+            $stm = $this->pdo->query("SHOW INDEXES IN {$this->table->getName()}");
             return $this->groupKeys($stm->fetchAll(PDO::FETCH_CLASS, MySqlKeyPart::class, [$this->pdo]) ?: []);
         } finally {
             if ($stm instanceof PDOStatement) {

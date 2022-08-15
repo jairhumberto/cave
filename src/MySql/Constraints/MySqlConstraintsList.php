@@ -6,8 +6,7 @@ use PDO;
 use PDOStatement;
 use Squille\Cave\ArrayList;
 use Squille\Cave\Models\IConstraintsListModel;
-use Squille\Cave\MySql\Indexes\MySqlIndexFactory;
-use Squille\Cave\MySql\Indexes\MySqlKeyPart;
+use Squille\Cave\MySql\MySqlKeyPart;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\UnconformitiesList;
 
@@ -40,7 +39,7 @@ class MySqlConstraintsList extends ArrayList implements IConstraintsListModel
         $keys = [];
         $groups = $this->groupKeyParts($keyParts);
         foreach ($groups as $group) {
-            $keys[] = MySqlIndexFactory::createInstance($this->pdo, $group);
+            $keys[] = MySqlConstraintFactory::createInstance($this->pdo, $group);
         }
         return $keys;
     }

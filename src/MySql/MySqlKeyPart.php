@@ -1,6 +1,6 @@
 <?php
 
-namespace Squille\Cave\MySql\Indexes;
+namespace Squille\Cave\MySql;
 
 use PDO;
 use Squille\Cave\Models\IKeyPartModel;
