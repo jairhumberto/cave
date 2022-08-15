@@ -3,8 +3,6 @@
 namespace Squille\Cave\MySql\Indexes;
 
 use PDO;
-use Squille\Cave\MySql\Constraints\MySqlPrimaryKey;
-use Squille\Cave\MySql\Constraints\MySqlUniqueKey;
 
 class MySqlIndexFactory
 {

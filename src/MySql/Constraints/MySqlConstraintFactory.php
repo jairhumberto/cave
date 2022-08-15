@@ -3,7 +3,6 @@
 namespace Squille\Cave\MySql\Constraints;
 
 use PDO;
-use Squille\Cave\MySql\Indexes\AbstractMySqlConstraint;
 
 class MySqlConstraintFactory
 {
