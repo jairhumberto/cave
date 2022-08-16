@@ -6,7 +6,6 @@ use PDO;
 use PDOStatement;
 use Squille\Cave\ArrayList;
 use Squille\Cave\Models\IConstraintsListModel;
-use Squille\Cave\MySql\MySqlKeyPart;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\UnconformitiesList;
 
@@ -19,44 +18,67 @@ class MySqlConstraintsList extends ArrayList implements IConstraintsListModel
     {
         $this->pdo = $pdo;
         $this->table = $table;
-        parent::__construct($this->retrieveKeys());
+        parent::__construct($this->retrieveConstraints());
     }
 
-    private function retrieveKeys()
+    private function retrieveConstraints()
     {
         try {
-            $stm = $this->pdo->query("SHOW KEYS IN {$this->table->getName()}");
-            return $this->groupKeys($stm->fetchAll(PDO::FETCH_CLASS, MySqlKeyPart::class, [$this->pdo]) ?: []);
+            $selectExpressions = MySqlPartialConstraint::selectExpressions() ?: "*";
+            $stm = $this->pdo->query("
+                SELECT $selectExpressions
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE
+                    TABLE_SCHEMA = DATABASE()
+                    AND TABLE_NAME = '{$this->getTable()}'
+            ");
+            return $this->groupConstraints($stm->fetchAll(PDO::FETCH_CLASS, MySqlPartialConstraint::class, [$this->pdo]) ?: []);
         } finally {
-            if ($stm instanceof PDOStatement) {
+            if (isset($stm) && $stm instanceof PDOStatement) {
                 $stm->closeCursor();
             }
         }
     }
 
-    private function groupKeys(array $keyParts)
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    private function groupConstraints(array $partialConstraints)
     {
         $keys = [];
-        $groups = $this->groupKeyParts($keyParts);
+        $groups = $this->groupPartialConstraints($partialConstraints);
         foreach ($groups as $group) {
             $keys[] = MySqlConstraintFactory::createInstance($this->pdo, $group);
         }
         return $keys;
     }
 
-    private function groupKeyParts(array $keyParts)
+    private function groupPartialConstraints(array $partialConstraints)
     {
         $groups = [];
-        foreach ($keyParts as $part) {
-            if (!array_key_exists($part->getKeyName(), $groups)) {
-                $groups[$part->getKeyName()] = [];
+        foreach ($partialConstraints as $part) {
+            if (!array_key_exists($part->getConstraintName(), $groups)) {
+                $groups[$part->getConstraintName()] = [];
             }
-            $groups[$part->getKeyName()][] = $part;
+            $groups[$part->getConstraintName()][] = $part;
         }
         return $groups;
     }
 
     public function checkIntegrity(IConstraintsListModel $constraintsListModel)
+    {
+        return $this->missingConstraintsUnconformities($constraintsListModel)
+            ->merge($this->generalConstraintsUnconformities($constraintsListModel));
+    }
+
+    public function missingConstraintsUnconformities(IConstraintsListModel $constraintsListModel)
+    {
+        return new UnconformitiesList();
+    }
+
+    public function generalConstraintsUnconformities(IConstraintsListModel $constraintsListModel)
     {
         return new UnconformitiesList();
     }

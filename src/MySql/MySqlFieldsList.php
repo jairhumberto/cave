@@ -26,7 +26,7 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
     private function retrieveFields()
     {
         try {
-            $result = $this->pdo->query("SHOW FULL FIELDS IN {$this->table->getName()}");
+            $result = $this->pdo->query("SHOW FULL FIELDS IN {$this->getTable()}");
             return $result->fetchAll(PDO::FETCH_CLASS, MySqlField::class, [$this->pdo, $this->table]) ?: [];
         } finally {
             if ($result instanceof PDOStatement) {

@@ -16,7 +16,7 @@ class MySqlUniqueKey extends AbstractMySqlConstraint
     {
         $this->pdo = $pdo;
 
-        $this->name = $keyParts[0]->getKeyName();
+        $this->name = $keyParts[0]->getConstraintName();
         $this->type = $keyParts[0]->getIndexType();
 
         parent::__construct($keyParts);

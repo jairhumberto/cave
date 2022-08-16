@@ -8,6 +8,11 @@ use Squille\Cave\IList;
 interface IConstraintsListModel extends IList
 {
     /**
+     * @return ITableModel
+     */
+    public function getTable();
+
+    /**
      * @param IConstraintsListModel $constraintsListModel
      * @return UnconformitiesList
      */

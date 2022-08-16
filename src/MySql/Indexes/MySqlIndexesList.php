@@ -6,7 +6,6 @@ use PDO;
 use PDOStatement;
 use Squille\Cave\ArrayList;
 use Squille\Cave\Models\IIndexesListModel;
-use Squille\Cave\MySql\MySqlKeyPart;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\UnconformitiesList;
 
@@ -19,109 +18,77 @@ class MySqlIndexesList extends ArrayList implements IIndexesListModel
     {
         $this->pdo = $pdo;
         $this->table = $table;
-        parent::__construct($this->retrieveKeys());
+        parent::__construct($this->retrieveIndexes());
     }
 
-    private function retrieveKeys()
+    private function retrieveIndexes()
     {
         try {
-            $stm = $this->pdo->query("SHOW INDEXES IN {$this->table->getName()}");
-            return $this->groupKeys($stm->fetchAll(PDO::FETCH_CLASS, MySqlKeyPart::class, [$this->pdo]) ?: []);
+            $selectExpressions = MySqlPartialIndex::selectExpressions() ?: "*";
+            $stm = $this->pdo->query("
+                SELECT $selectExpressions
+                FROM INFORMATION_SCHEMA.STATISTICS
+                WHERE
+                    TABLE_SCHEMA = DATABASE()
+                    AND TABLE_NAME='{$this->getTable()}'
+                    AND NOT EXISTS(
+                        SELECT 1
+                        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                        WHERE
+                            TABLE_SCHEMA = DATABASE()
+                            AND TABLE_NAME = '{$this->getTable()}'
+                            AND CONSTRAINT_NAME = INDEX_NAME
+                        LIMIT 1
+                    )
+            ");
+            return $this->groupIndexes($stm->fetchAll(PDO::FETCH_CLASS, MySqlPartialIndex::class, [$this->pdo]) ?: []);
         } finally {
-            if ($stm instanceof PDOStatement) {
+            if (isset($stm) && $stm instanceof PDOStatement) {
                 $stm->closeCursor();
             }
         }
     }
 
-    private function groupKeys(array $keyParts)
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    private function groupIndexes(array $partialIndexes)
     {
         $keys = [];
-        $groups = $this->groupKeyParts($keyParts);
+        $groups = $this->groupPartialIndexes($partialIndexes);
         foreach ($groups as $group) {
             $keys[] = MySqlIndexFactory::createInstance($this->pdo, $group);
         }
         return $keys;
     }
 
-    private function groupKeyParts(array $keyParts)
+    private function groupPartialIndexes(array $partialIndexes)
     {
         $groups = [];
-        foreach ($keyParts as $part) {
-            if (!array_key_exists($part->getKeyName(), $groups)) {
-                $groups[$part->getKeyName()] = [];
+        foreach ($partialIndexes as $part) {
+            if (!array_key_exists($part->getIndexName(), $groups)) {
+                $groups[$part->getIndexName()] = [];
             }
-            $groups[$part->getKeyName()][] = $part;
+            $groups[$part->getIndexName()][] = $part;
         }
         return $groups;
     }
 
     public function checkIntegrity(IIndexesListModel $indexesListModel)
     {
-        return new UnconformitiesList();
-//        return $this->missingKeysUnconformities($indexesListModel)
-//            ->merge($this->generalKeysUnconformities($indexesListModel));
+        return $this->missingIndexesUnconformities($indexesListModel)
+            ->merge($this->generalIndexesUnconformities($indexesListModel));
     }
 
-//    private function missingKeysUnconformities(IIndexesListModel $keysListModel)
-//    {
-//        $unconformities = new UnconformitiesList();
-//        foreach ($keysListModel as $keyModel) {
-//            $callback = function ($item) use ($keyModel) {
-//                return $item->getKeyName() == $keyModel->getKeyName();
-//            };
-//
-//            $keyFound = $this->search($callback);
-//
-//            if ($keyFound == null) {
-//                $unconformities->add($this->missingKeyUnconformity($keyModel));
-//            }
-//        }
-//        return $unconformities;
-//    }
-//
-//    private function missingKeyUnconformity(IIndexModel $keyModel)
-//    {
-//        $description = "create table {$keyModel->getKeyName()}";
-//        $instructions = new InstructionsList();
-//        $instructions->add(function () use ($keyModel) {
-//            $tblName = $keyModel->getName();
-//            $createDefinitions = $keyModel->getFields()->merge($keyModel->getKeys());
-//            $tableOptions = $this->getTableOptions($keyModel);
-//            $this->pdo->query("
-//                CREATE TABLE $tblName
-//                ($createDefinitions) $tableOptions
-//            ");
-//        });
-//        return new Unconformity($description, $instructions);
-//    }
-//
-//    private function generalKeysUnconformities(IIndexesListModel $keysListModel)
-//    {
-//        $unconformities = new UnconformitiesList();
-//        foreach ($this as $key) {
-//            $callback = function ($item) use ($key) {
-//                return $item->getKeyName() == $key->getKeyName();
-//            };
-//
-//            $exceedingKeyFound = $keysListModel->search($callback);
-//
-//            if ($exceedingKeyFound == null) {
-//                $unconformities->add($this->exceedingKeyUnconformity($key));
-//            } else {
-//                $unconformities->merge($key->checkIntegrity($exceedingKeyFound));
-//            }
-//        }
-//        return $unconformities;
-//    }
-//
-//    private function exceedingKeyUnconformity(IIndexModel $table)
-//    {
-//        $description = "drop table {$table->getName()}";
-//        $instructions = new InstructionsList();
-//        $instructions->add(function () use ($table) {
-//            $this->pdo->query("DROP TABLE {$table->getName()}");
-//        });
-//        return new Unconformity($description, $instructions);
-//    }
+    public function missingIndexesUnconformities(IIndexesListModel $indexesListModel)
+    {
+        return new UnconformitiesList();
+    }
+
+    public function generalIndexesUnconformities(IIndexesListModel $indexesListModel)
+    {
+        return new UnconformitiesList();
+    }
 }

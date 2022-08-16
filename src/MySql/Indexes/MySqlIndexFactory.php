@@ -8,17 +8,17 @@ class MySqlIndexFactory
 {
     /**
      * @param PDO $pdo
-     * @param array $keyParts
+     * @param array $partialIndexes
      * @return AbstractMySqlIndex
      */
-    public static function createInstance(PDO $pdo, array $keyParts)
+    public static function createInstance(PDO $pdo, array $partialIndexes)
     {
-        $firstKeyPart = $keyParts[0];
+//        $firstKeyPart = $keyParts[0];
+//
+//        if ($firstKeyPart->getIndexType() == "FULLTEXT") {
+//            return new MySqlFullTextIndex($pdo, $keyParts);
+//        }
 
-        if ($firstKeyPart->getIndexType() == "FULLTEXT") {
-            return new MySqlFullTextIndex($pdo, $keyParts);
-        }
-
-        return new MySqlIndex($pdo, $keyParts);
+        return new MySqlIndex($pdo, $partialIndexes);
     }
 }
