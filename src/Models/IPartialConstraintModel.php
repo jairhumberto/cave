@@ -9,6 +9,11 @@ interface IPartialConstraintModel
     /**
      * @return string
      */
+    public function getColumn();
+
+    /**
+     * @return string
+     */
     public function getName();
 
     /**

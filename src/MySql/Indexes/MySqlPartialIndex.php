@@ -9,6 +9,7 @@ use Squille\Cave\UnconformitiesList;
 class MySqlPartialIndex implements IPartialIndexModel
 {
     private $pdo;
+    private $column_name;
     private $index_name;
     private $index_type;
 
@@ -34,11 +35,6 @@ class MySqlPartialIndex implements IPartialIndexModel
         return new UnconformitiesList();
     }
 
-    public function getName()
-    {
-        return $this->index_name;
-    }
-
     public function getType()
     {
         return $this->index_type;
@@ -46,6 +42,16 @@ class MySqlPartialIndex implements IPartialIndexModel
 
     public function __toString()
     {
-        return $this->getName();
+        return $this->getColumn();
+    }
+
+    public function getName()
+    {
+        return $this->index_name;
+    }
+
+    public function getColumn()
+    {
+        return $this->column_name;
     }
 }
