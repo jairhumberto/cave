@@ -27,10 +27,19 @@ class MySqlConstraintsList extends ArrayList implements IConstraintsListModel
             $selectExpressions = MySqlPartialConstraint::selectExpressions() ?: "*";
             $stm = $this->pdo->query("
                 SELECT $selectExpressions
-                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                FROM INFORMATION_SCHEMA.STATISTICS
                 WHERE
                     TABLE_SCHEMA = DATABASE()
-                    AND TABLE_NAME = '{$this->getTable()}'
+                    AND TABLE_NAME='{$this->getTable()}'
+                    AND EXISTS(
+                        SELECT 1
+                        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                        WHERE
+                            TABLE_SCHEMA = DATABASE()
+                            AND TABLE_NAME = '{$this->getTable()}'
+                            AND CONSTRAINT_NAME = INDEX_NAME
+                        LIMIT 1
+                    )
             ");
             return $this->groupConstraints($stm->fetchAll(PDO::FETCH_CLASS, MySqlPartialConstraint::class, [$this->pdo]) ?: []);
         } finally {
@@ -59,10 +68,10 @@ class MySqlConstraintsList extends ArrayList implements IConstraintsListModel
     {
         $groups = [];
         foreach ($partialConstraints as $part) {
-            if (!array_key_exists($part->getConstraintName(), $groups)) {
-                $groups[$part->getConstraintName()] = [];
+            if (!array_key_exists($part->getName(), $groups)) {
+                $groups[$part->getName()] = [];
             }
-            $groups[$part->getConstraintName()][] = $part;
+            $groups[$part->getName()][] = $part;
         }
         return $groups;
     }

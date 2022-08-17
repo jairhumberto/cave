@@ -12,14 +12,14 @@ class MySqlIndex extends AbstractMySqlIndex
     private $name;
     private $type;
 
-    public function __construct(PDO $pdo, array $keyParts)
+    public function __construct(PDO $pdo, array $partialConstraints)
     {
         $this->pdo = $pdo;
 
-        $this->name = $keyParts[0]->getKeyName();
-        $this->type = $keyParts[0]->getIndexType();
+        $this->name = $partialConstraints[0]->getName();
+        $this->type = $partialConstraints[0]->getType();
 
-        parent::__construct($keyParts);
+        parent::__construct($partialConstraints);
     }
 
     public function checkIntegrity(IIndexModel $indexModel)

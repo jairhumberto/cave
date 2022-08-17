@@ -10,10 +10,10 @@ class MySqlPrimaryKey extends AbstractMySqlConstraint
 {
     private $pdo;
 
-    public function __construct(PDO $pdo, array $keyParts)
+    public function __construct(PDO $pdo, array $partialConstraints)
     {
         $this->pdo = $pdo;
-        parent::__construct($keyParts);
+        parent::__construct($partialConstraints);
     }
 
     public function checkIntegrity(IConstraintModel $constraintModel)

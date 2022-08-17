@@ -9,7 +9,12 @@ interface IPartialConstraintModel
     /**
      * @return string
      */
-    public function getConstraintName();
+    public function getName();
+
+    /**
+     * @return string
+     */
+    public function getType();
 
     /**
      * @param IPartialConstraintModel $partialConstraintModel

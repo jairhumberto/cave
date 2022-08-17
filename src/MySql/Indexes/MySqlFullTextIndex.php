@@ -11,11 +11,11 @@ class MySqlFullTextIndex extends AbstractMySqlIndex
     private $pdo;
     private $name;
 
-    public function __construct(PDO $pdo, array $keyParts)
+    public function __construct(PDO $pdo, array $partialConstraints)
     {
         $this->pdo = $pdo;
-        $this->name = $keyParts[0]->getKeyName();
-        parent::__construct($keyParts);
+        $this->name = $partialConstraints[0]->getName();
+        parent::__construct($partialConstraints);
     }
 
     public function checkIntegrity(IIndexModel $indexModel)

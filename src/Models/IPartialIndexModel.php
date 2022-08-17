@@ -9,7 +9,12 @@ interface IPartialIndexModel
     /**
      * @return string
      */
-    public function getIndexName();
+    public function getName();
+
+    /**
+     * @return string
+     */
+    public function getType();
 
     /**
      * @param IPartialIndexModel $partialIndexModel

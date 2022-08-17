@@ -10,6 +10,7 @@ class MySqlPartialIndex implements IPartialIndexModel
 {
     private $pdo;
     private $index_name;
+    private $index_type;
 
     public function __construct(PDO $pdo)
     {
@@ -33,8 +34,18 @@ class MySqlPartialIndex implements IPartialIndexModel
         return new UnconformitiesList();
     }
 
-    public function getIndexName()
+    public function getName()
     {
         return $this->index_name;
+    }
+
+    public function getType()
+    {
+        return $this->index_type;
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 }

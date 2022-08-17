@@ -9,7 +9,8 @@ use Squille\Cave\UnconformitiesList;
 class MySqlPartialConstraint implements IPartialConstraintModel
 {
     private $pdo;
-    private $constraint_name;
+    private $index_name;
+    private $index_type;
 
     public function __construct(PDO $pdo)
     {
@@ -33,8 +34,18 @@ class MySqlPartialConstraint implements IPartialConstraintModel
         return new UnconformitiesList();
     }
 
-    public function getConstraintName()
+    public function getName()
     {
-        return $this->constraint_name;
+        return $this->index_name;
+    }
+
+    public function getType()
+    {
+        return $this->index_type;
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 }

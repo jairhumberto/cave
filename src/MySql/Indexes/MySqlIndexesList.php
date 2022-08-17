@@ -68,10 +68,10 @@ class MySqlIndexesList extends ArrayList implements IIndexesListModel
     {
         $groups = [];
         foreach ($partialIndexes as $part) {
-            if (!array_key_exists($part->getIndexName(), $groups)) {
-                $groups[$part->getIndexName()] = [];
+            if (!array_key_exists($part->getName(), $groups)) {
+                $groups[$part->getName()] = [];
             }
-            $groups[$part->getIndexName()][] = $part;
+            $groups[$part->getName()][] = $part;
         }
         return $groups;
     }

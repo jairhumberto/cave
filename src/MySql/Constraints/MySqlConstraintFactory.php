@@ -15,7 +15,7 @@ class MySqlConstraintFactory
     {
         $firstKeyPart = $partialConstraints[0];
 
-        if ($firstKeyPart->getConstraintName() == "PRIMARY") {
+        if ($firstKeyPart->getName() == "PRIMARY") {
             return new MySqlPrimaryKey($pdo, $partialConstraints);
         }
 
