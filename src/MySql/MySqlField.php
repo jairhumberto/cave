@@ -164,7 +164,7 @@ class MySqlField implements IFieldModel
         } else {
             $columnDefinition[] = "NOT NULL";
         }
-        if ($this->getDefault()) {
+        if (strlen($this->getDefault())) {
             $default = $this->getDefault();
             if (!$this->defaultIsFunction()) {
                 $default = "'$default'";
