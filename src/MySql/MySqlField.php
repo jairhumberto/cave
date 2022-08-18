@@ -165,7 +165,13 @@ class MySqlField implements IFieldModel
             $columnDefinition[] = "NOT NULL";
         }
         if ($this->getDefault()) {
-            $columnDefinition[] = "DEFAULT '{$this->getDefault()}'";
+            $default = $this->getDefault();
+
+            if (!$this->defaultIsFunction()) {
+                $default = "'$default'";
+            }
+
+            $columnDefinition[] = "DEFAULT $default";
         }
         if ($this->getExtra()) {
             $columnDefinition[] = $this->getExtra();
@@ -177,6 +183,11 @@ class MySqlField implements IFieldModel
             $columnDefinition[] = "COLLATE {$this->getCollation()}";
         }
         return join(" ", $columnDefinition);
+    }
+
+    private function defaultIsFunction()
+    {
+        return substr($this->getDefault(), -2) == "()";
     }
 
     public function getTable()
