@@ -69,7 +69,7 @@ class MySqlField implements IFieldModel
 
     private function typeUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify {$fieldModel->getField()} type {{$this->getType()} -> {$fieldModel->getType()}}";
+        $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} type {{$this->getType()} -> {$fieldModel->getType()}}";
         return new Unconformity($description);
     }
 
@@ -85,7 +85,7 @@ class MySqlField implements IFieldModel
 
     private function collationUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify {$fieldModel->getField()} collate {{$this->getCollation()} -> {$fieldModel->getCollation()}}";
+        $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} collate {{$this->getCollation()} -> {$fieldModel->getCollation()}}";
         return new Unconformity($description);
     }
 
@@ -96,7 +96,7 @@ class MySqlField implements IFieldModel
 
     private function nullUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify {$fieldModel->getField()} null {{$this->getNull()} -> {$fieldModel->getNull()}}";
+        $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} null {{$this->getNull()} -> {$fieldModel->getNull()}}";
         return new Unconformity($description);
     }
 
@@ -107,7 +107,7 @@ class MySqlField implements IFieldModel
 
     private function defaultUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify {$fieldModel->getField()} default {'{$this->getDefault()}' -> '{$fieldModel->getDefault()}'}";
+        $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} default {'{$this->getDefault()}' -> '{$fieldModel->getDefault()}'}";
         return new Unconformity($description);
     }
 
@@ -118,7 +118,7 @@ class MySqlField implements IFieldModel
 
     private function extraUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify {$fieldModel->getField()} extra {{$this->getExtra()} -> {$fieldModel->getExtra()}}";
+        $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} extra {{$this->getExtra()} -> {$fieldModel->getExtra()}}";
         return new Unconformity($description);
     }
 
@@ -129,7 +129,7 @@ class MySqlField implements IFieldModel
 
     private function commentUnconformity(IFieldModel $fieldModel)
     {
-        $description = "alter table modify {$fieldModel->getField()} comment {'{$this->getComment()}' -> '{$fieldModel->getComment()}'}";
+        $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} comment {'{$this->getComment()}' -> '{$fieldModel->getComment()}'}";
         return new Unconformity($description);
     }
 
@@ -166,11 +166,9 @@ class MySqlField implements IFieldModel
         }
         if ($this->getDefault()) {
             $default = $this->getDefault();
-
             if (!$this->defaultIsFunction()) {
                 $default = "'$default'";
             }
-
             $columnDefinition[] = "DEFAULT $default";
         }
         if ($this->getExtra()) {
