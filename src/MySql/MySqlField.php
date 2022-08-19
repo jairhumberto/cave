@@ -153,7 +153,7 @@ class MySqlField implements IFieldModel
     public function __toString()
     {
         $columnDefinition = $this->getColumnDefinition();
-        return "{$this->getField()} $columnDefinition";
+        return "`{$this->getField()}` $columnDefinition";
     }
 
     private function getColumnDefinition()
