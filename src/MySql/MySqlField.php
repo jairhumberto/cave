@@ -165,8 +165,8 @@ class MySqlField implements IFieldModel
             $columnDefinition[] = "NOT NULL";
         }
         if (strlen($this->getDefault())) {
-            $default = $this->getDefault();
-            if (!$this->defaultIsFunction()) {
+            $default = $this->defaultFiltered();
+            if (!$this->defaultIsFunction() && !is_numeric($default)) {
                 $default = "'$default'";
             }
             $columnDefinition[] = "DEFAULT $default";
@@ -181,6 +181,15 @@ class MySqlField implements IFieldModel
             $columnDefinition[] = "COLLATE {$this->getCollation()}";
         }
         return join(" ", $columnDefinition);
+    }
+
+    private function defaultFiltered()
+    {
+        $default = $this->getDefault();
+        if (strpos($this->getType(), "bit") !== false) {
+            $default = substr($default, 2, -1);
+        }
+        return $default;
     }
 
     private function defaultIsFunction()
