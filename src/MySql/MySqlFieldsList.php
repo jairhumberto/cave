@@ -75,7 +75,13 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
                 ADD COLUMN $currentFieldModel $position
             ");
         });
+        $this->addField($currentFieldModel);
         return new Unconformity($description, $instructions);
+    }
+
+    private function addField(IFieldModel $currentFieldModel)
+    {
+        $this->add($currentFieldModel);
     }
 
     private function generalFieldsUnconformities(IFieldsListModel $fieldsListModel)
