@@ -67,7 +67,7 @@ class MySqlTablesList extends ArrayList implements ITablesListModel
                 ->merge($modelTable->getIndexes());
             $tableOptions = $this->getTableOptions($modelTable);
             $this->pdo->query("
-                CREATE TABLE $tblName
+                CREATE TABLE `$tblName`
                 ($createDefinitions) $tableOptions
             ");
         });
