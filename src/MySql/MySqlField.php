@@ -194,7 +194,7 @@ class MySqlField implements IFieldModel
 
     private function defaultIsFunction()
     {
-        return substr($this->getDefault(), -2) == "()";
+        return substr($this->getDefault(), -1) == ")";
     }
 
     public function getTable()
