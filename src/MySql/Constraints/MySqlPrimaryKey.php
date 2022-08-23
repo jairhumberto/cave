@@ -25,4 +25,14 @@ class MySqlPrimaryKey extends AbstractMySqlConstraint
     {
         return sprintf("PRIMARY KEY (%s)", parent::__toString());
     }
+
+    public function getName()
+    {
+        return "PRIMARY";
+    }
+
+    public function dropCommand()
+    {
+        return "DROP PRIMARY KEY";
+    }
 }

@@ -5,9 +5,12 @@ namespace Squille\Cave\MySql\Constraints;
 use PDO;
 use PDOStatement;
 use Squille\Cave\ArrayList;
+use Squille\Cave\InstructionsList;
+use Squille\Cave\Models\IConstraintModel;
 use Squille\Cave\Models\IConstraintsListModel;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\UnconformitiesList;
+use Squille\Cave\Unconformity;
 
 class MySqlConstraintsList extends ArrayList implements IConstraintsListModel
 {
@@ -82,13 +85,59 @@ class MySqlConstraintsList extends ArrayList implements IConstraintsListModel
             ->merge($this->generalConstraintsUnconformities($constraintsListModel));
     }
 
-    public function missingConstraintsUnconformities(IConstraintsListModel $constraintsListModel)
+    private function missingConstraintsUnconformities(IConstraintsListModel $constraintsListModel)
     {
-        return new UnconformitiesList();
+        $unconformities = new UnconformitiesList();
+        foreach ($constraintsListModel as $constraintModel) {
+            $callback = function ($item) use ($constraintModel) {
+                return $item->getName() == $constraintModel->getName();
+            };
+
+            $constraintFound = $this->search($callback);
+
+            if ($constraintFound == null) {
+                $unconformities->add($this->missingConstraintUnconformity($constraintModel));
+            }
+        }
+        return $unconformities;
     }
 
-    public function generalConstraintsUnconformities(IConstraintsListModel $constraintsListModel)
+    private function missingConstraintUnconformity(IConstraintModel $constraintModel)
     {
-        return new UnconformitiesList();
+        $description = "alter table {$this->getTable()} add {$constraintModel->getName()}";
+        $instructions = new InstructionsList();
+        $instructions->add(function () use ($constraintModel) {
+            $this->pdo->query("ALTER TABLE {$this->getTable()} ADD $constraintModel");
+        });
+        return new Unconformity($description, $instructions);
+    }
+
+    private function generalConstraintsUnconformities(IConstraintsListModel $constraintsListModel)
+    {
+        $unconformities = new UnconformitiesList();
+        foreach ($this as $constraint) {
+            $callback = function ($item) use ($constraint) {
+                return $item->getName() == $constraint->getName();
+            };
+
+            $constraintModelFound = $constraintsListModel->search($callback);
+
+            if ($constraintModelFound == null) {
+                $unconformities->add($this->exceedingConstraintUnconformity($constraint));
+            } else {
+                $unconformities->merge($constraint->checkIntegrity($constraintModelFound));
+            }
+        }
+        return $unconformities;
+    }
+
+    private function exceedingConstraintUnconformity(AbstractMySqlConstraint $mySqlConstraint)
+    {
+        $description = "alter table {$this->getTable()} {$mySqlConstraint->dropCommand()}";
+        $instructions = new InstructionsList();
+        $instructions->add(function () use ($mySqlConstraint) {
+            $this->pdo->query("ALTER TABLE {$this->getTable()} {$mySqlConstraint->dropCommand()}");
+        });
+        return new Unconformity($description, $instructions);
     }
 }

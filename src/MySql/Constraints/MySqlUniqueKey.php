@@ -31,4 +31,14 @@ class MySqlUniqueKey extends AbstractMySqlConstraint
     {
         return sprintf("UNIQUE KEY %s USING %s (%s)", $this->name, $this->type, parent::__toString());
     }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function dropCommand()
+    {
+        return "DROP KEY {$this->getName()}";
+    }
 }
