@@ -58,6 +58,7 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
                 } else {
                     $previousFieldModel = $fieldsListModel->get($key - 1);
                 }
+                $this->addField($fieldModel);
                 $unconformities->add($this->missingFieldUnconformity($fieldModel, $previousFieldModel));
             }
         }
@@ -75,7 +76,6 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
                 ADD COLUMN $currentFieldModel $position
             ");
         });
-        $this->addField($currentFieldModel);
         return new Unconformity($description, $instructions);
     }
 

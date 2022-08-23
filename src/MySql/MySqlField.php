@@ -138,7 +138,7 @@ class MySqlField implements IFieldModel
         $instructions = new InstructionsList();
         $instructions->add(function () use ($fieldModel) {
             $this->pdo->query("
-                ALTER TABLE {$this->table->getName()}
+                ALTER TABLE {$fieldModel->getTable()}
                 MODIFY $fieldModel
             ");
         });
