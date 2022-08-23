@@ -22,6 +22,11 @@ class MySqlIndex extends AbstractMySqlIndex
         parent::__construct($partialConstraints);
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
     public function checkIntegrity(IIndexModel $indexModel)
     {
         return new UnconformitiesList();

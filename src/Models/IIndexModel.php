@@ -8,6 +8,11 @@ use Squille\Cave\UnconformitiesList;
 interface IIndexModel extends IList
 {
     /**
+     * @return string
+     */
+    public function getName();
+
+    /**
      * @param IIndexModel $indexModel
      * @return UnconformitiesList
      */
