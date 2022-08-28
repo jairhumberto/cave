@@ -44,7 +44,7 @@ class MySqlIndexesList extends ArrayList implements IIndexesListModel
                         LIMIT 1
                     )
             ");
-            return $this->groupIndexes($stm->fetchAll(PDO::FETCH_CLASS, MySqlPartialIndex::class, [$this->pdo]) ?: []);
+            return $this->groupIndexes($stm->fetchAll(PDO::FETCH_CLASS, MySqlPartialIndex::class, [$this->pdo, $this->table]) ?: []);
         } finally {
             if (isset($stm) && $stm instanceof PDOStatement) {
                 $stm->closeCursor();

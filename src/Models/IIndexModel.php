@@ -13,6 +13,11 @@ interface IIndexModel extends IList
     public function getName();
 
     /**
+     * @return string
+     */
+    public function getTable();
+    
+    /**
      * @param IIndexModel $indexModel
      * @return UnconformitiesList
      */

@@ -22,6 +22,17 @@ interface IPartialIndexModel
     public function getType();
 
     /**
+     * @return string
+     */
+    public function getTable();
+
+    /**
+     * @param IPartialIndexModel $partialIndexModel
+     * @return bool
+     */
+    public function equals(IPartialIndexModel $partialIndexModel);
+
+    /**
      * @param IPartialIndexModel $partialIndexModel
      * @return UnconformitiesList
      */
