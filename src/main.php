@@ -5,6 +5,7 @@ require dirname(getcwd())
 
 use Squille\Cave\MySql\MySqlDatabase;
 
+//$databaseA = new MySqlDatabase(new PDO("mysql:host=localhost;dbname=banco_a", "bioacesso", "bioacesso@uzer"));
 $databaseA = new MySqlDatabase(new PDO("mysql:host=localhost;dbname=banco_a", "bioacesso", "bioacesso@uzer"));
 $databaseB = new MySqlDatabase(new PDO("mysql:host=localhost;dbname=banco_b", "bioacesso", "bioacesso@uzer"));
 
@@ -13,10 +14,10 @@ $unconformities = $databaseB->checkIntegrity($databaseA);
 foreach ($unconformities as $unconformity) {
     $description = $unconformity->getDescription();
     if ($description) {
-        print "== $description ";
+        print " == $description...";
     }
     $unconformity->fix();
     if ($description) {
-        print "==\n";
+        print str_repeat(chr(8),3)." ==\n";
     }
 }

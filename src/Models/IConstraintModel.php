@@ -13,6 +13,11 @@ interface IConstraintModel extends IList
     public function getName();
 
     /**
+     * @return string
+     */
+    public function getTable();
+
+    /**
      * @param IConstraintModel $constraintModel
      * @return UnconformitiesList
      */

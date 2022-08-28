@@ -20,6 +20,11 @@ abstract class ArrayList implements Iterator, IList
         return count($this->items) > 0;
     }
 
+    public function count()
+    {
+        return count($this->items);
+    }
+
     public function get($index)
     {
         return $this->items[$index];

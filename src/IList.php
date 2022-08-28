@@ -17,6 +17,11 @@ interface IList
     public function any();
 
     /**
+     * @return int
+     */
+    public function count();
+
+    /**
      * @param int $index
      * @return mixed
      */

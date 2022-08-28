@@ -44,7 +44,7 @@ class MySqlConstraintsList extends ArrayList implements IConstraintsListModel
                         LIMIT 1
                     )
             ");
-            return $this->groupConstraints($stm->fetchAll(PDO::FETCH_CLASS, MySqlPartialConstraint::class, [$this->pdo]) ?: []);
+            return $this->groupConstraints($stm->fetchAll(PDO::FETCH_CLASS, MySqlPartialConstraint::class, [$this->pdo, $this->table]) ?: []);
         } finally {
             if (isset($stm) && $stm instanceof PDOStatement) {
                 $stm->closeCursor();
