@@ -33,11 +33,6 @@ class MySqlPartialConstraint implements IPartialConstraintModel
         return join(",", $properties);
     }
 
-    public function checkIntegrity(IPartialConstraintModel $partialConstraintModel)
-    {
-        return new UnconformitiesList();
-    }
-
     public function getName()
     {
         return $this->index_name;

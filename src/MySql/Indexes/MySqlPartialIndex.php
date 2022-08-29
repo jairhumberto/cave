@@ -33,11 +33,6 @@ class MySqlPartialIndex implements IPartialIndexModel
         return join(",", $properties);
     }
 
-    public function checkIntegrity(IPartialIndexModel $partialIndexModel)
-    {
-        return new UnconformitiesList();
-    }
-
     public function getType()
     {
         return $this->index_type;

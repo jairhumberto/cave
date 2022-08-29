@@ -13,7 +13,6 @@ class MySqlIndex extends AbstractMySqlIndex
     {
         $this->name = $partialConstraints[0]->getName();
         $this->type = $partialConstraints[0]->getType();
-
         parent::__construct($pdo, $partialConstraints);
     }
 

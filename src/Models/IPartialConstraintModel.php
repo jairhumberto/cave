@@ -2,7 +2,6 @@
 
 namespace Squille\Cave\Models;
 
-use Squille\Cave\MySql\Constraints\MySqlPartialConstraint;
 use Squille\Cave\UnconformitiesList;
 
 interface IPartialConstraintModel
@@ -32,10 +31,4 @@ interface IPartialConstraintModel
      * @return bool
      */
     public function equals(IPartialConstraintModel $partialConstraintModel);
-
-    /**
-     * @param IPartialConstraintModel $partialConstraintModel
-     * @return UnconformitiesList
-     */
-    public function checkIntegrity(IPartialConstraintModel $partialConstraintModel);
 }

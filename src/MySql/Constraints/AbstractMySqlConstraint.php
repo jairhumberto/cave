@@ -26,7 +26,7 @@ abstract class AbstractMySqlConstraint extends ArrayList implements IConstraintM
         return $this->table;
     }
 
-    protected function partialKeysIncompatible(IConstraintModel $constraintModel)
+    private function partialKeysIncompatible(IConstraintModel $constraintModel)
     {
         return $this->count() != $constraintModel->count()
             || $this->constraintsPartsMissing($constraintModel)

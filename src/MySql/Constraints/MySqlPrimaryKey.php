@@ -3,10 +3,6 @@
 namespace Squille\Cave\MySql\Constraints;
 
 use PDO;
-use Squille\Cave\InstructionsList;
-use Squille\Cave\Models\IConstraintModel;
-use Squille\Cave\UnconformitiesList;
-use Squille\Cave\Unconformity;
 
 class MySqlPrimaryKey extends AbstractMySqlConstraint
 {

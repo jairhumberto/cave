@@ -3,10 +3,6 @@
 namespace Squille\Cave\MySql\Constraints;
 
 use PDO;
-use Squille\Cave\InstructionsList;
-use Squille\Cave\Models\IConstraintModel;
-use Squille\Cave\UnconformitiesList;
-use Squille\Cave\Unconformity;
 
 class MySqlUniqueKey extends AbstractMySqlConstraint
 {
@@ -17,7 +13,6 @@ class MySqlUniqueKey extends AbstractMySqlConstraint
     {
         $this->name = $partialConstraints[0]->getName();
         $this->type = $partialConstraints[0]->getType();
-
         parent::__construct($pdo, $partialConstraints);
     }
 

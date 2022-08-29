@@ -37,7 +37,7 @@ abstract class AbstractMySqlIndex extends ArrayList implements IIndexModel
         return $unconformities;
     }
 
-    protected function partialIndexesIncompatible(IIndexModel $indexModel)
+    private function partialIndexesIncompatible(IIndexModel $indexModel)
     {
         return $this->count() != $indexModel->count()
             || $this->indexesPartsMissing($indexModel)

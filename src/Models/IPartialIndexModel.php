@@ -31,10 +31,4 @@ interface IPartialIndexModel
      * @return bool
      */
     public function equals(IPartialIndexModel $partialIndexModel);
-
-    /**
-     * @param IPartialIndexModel $partialIndexModel
-     * @return UnconformitiesList
-     */
-    public function checkIntegrity(IPartialIndexModel $partialIndexModel);
 }
