@@ -29,11 +29,9 @@ abstract class AbstractMySqlIndex extends ArrayList implements IIndexModel
     public function checkIntegrity(IIndexModel $indexModel)
     {
         $unconformities = new UnconformitiesList();
-
         if ($this->partialIndexesIncompatible($indexModel)) {
             $unconformities->add($this->incompatibleIndexUnconformity($indexModel));
         }
-
         return $unconformities;
     }
 

@@ -14,11 +14,9 @@ class MySqlIndexFactory
     public static function createInstance(PDO $pdo, array $partialIndexes)
     {
         $firstKeyPart = $partialIndexes[0];
-
         if ($firstKeyPart->getType() == "FULLTEXT") {
             return new MySqlFullTextIndex($pdo, $partialIndexes);
         }
-
         return new MySqlIndex($pdo, $partialIndexes);
     }
 }

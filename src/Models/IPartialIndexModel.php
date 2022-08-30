@@ -2,8 +2,6 @@
 
 namespace Squille\Cave\Models;
 
-use Squille\Cave\UnconformitiesList;
-
 interface IPartialIndexModel
 {
     /**

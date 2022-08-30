@@ -35,6 +35,11 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
         }
     }
 
+    public function getTable()
+    {
+        return $this->table;
+    }
+
     public function checkIntegrity(IFieldsListModel $fieldsListModel)
     {
         return $this->missingFieldsUnconformities($fieldsListModel)
@@ -65,6 +70,11 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
         return $unconformities;
     }
 
+    private function addField(IFieldModel $currentFieldModel)
+    {
+        $this->add($currentFieldModel);
+    }
+
     private function missingFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
     {
         $description = "alter table {$currentFieldModel->getTable()} add {$currentFieldModel->getField()}";
@@ -77,11 +87,6 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
             ");
         });
         return new Unconformity($description, $instructions);
-    }
-
-    private function addField(IFieldModel $currentFieldModel)
-    {
-        $this->add($currentFieldModel);
     }
 
     private function generalFieldsUnconformities(IFieldsListModel $fieldsListModel)
@@ -145,10 +150,5 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
             ");
         });
         return new Unconformity($description, $instructions);
-    }
-
-    public function getTable()
-    {
-        return $this->table;
     }
 }

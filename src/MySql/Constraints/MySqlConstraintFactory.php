@@ -14,11 +14,9 @@ class MySqlConstraintFactory
     public static function createInstance(PDO $pdo, array $partialConstraints)
     {
         $firstKeyPart = $partialConstraints[0];
-
         if ($firstKeyPart->getName() == "PRIMARY") {
             return new MySqlPrimaryKey($pdo, $partialConstraints);
         }
-
         return new MySqlUniqueKey($pdo, $partialConstraints);
     }
 }

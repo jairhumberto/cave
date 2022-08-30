@@ -26,6 +26,15 @@ abstract class AbstractMySqlConstraint extends ArrayList implements IConstraintM
         return $this->table;
     }
 
+    public function checkIntegrity(IConstraintModel $constraintModel)
+    {
+        $unconformities = new UnconformitiesList();
+        if ($this->partialKeysIncompatible($constraintModel)) {
+            $unconformities->add($this->incompatibleConstraintUnconformity($constraintModel));
+        }
+        return $unconformities;
+    }
+
     private function partialKeysIncompatible(IConstraintModel $constraintModel)
     {
         return $this->count() != $constraintModel->count()
@@ -66,17 +75,6 @@ abstract class AbstractMySqlConstraint extends ArrayList implements IConstraintM
             $this->pdo->query("ALTER TABLE {$this->getTable()} ADD $constraintModel");
         });
         return new Unconformity($description, $instructions);
-    }
-
-    public function checkIntegrity(IConstraintModel $constraintModel)
-    {
-        $unconformities = new UnconformitiesList();
-
-        if ($this->partialKeysIncompatible($constraintModel)) {
-            $unconformities->add($this->incompatibleConstraintUnconformity($constraintModel));
-        }
-
-        return $unconformities;
     }
 
     /**

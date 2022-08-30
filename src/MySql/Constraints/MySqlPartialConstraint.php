@@ -5,7 +5,6 @@ namespace Squille\Cave\MySql\Constraints;
 use PDO;
 use Squille\Cave\Models\IPartialConstraintModel;
 use Squille\Cave\MySql\MySqlTable;
-use Squille\Cave\UnconformitiesList;
 
 class MySqlPartialConstraint implements IPartialConstraintModel
 {
@@ -38,11 +37,6 @@ class MySqlPartialConstraint implements IPartialConstraintModel
         return $this->index_name;
     }
 
-    public function getType()
-    {
-        return $this->index_type;
-    }
-
     public function __toString()
     {
         return $this->getColumn();
@@ -62,5 +56,10 @@ class MySqlPartialConstraint implements IPartialConstraintModel
     {
         return $partialConstraintModel->getColumn() == $this->getColumn()
             && $partialConstraintModel->getType() == $this->getType();
+    }
+
+    public function getType()
+    {
+        return $this->index_type;
     }
 }

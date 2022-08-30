@@ -73,6 +73,11 @@ class MySqlField implements IFieldModel
         return new Unconformity($description);
     }
 
+    public function getTable()
+    {
+        return $this->table;
+    }
+
     public function getField()
     {
         return $this->Field;
@@ -195,10 +200,5 @@ class MySqlField implements IFieldModel
     private function defaultIsFunction()
     {
         return substr($this->getDefault(), -1) == ")";
-    }
-
-    public function getTable()
-    {
-        return $this->table;
     }
 }

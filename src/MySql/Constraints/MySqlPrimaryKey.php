@@ -6,11 +6,6 @@ use PDO;
 
 class MySqlPrimaryKey extends AbstractMySqlConstraint
 {
-    public function __construct(PDO $pdo, array $partialConstraints)
-    {
-        parent::__construct($pdo, $partialConstraints);
-    }
-
     public function getName()
     {
         return "PRIMARY";

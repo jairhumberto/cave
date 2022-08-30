@@ -5,7 +5,6 @@ namespace Squille\Cave\MySql\Indexes;
 use PDO;
 use Squille\Cave\Models\IPartialIndexModel;
 use Squille\Cave\MySql\MySqlTable;
-use Squille\Cave\UnconformitiesList;
 
 class MySqlPartialIndex implements IPartialIndexModel
 {
@@ -33,24 +32,19 @@ class MySqlPartialIndex implements IPartialIndexModel
         return join(",", $properties);
     }
 
-    public function getType()
-    {
-        return $this->index_type;
-    }
-
     public function __toString()
     {
         return $this->getColumn();
     }
 
-    public function getName()
-    {
-        return $this->index_name;
-    }
-
     public function getColumn()
     {
         return $this->column_name;
+    }
+
+    public function getName()
+    {
+        return $this->index_name;
     }
 
     public function getTable()
@@ -62,5 +56,10 @@ class MySqlPartialIndex implements IPartialIndexModel
     {
         return $partialIndexModel->getColumn() == $this->getColumn()
             && $partialIndexModel->getType() == $this->getType();
+    }
+
+    public function getType()
+    {
+        return $this->index_type;
     }
 }

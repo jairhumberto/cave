@@ -2,8 +2,8 @@
 
 namespace Squille\Cave\Models;
 
-use Squille\Cave\UnconformitiesList;
 use Squille\Cave\IList;
+use Squille\Cave\UnconformitiesList;
 
 interface ITablesListModel extends IList
 {
