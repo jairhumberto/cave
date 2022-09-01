@@ -11,35 +11,27 @@ use Squille\Cave\Unconformity;
 class XmlDatabase implements IDatabaseModel
 {
     private $xml;
-    private $charset;
     private $collation;
 
     public function __construct(DOMDocument $xml)
     {
         $this->xml = $xml;
-        $this->initProperties();
+        $this->initComponents();
     }
 
-    private function initProperties()
+    private function initComponents()
     {
         $this->createRootElement();
-        $this->retrieveCharset();
         $this->retrieveCollation();
     }
 
     private function createRootElement()
     {
-        if (is_null($this->xml->firstChild)) {
+        if ($this->xml->firstChild == null) {
             $database = $this->xml->createElement("database");
-            $database->setAttribute("charset", "");
             $database->setAttribute("collation", "");
             $this->xml->appendChild($database);
         }
-    }
-
-    private function retrieveCharset()
-    {
-        $this->charset = $this->xml->firstChild->getAttribute("charset");
     }
 
     private function retrieveCollation()
@@ -51,30 +43,11 @@ class XmlDatabase implements IDatabaseModel
     {
         $unconformities = new UnconformitiesList();
 
-        if ($this->getCharset() != $databaseModel->getCharset()) {
-            $unconformities->add($this->addCharsetUnconformity($databaseModel));
-        }
-
         if ($this->getCollation() != $databaseModel->getCollation()) {
-            $unconformities->add($this->addCollateUnconformity($databaseModel));
+            $unconformities->add($this->collateUnconformity($databaseModel));
         }
 
         return $unconformities;
-    }
-
-    public function getCharset()
-    {
-        return $this->charset;
-    }
-
-    private function addCharsetUnconformity(IDatabaseModel $model)
-    {
-        $description = "Database charset ({$this->getCharset()}) differs from the model ({$model->getCharset()})";
-        $instructions = new InstructionsList();
-        $instructions->add(function () use ($model) {
-            $this->xml->firstChild->setAttribute("charset", $model->getCharset());
-        });
-        return new Unconformity($description, $instructions);
     }
 
     public function getCollation()
@@ -82,7 +55,7 @@ class XmlDatabase implements IDatabaseModel
         return $this->collation;
     }
 
-    private function addCollateUnconformity(IDatabaseModel $model)
+    private function collateUnconformity(IDatabaseModel $model)
     {
         $description = "Database collate ({$this->getCollation()}) differs from the model ({$model->getCollation()})";
         $instructions = new InstructionsList();
@@ -98,5 +71,10 @@ class XmlDatabase implements IDatabaseModel
     public function save($filename)
     {
         $this->xml->save($filename);
+    }
+
+    public function getTables()
+    {
+        // TODO: Implement getTables() method.
     }
 }
