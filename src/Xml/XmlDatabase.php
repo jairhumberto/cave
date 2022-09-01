@@ -10,33 +10,25 @@ use Squille\Cave\Unconformity;
 
 class XmlDatabase implements IDatabaseModel
 {
-    private $xml;
+    private $root;
     private $collation;
+    private $tables;
 
-    public function __construct(DOMDocument $xml)
+    public function __construct(DOMDocument $doc)
     {
-        $this->xml = $xml;
-        $this->initComponents();
+        $this->root = $this->createRootElement($doc);
+        $this->collation = $this->root->getAttribute("collation");
+        $this->tables = new XmlTablesList();
     }
 
-    private function initComponents()
+    private function createRootElement(DOMDocument $doc)
     {
-        $this->createRootElement();
-        $this->retrieveCollation();
-    }
-
-    private function createRootElement()
-    {
-        if ($this->xml->firstChild == null) {
-            $database = $this->xml->createElement("database");
+        if ($doc->firstChild == null) {
+            $database = $doc->createElement("database");
             $database->setAttribute("collation", "");
-            $this->xml->appendChild($database);
+            $doc->appendChild($database);
         }
-    }
-
-    private function retrieveCollation()
-    {
-        $this->collation = $this->xml->firstChild->getAttribute("collation");
+        return $doc->firstChild;
     }
 
     public function checkIntegrity(IDatabaseModel $databaseModel)
@@ -60,7 +52,7 @@ class XmlDatabase implements IDatabaseModel
         $description = "Database collate ({$this->getCollation()}) differs from the model ({$model->getCollation()})";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($model) {
-            $this->xml->firstChild->setAttribute("collation", $model->getCollation());
+            $this->root->setAttribute("collation", $model->getCollation());
         });
         return new Unconformity($description, $instructions);
     }
@@ -70,11 +62,11 @@ class XmlDatabase implements IDatabaseModel
      */
     public function save($filename)
     {
-        $this->xml->save($filename);
+        $this->root->ownerDocument->save($filename);
     }
 
     public function getTables()
     {
-        // TODO: Implement getTables() method.
+        return $this->tables;
     }
 }
