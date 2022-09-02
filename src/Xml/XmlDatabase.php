@@ -37,7 +37,7 @@ class XmlDatabase implements IDatabaseModel
         if ($this->getCollation() != $databaseModel->getCollation()) {
             $unconformities->add($this->collateUnconformity($databaseModel));
         }
-        return $unconformities;
+        return $unconformities->merge($this->getTables()->checkIntegrity($databaseModel->getTables()));
     }
 
     public function getCollation()

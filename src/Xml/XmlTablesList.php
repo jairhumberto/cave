@@ -5,7 +5,12 @@ namespace Squille\Cave\Xml;
 use DOMElement;
 use DOMNode;
 use Squille\Cave\ArrayList;
+use Squille\Cave\InstructionsList;
+use Squille\Cave\Models\ITableModel;
 use Squille\Cave\Models\ITablesListModel;
+use Squille\Cave\MySql\MySqlTable;
+use Squille\Cave\UnconformitiesList;
+use Squille\Cave\Unconformity;
 
 class XmlTablesList extends ArrayList implements ITablesListModel
 {
@@ -56,6 +61,74 @@ class XmlTablesList extends ArrayList implements ITablesListModel
 
     public function checkIntegrity(ITablesListModel $tablesListModel)
     {
-        // TODO: Implement checkIntegrity() method.
+        return $this->missingTablesUnconformities($tablesListModel)
+            ->merge($this->generalTablesUnconformities($tablesListModel));
+    }
+
+    private function missingTablesUnconformities(ITablesListModel $tablesListModel)
+    {
+        $unconformities = new UnconformitiesList();
+        foreach ($tablesListModel as $tableModel) {
+            $callback = function ($item) use ($tableModel) {
+                return $item->getName() == $tableModel->getName();
+            };
+
+            $tableFound = $this->search($callback);
+
+            if ($tableFound == null) {
+                $unconformities->add($this->missingTableUnconformity($tableModel));
+            }
+        }
+        return $unconformities;
+    }
+
+    private function missingTableUnconformity(ITableModel $modelTable)
+    {
+        $description = "create table {$modelTable->getName()}";
+        $instructions = new InstructionsList();
+        $instructions->add(function () use ($modelTable) {
+            $tableNode = $this->root->ownerDocument->createElement("table");
+            $tableNode->setAttribute("name", $modelTable->getName());
+            $tableNode->setAttribute("engine", $modelTable->getEngine());
+            $tableNode->setAttribute("row_format", $modelTable->getRowFormat());
+            $tableNode->setAttribute("collation", $modelTable->getCollation());
+            $tableNode->setAttribute("checksum", $modelTable->getChecksum());
+            $this->root->appendChild($tableNode);
+        });
+        return new Unconformity($description, $instructions);
+    }
+
+    private function generalTablesUnconformities(ITablesListModel $tablesListModel)
+    {
+        $unconformities = new UnconformitiesList();
+        foreach ($this as $table) {
+            $callback = function ($item) use ($table) {
+                return $item->getName() == $table->getName();
+            };
+
+            $tableModelFound = $tablesListModel->search($callback);
+
+            if ($tableModelFound == null) {
+                $unconformities->add($this->exceedingTableUnconformity($table));
+            } else {
+                $unconformities->merge($table->checkIntegrity($tableModelFound));
+            }
+        }
+        return $unconformities;
+    }
+
+    private function exceedingTableUnconformity(XmlTable $xmlTable)
+    {
+        $description = "drop table {$xmlTable->getName()}";
+        $instructions = new InstructionsList();
+        $instructions->add(function () use ($xmlTable) {
+            foreach($this->root->childNodes as $childNode) {
+                if ($childNode->name == $xmlTable->getName()) {
+                    $this->root->removeChild($childNode);
+                    break;
+                }
+            }
+        });
+        return new Unconformity($description, $instructions);
     }
 }
