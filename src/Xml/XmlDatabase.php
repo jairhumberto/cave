@@ -3,17 +3,21 @@
 namespace Squille\Cave\Xml;
 
 use DOMDocument;
+use DOMException;
 use Squille\Cave\InstructionsList;
+use Squille\Cave\Models\AbstractDatabaseModel;
 use Squille\Cave\Models\IDatabaseModel;
-use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-class XmlDatabase implements IDatabaseModel
+class XmlDatabase extends AbstractDatabaseModel
 {
     private $root;
     private $collation;
     private $tables;
 
+    /**
+     * @throws DOMException
+     */
     public function __construct(DOMDocument $doc)
     {
         $this->root = $this->createRootElement($doc);
@@ -21,38 +25,21 @@ class XmlDatabase implements IDatabaseModel
         $this->tables = new XmlTablesList($this->root);
     }
 
+    /**
+     * @throws DOMException
+     */
     private function createRootElement(DOMDocument $doc)
     {
         if ($doc->firstChild == null) {
             $database = $doc->createElement("database");
-            $database->setAttribute("collation", "");
             $doc->appendChild($database);
         }
         return $doc->firstChild;
     }
 
-    public function checkIntegrity(IDatabaseModel $databaseModel)
+    public function getTables()
     {
-        $unconformities = new UnconformitiesList();
-        if ($this->getCollation() != $databaseModel->getCollation()) {
-            $unconformities->add($this->collateUnconformity($databaseModel));
-        }
-        return $unconformities->merge($this->getTables()->checkIntegrity($databaseModel->getTables()));
-    }
-
-    public function getCollation()
-    {
-        return $this->collation;
-    }
-
-    private function collateUnconformity(IDatabaseModel $model)
-    {
-        $description = "Database collate ({$this->getCollation()}) differs from the model ({$model->getCollation()})";
-        $instructions = new InstructionsList();
-        $instructions->add(function () use ($model) {
-            $this->root->setAttribute("collation", $model->getCollation());
-        });
-        return new Unconformity($description, $instructions);
+        return $this->tables;
     }
 
     /**
@@ -63,8 +50,18 @@ class XmlDatabase implements IDatabaseModel
         $this->root->ownerDocument->save($filename);
     }
 
-    public function getTables()
+    protected function collationUnconformity(IDatabaseModel $databaseModel)
     {
-        return $this->tables;
+        $description = "Database collate ({$this->getCollation()}) differs from the model ({$databaseModel->getCollation()})";
+        $instructions = new InstructionsList();
+        $instructions->add(function () use ($databaseModel) {
+            $this->root->setAttribute("collation", $databaseModel->getCollation());
+        });
+        return new Unconformity($description, $instructions);
+    }
+
+    public function getCollation()
+    {
+        return $this->collation;
     }
 }

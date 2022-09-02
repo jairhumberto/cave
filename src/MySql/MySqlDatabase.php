@@ -5,11 +5,11 @@ namespace Squille\Cave\MySql;
 use PDO;
 use PDOStatement;
 use Squille\Cave\InstructionsList;
+use Squille\Cave\Models\AbstractDatabaseModel;
 use Squille\Cave\Models\IDatabaseModel;
-use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-class MySqlDatabase implements IDatabaseModel
+class MySqlDatabase extends AbstractDatabaseModel
 {
     private $pdo;
     private $collation;
@@ -34,21 +34,12 @@ class MySqlDatabase implements IDatabaseModel
         }
     }
 
-    public function checkIntegrity(IDatabaseModel $databaseModel)
+    public function getTables()
     {
-        $unconformities = new UnconformitiesList();
-        if ($this->getCollation() != $databaseModel->getCollation()) {
-            $unconformities->add($this->collationUnconformity($databaseModel));
-        }
-        return $unconformities->merge($this->getTables()->checkIntegrity($databaseModel->getTables()));
+        return $this->tables;
     }
 
-    public function getCollation()
-    {
-        return $this->collation;
-    }
-
-    private function collationUnconformity(IDatabaseModel $databaseModel)
+    protected function collationUnconformity(IDatabaseModel $databaseModel)
     {
         $description = "alter database collate {{$this->getCollation()} -> {$databaseModel->getCollation()}}";
         $instructions = new InstructionsList();
@@ -58,8 +49,8 @@ class MySqlDatabase implements IDatabaseModel
         return new Unconformity($description, $instructions);
     }
 
-    public function getTables()
+    public function getCollation()
     {
-        return $this->tables;
+        return $this->collation;
     }
 }
