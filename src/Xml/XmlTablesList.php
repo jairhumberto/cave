@@ -14,7 +14,7 @@ class XmlTablesList extends ArrayList implements ITablesListModel
     public function __construct(DOMElement $parent)
     {
         $this->root = $this->createRootElement($parent);
-        parent::__construct($this->root->childNodes);
+        parent::__construct($this->retrieveTables());
     }
 
     /**
@@ -43,6 +43,15 @@ class XmlTablesList extends ArrayList implements ITablesListModel
             }
         }
         return null;
+    }
+
+    private function retrieveTables()
+    {
+        $tables = [];
+        foreach($this->root->childNodes as $childNode) {
+            $tables[] = new XmlTable($childNode);
+        }
+        return $tables;
     }
 
     public function checkIntegrity(ITablesListModel $tablesListModel)
