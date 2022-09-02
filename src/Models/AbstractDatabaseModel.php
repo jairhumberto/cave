@@ -3,6 +3,7 @@
 namespace Squille\Cave\Models;
 
 use Squille\Cave\UnconformitiesList;
+use Squille\Cave\Unconformity;
 
 abstract class AbstractDatabaseModel implements IDatabaseModel
 {
@@ -15,5 +16,9 @@ abstract class AbstractDatabaseModel implements IDatabaseModel
         return $unconformities->merge($this->getTables()->checkIntegrity($databaseModel->getTables()));
     }
 
+    /**
+     * @param IDatabaseModel $databaseModel
+     * @return Unconformity
+     */
     abstract protected function collationUnconformity(IDatabaseModel $databaseModel);
 }

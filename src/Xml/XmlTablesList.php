@@ -4,15 +4,13 @@ namespace Squille\Cave\Xml;
 
 use DOMElement;
 use DOMNode;
-use Squille\Cave\ArrayList;
 use Squille\Cave\InstructionsList;
+use Squille\Cave\MOdels\AbstractTableModel;
+use Squille\Cave\Models\AbstractTablesListModel;
 use Squille\Cave\Models\ITableModel;
-use Squille\Cave\Models\ITablesListModel;
-use Squille\Cave\MySql\MySqlTable;
-use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-class XmlTablesList extends ArrayList implements ITablesListModel
+class XmlTablesList extends AbstractTablesListModel
 {
     private $root;
 
@@ -53,77 +51,35 @@ class XmlTablesList extends ArrayList implements ITablesListModel
     private function retrieveTables()
     {
         $tables = [];
-        foreach($this->root->childNodes as $childNode) {
+        foreach ($this->root->childNodes as $childNode) {
             $tables[] = new XmlTable($childNode);
         }
         return $tables;
     }
 
-    public function checkIntegrity(ITablesListModel $tablesListModel)
+    protected function missingTableUnconformity(ITableModel $tableModel)
     {
-        return $this->missingTablesUnconformities($tablesListModel)
-            ->merge($this->generalTablesUnconformities($tablesListModel));
-    }
-
-    private function missingTablesUnconformities(ITablesListModel $tablesListModel)
-    {
-        $unconformities = new UnconformitiesList();
-        foreach ($tablesListModel as $tableModel) {
-            $callback = function ($item) use ($tableModel) {
-                return $item->getName() == $tableModel->getName();
-            };
-
-            $tableFound = $this->search($callback);
-
-            if ($tableFound == null) {
-                $unconformities->add($this->missingTableUnconformity($tableModel));
-            }
-        }
-        return $unconformities;
-    }
-
-    private function missingTableUnconformity(ITableModel $modelTable)
-    {
-        $description = "create table {$modelTable->getName()}";
+        $description = "create table {$tableModel->getName()}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($modelTable) {
+        $instructions->add(function () use ($tableModel) {
             $tableNode = $this->root->ownerDocument->createElement("table");
-            $tableNode->setAttribute("name", $modelTable->getName());
-            $tableNode->setAttribute("engine", $modelTable->getEngine());
-            $tableNode->setAttribute("row_format", $modelTable->getRowFormat());
-            $tableNode->setAttribute("collation", $modelTable->getCollation());
-            $tableNode->setAttribute("checksum", $modelTable->getChecksum());
+            $tableNode->setAttribute("name", $tableModel->getName());
+            $tableNode->setAttribute("engine", $tableModel->getEngine());
+            $tableNode->setAttribute("row_format", $tableModel->getRowFormat());
+            $tableNode->setAttribute("collation", $tableModel->getCollation());
+            $tableNode->setAttribute("checksum", $tableModel->getChecksum());
             $this->root->appendChild($tableNode);
         });
         return new Unconformity($description, $instructions);
     }
 
-    private function generalTablesUnconformities(ITablesListModel $tablesListModel)
+    protected function exceedingTableUnconformity(AbstractTableModel $abstractTableModel)
     {
-        $unconformities = new UnconformitiesList();
-        foreach ($this as $table) {
-            $callback = function ($item) use ($table) {
-                return $item->getName() == $table->getName();
-            };
-
-            $tableModelFound = $tablesListModel->search($callback);
-
-            if ($tableModelFound == null) {
-                $unconformities->add($this->exceedingTableUnconformity($table));
-            } else {
-                $unconformities->merge($table->checkIntegrity($tableModelFound));
-            }
-        }
-        return $unconformities;
-    }
-
-    private function exceedingTableUnconformity(XmlTable $xmlTable)
-    {
-        $description = "drop table {$xmlTable->getName()}";
+        $description = "drop table {$abstractTableModel->getName()}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($xmlTable) {
-            foreach($this->root->childNodes as $childNode) {
-                if ($childNode->name == $xmlTable->getName()) {
+        $instructions->add(function () use ($abstractTableModel) {
+            foreach ($this->root->childNodes as $childNode) {
+                if ($childNode->name == $abstractTableModel->getName()) {
                     $this->root->removeChild($childNode);
                     break;
                 }

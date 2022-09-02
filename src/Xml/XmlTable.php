@@ -3,9 +3,10 @@
 namespace Squille\Cave\Xml;
 
 use DOMElement;
+use Squille\Cave\MOdels\AbstractTableModel;
 use Squille\Cave\Models\ITableModel;
 
-class XmlTable implements ITableModel
+class XmlTable extends AbstractTableModel
 {
     public function __construct(DOMElement $element)
     {
@@ -55,5 +56,25 @@ class XmlTable implements ITableModel
     public function checkIntegrity(ITableModel $tableModel)
     {
         // TODO: Implement checkIntegrity() method.
+    }
+
+    protected function engineUnconformity(ITableModel $tableModel)
+    {
+        // TODO: Implement engineUnconformity() method.
+    }
+
+    protected function rowFormatUnconformity(ITableModel $tableModel)
+    {
+        // TODO: Implement rowFormatUnconformity() method.
+    }
+
+    protected function collateUnconformity(ITableModel $tableModel)
+    {
+        // TODO: Implement collateUnconformity() method.
+    }
+
+    protected function checksumUnconformity(ITableModel $tableModel)
+    {
+        // TODO: Implement checksumUnconformity() method.
     }
 }

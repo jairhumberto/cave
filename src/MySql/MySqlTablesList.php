@@ -4,14 +4,13 @@ namespace Squille\Cave\MySql;
 
 use PDO;
 use PDOStatement;
-use Squille\Cave\ArrayList;
 use Squille\Cave\InstructionsList;
+use Squille\Cave\MOdels\AbstractTableModel;
+use Squille\Cave\Models\AbstractTablesListModel;
 use Squille\Cave\Models\ITableModel;
-use Squille\Cave\Models\ITablesListModel;
-use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-class MySqlTablesList extends ArrayList implements ITablesListModel
+class MySqlTablesList extends AbstractTablesListModel
 {
     private $pdo;
 
@@ -33,39 +32,16 @@ class MySqlTablesList extends ArrayList implements ITablesListModel
         }
     }
 
-    public function checkIntegrity(ITablesListModel $tablesListModel)
+    protected function missingTableUnconformity(ITableModel $tableModel)
     {
-        return $this->missingTablesUnconformities($tablesListModel)
-            ->merge($this->generalTablesUnconformities($tablesListModel));
-    }
-
-    private function missingTablesUnconformities(ITablesListModel $tablesListModel)
-    {
-        $unconformities = new UnconformitiesList();
-        foreach ($tablesListModel as $tableModel) {
-            $callback = function ($item) use ($tableModel) {
-                return $item->getName() == $tableModel->getName();
-            };
-
-            $tableFound = $this->search($callback);
-
-            if ($tableFound == null) {
-                $unconformities->add($this->missingTableUnconformity($tableModel));
-            }
-        }
-        return $unconformities;
-    }
-
-    private function missingTableUnconformity(ITableModel $modelTable)
-    {
-        $description = "create table {$modelTable->getName()}";
+        $description = "create table {$tableModel->getName()}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($modelTable) {
-            $tblName = $modelTable->getName();
-            $createDefinitions = $modelTable->getFields()
-                ->merge($modelTable->getConstraints())
-                ->merge($modelTable->getIndexes());
-            $tableOptions = $this->getTableOptions($modelTable);
+        $instructions->add(function () use ($tableModel) {
+            $tblName = $tableModel->getName();
+            $createDefinitions = $tableModel->getFields()
+                ->merge($tableModel->getConstraints())
+                ->merge($tableModel->getIndexes());
+            $tableOptions = $this->getTableOptions($tableModel);
             $this->pdo->query("
                 CREATE TABLE `$tblName`
                 ($createDefinitions) $tableOptions
@@ -87,31 +63,12 @@ class MySqlTablesList extends ArrayList implements ITablesListModel
         return join(",", $tableOptionsArray);
     }
 
-    private function generalTablesUnconformities(ITablesListModel $tablesListModel)
+    protected function exceedingTableUnconformity(AbstractTableModel $abstractTableModel)
     {
-        $unconformities = new UnconformitiesList();
-        foreach ($this as $table) {
-            $callback = function ($item) use ($table) {
-                return $item->getName() == $table->getName();
-            };
-
-            $tableModelFound = $tablesListModel->search($callback);
-
-            if ($tableModelFound == null) {
-                $unconformities->add($this->exceedingTableUnconformity($table));
-            } else {
-                $unconformities->merge($table->checkIntegrity($tableModelFound));
-            }
-        }
-        return $unconformities;
-    }
-
-    private function exceedingTableUnconformity(MySqlTable $mySqlTable)
-    {
-        $description = "drop table {$mySqlTable->getName()}";
+        $description = "drop table {$abstractTableModel->getName()}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($mySqlTable) {
-            $this->pdo->query("DROP TABLE {$mySqlTable->getName()}");
+        $instructions->add(function () use ($abstractTableModel) {
+            $this->pdo->query("DROP TABLE {$abstractTableModel->getName()}");
         });
         return new Unconformity($description, $instructions);
     }
