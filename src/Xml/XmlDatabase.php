@@ -18,7 +18,7 @@ class XmlDatabase implements IDatabaseModel
     {
         $this->root = $this->createRootElement($doc);
         $this->collation = $this->root->getAttribute("collation");
-        $this->tables = new XmlTablesList();
+        $this->tables = new XmlTablesList($this->root);
     }
 
     private function createRootElement(DOMDocument $doc)
@@ -34,11 +34,9 @@ class XmlDatabase implements IDatabaseModel
     public function checkIntegrity(IDatabaseModel $databaseModel)
     {
         $unconformities = new UnconformitiesList();
-
         if ($this->getCollation() != $databaseModel->getCollation()) {
             $unconformities->add($this->collateUnconformity($databaseModel));
         }
-
         return $unconformities;
     }
 
