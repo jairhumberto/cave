@@ -24,8 +24,8 @@ class XmlTable extends AbstractTableModel
     {
         $this->root = $element;
         $this->fields = new XmlFieldsList($element, $this);
-        $this->constraints = new XmlConstraintsList($element);
-        $this->indexes = new XmlIndexesList($element);
+        $this->constraints = new XmlConstraintsList($element, $this);
+        $this->indexes = new XmlIndexesList($element, $this);
     }
 
     public function getName()

@@ -5,11 +5,12 @@ namespace Squille\Cave\MySql\Indexes;
 use PDO;
 use Squille\Cave\ArrayList;
 use Squille\Cave\InstructionsList;
+use Squille\Cave\Models\AbstractIndexModel;
 use Squille\Cave\Models\IIndexModel;
 use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-abstract class AbstractMySqlIndex extends ArrayList implements IIndexModel
+abstract class AbstractMySqlIndex extends AbstractIndexModel
 {
     private $pdo;
     private $table;
@@ -26,45 +27,7 @@ abstract class AbstractMySqlIndex extends ArrayList implements IIndexModel
         return $this->table;
     }
 
-    public function checkIntegrity(IIndexModel $indexModel)
-    {
-        $unconformities = new UnconformitiesList();
-        if ($this->partialIndexesIncompatible($indexModel)) {
-            $unconformities->add($this->incompatibleIndexUnconformity($indexModel));
-        }
-        return $unconformities;
-    }
-
-    private function partialIndexesIncompatible(IIndexModel $indexModel)
-    {
-        return $this->count() != $indexModel->count()
-            || $this->indexesPartsMissing($indexModel)
-            || $this->indexesPartsExceeding($indexModel);
-    }
-
-    private function indexesPartsMissing(IIndexModel $indexModel)
-    {
-        foreach ($indexModel as $key => $indexPartModel) {
-            $currentIndexPart = $this->get($key);
-            if (!$currentIndexPart->equals($indexPartModel)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private function indexesPartsExceeding(IIndexModel $indexModel)
-    {
-        foreach ($this as $key => $indexPart) {
-            $currentIndexPartModel = $indexModel->get($key);
-            if (!$currentIndexPartModel->equals($indexPart)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private function incompatibleIndexUnconformity(IIndexModel $indexModel)
+    protected function incompatibleIndexUnconformity(IIndexModel $indexModel)
     {
         $description = "alter table {$this->getTable()} drop index {$this->getName()}";
         $instructions = new InstructionsList();

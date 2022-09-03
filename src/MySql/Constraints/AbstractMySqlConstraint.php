@@ -3,13 +3,12 @@
 namespace Squille\Cave\MySql\Constraints;
 
 use PDO;
-use Squille\Cave\ArrayList;
 use Squille\Cave\InstructionsList;
+use Squille\Cave\Models\AbstractConstraintModel;
 use Squille\Cave\Models\IConstraintModel;
-use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-abstract class AbstractMySqlConstraint extends ArrayList implements IConstraintModel
+abstract class AbstractMySqlConstraint extends AbstractConstraintModel
 {
     private $pdo;
     private $table;
@@ -26,45 +25,7 @@ abstract class AbstractMySqlConstraint extends ArrayList implements IConstraintM
         return $this->table;
     }
 
-    public function checkIntegrity(IConstraintModel $constraintModel)
-    {
-        $unconformities = new UnconformitiesList();
-        if ($this->partialKeysIncompatible($constraintModel)) {
-            $unconformities->add($this->incompatibleConstraintUnconformity($constraintModel));
-        }
-        return $unconformities;
-    }
-
-    private function partialKeysIncompatible(IConstraintModel $constraintModel)
-    {
-        return $this->count() != $constraintModel->count()
-            || $this->constraintsPartsMissing($constraintModel)
-            || $this->constraintsPartsExceeding($constraintModel);
-    }
-
-    private function constraintsPartsMissing(IConstraintModel $constraintModel)
-    {
-        foreach ($constraintModel as $key => $constraintPartModel) {
-            $currentConstraintPart = $this->get($key);
-            if (!$currentConstraintPart->equals($constraintPartModel)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private function constraintsPartsExceeding(IConstraintModel $constraintModel)
-    {
-        foreach ($this as $key => $constraintPart) {
-            $currentConstraintPartModel = $constraintModel->get($key);
-            if (!$currentConstraintPartModel->equals($constraintPart)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private function incompatibleConstraintUnconformity(IConstraintModel $constraintModel)
+    protected function incompatibleConstraintUnconformity(IConstraintModel $constraintModel)
     {
         $description = "alter table {$this->getTable()} {$this->dropCommand()}";
         $instructions = new InstructionsList();

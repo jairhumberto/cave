@@ -6,13 +6,14 @@ use PDO;
 use PDOStatement;
 use Squille\Cave\ArrayList;
 use Squille\Cave\InstructionsList;
+use Squille\Cave\Models\AbstractIndexesListModel;
 use Squille\Cave\Models\IIndexesListModel;
 use Squille\Cave\Models\IIndexModel;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-class MySqlIndexesList extends ArrayList implements IIndexesListModel
+class MySqlIndexesList extends AbstractIndexesListModel
 {
     private $pdo;
     private $table;
@@ -79,30 +80,7 @@ class MySqlIndexesList extends ArrayList implements IIndexesListModel
         return $groups;
     }
 
-    public function checkIntegrity(IIndexesListModel $indexesListModel)
-    {
-        return $this->missingIndexesUnconformities($indexesListModel)
-            ->merge($this->generalIndexesUnconformities($indexesListModel));
-    }
-
-    private function missingIndexesUnconformities(IIndexesListModel $indexesListModel)
-    {
-        $unconformities = new UnconformitiesList();
-        foreach ($indexesListModel as $indexModel) {
-            $callback = function ($item) use ($indexModel) {
-                return $item->getName() == $indexModel->getName();
-            };
-
-            $indexFound = $this->search($callback);
-
-            if ($indexFound == null) {
-                $unconformities->add($this->missingIndexUnconformity($indexModel));
-            }
-        }
-        return $unconformities;
-    }
-
-    private function missingIndexUnconformity(IIndexModel $indexModel)
+    protected function missingIndexUnconformity(IIndexModel $indexModel)
     {
         $description = "alter table {$this->getTable()} add {$indexModel->getName()}";
         $instructions = new InstructionsList();
@@ -112,26 +90,7 @@ class MySqlIndexesList extends ArrayList implements IIndexesListModel
         return new Unconformity($description, $instructions);
     }
 
-    private function generalIndexesUnconformities(IIndexesListModel $indexesListModel)
-    {
-        $unconformities = new UnconformitiesList();
-        foreach ($this as $index) {
-            $callback = function ($item) use ($index) {
-                return $item->getName() == $index->getName();
-            };
-
-            $indexModelFound = $indexesListModel->search($callback);
-
-            if ($indexModelFound == null) {
-                $unconformities->add($this->exceedingIndexUnconformity($index));
-            } else {
-                $unconformities->merge($index->checkIntegrity($indexModelFound));
-            }
-        }
-        return $unconformities;
-    }
-
-    private function exceedingIndexUnconformity(AbstractMySqlIndex $mySqlIndex)
+    protected function exceedingIndexUnconformity(AbstractIndexModel $mySqlIndex)
     {
         $description = "alter table {$this->getTable()} drop index {$mySqlIndex->getName()}";
         $instructions = new InstructionsList();
