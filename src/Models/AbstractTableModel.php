@@ -1,8 +1,9 @@
 <?php
 
-namespace Squille\Cave\MOdels;
+namespace Squille\Cave\Models;
 
 use Squille\Cave\UnconformitiesList;
+use Squille\Cave\Unconformity;
 
 abstract class AbstractTableModel implements ITableModel
 {
@@ -32,11 +33,27 @@ abstract class AbstractTableModel implements ITableModel
             ->merge($this->getIndexes()->checkIntegrity($tableModel->getIndexes()));
     }
 
+    /**
+     * @param ITableModel $tableModel
+     * @return Unconformity
+     */
     abstract protected function engineUnconformity(ITableModel $tableModel);
 
+    /**
+     * @param ITableModel $tableModel
+     * @return Unconformity
+     */
     abstract protected function rowFormatUnconformity(ITableModel $tableModel);
 
+    /**
+     * @param ITableModel $tableModel
+     * @return Unconformity
+     */
     abstract protected function collateUnconformity(ITableModel $tableModel);
 
+    /**
+     * @param ITableModel $tableModel
+     * @return Unconformity
+     */
     abstract protected function checksumUnconformity(ITableModel $tableModel);
 }

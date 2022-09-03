@@ -1,16 +1,16 @@
 <?php
 
-namespace Squille\Cave\MySql;
+namespace Squille\Cave\Xml;
 
-use PDO;
+use DOMElement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractFieldModel;
 use Squille\Cave\Models\IFieldModel;
 use Squille\Cave\Unconformity;
 
-class MySqlField extends AbstractFieldModel
+class XmlField extends AbstractFieldModel
 {
-    private $pdo;
+    private $root;
     private $table;
     private $Field;
     private $Type;
@@ -21,9 +21,9 @@ class MySqlField extends AbstractFieldModel
     private $Extra;
     private $Comment;
 
-    public function __construct(PDO $pdo, MySqlTable $table)
+    public function __construct(DOMElement $element, XmlTable $table)
     {
-        $this->pdo = $pdo;
+        $this->root = $element;
         $this->table = $table;
     }
 

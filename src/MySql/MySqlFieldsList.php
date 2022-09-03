@@ -4,14 +4,13 @@ namespace Squille\Cave\MySql;
 
 use PDO;
 use PDOStatement;
-use Squille\Cave\ArrayList;
 use Squille\Cave\InstructionsList;
+use Squille\Cave\Models\AbstractFieldModel;
+use Squille\Cave\Models\AbstractFieldsListModel;
 use Squille\Cave\Models\IFieldModel;
-use Squille\Cave\Models\IFieldsListModel;
-use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-class MySqlFieldsList extends ArrayList implements IFieldsListModel
+class MySqlFieldsList extends AbstractFieldsListModel
 {
     private $pdo;
     private $table;
@@ -40,42 +39,7 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
         return $this->table;
     }
 
-    public function checkIntegrity(IFieldsListModel $fieldsListModel)
-    {
-        return $this->missingFieldsUnconformities($fieldsListModel)
-            ->merge($this->generalFieldsUnconformities($fieldsListModel))
-            ->merge($this->orderFieldsUnconformities($fieldsListModel));
-    }
-
-    private function missingFieldsUnconformities(IFieldsListModel $fieldsListModel)
-    {
-        $unconformities = new UnconformitiesList();
-        foreach ($fieldsListModel as $key => $fieldModel) {
-            $callback = function ($item) use ($fieldModel) {
-                return $item->getField() == $fieldModel->getField();
-            };
-
-            $fieldFound = $this->search($callback);
-
-            if ($fieldFound == null) {
-                if ($key == 0) {
-                    $previousFieldModel = null;
-                } else {
-                    $previousFieldModel = $fieldsListModel->get($key - 1);
-                }
-                $this->addField($fieldModel);
-                $unconformities->add($this->missingFieldUnconformity($fieldModel, $previousFieldModel));
-            }
-        }
-        return $unconformities;
-    }
-
-    private function addField(IFieldModel $currentFieldModel)
-    {
-        $this->add($currentFieldModel);
-    }
-
-    private function missingFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
+    protected function missingFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
     {
         $description = "alter table {$currentFieldModel->getTable()} add {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();
@@ -89,26 +53,7 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
         return new Unconformity($description, $instructions);
     }
 
-    private function generalFieldsUnconformities(IFieldsListModel $fieldsListModel)
-    {
-        $unconformities = new UnconformitiesList();
-        foreach ($this as $field) {
-            $callback = function ($item) use ($field) {
-                return $item->getField() == $field->getField();
-            };
-
-            $fieldModelFound = $fieldsListModel->search($callback);
-
-            if ($fieldModelFound == null) {
-                $unconformities->add($this->exceedingFieldUnconformity($field));
-            } else {
-                $unconformities->merge($field->checkIntegrity($fieldModelFound));
-            }
-        }
-        return $unconformities;
-    }
-
-    private function exceedingFieldUnconformity(MySqlField $mySqlField)
+    protected function exceedingFieldUnconformity(AbstractFieldModel $mySqlField)
     {
         $description = "alter table {$mySqlField->getTable()} drop column {$mySqlField->getField()}";
         $instructions = new InstructionsList();
@@ -121,24 +66,7 @@ class MySqlFieldsList extends ArrayList implements IFieldsListModel
         return new Unconformity($description, $instructions);
     }
 
-    private function orderFieldsUnconformities(IFieldsListModel $fieldsListModel)
-    {
-        $unconformities = new UnconformitiesList();
-        foreach ($fieldsListModel as $key => $fieldModel) {
-            $field = $this->get($key);
-            if ($field->getField() != $fieldModel->getField()) {
-                if ($key == 0) {
-                    $previousFieldModel = null;
-                } else {
-                    $previousFieldModel = $fieldsListModel->get($key - 1);
-                }
-                $unconformities->add($this->orderFieldUnconformity($fieldModel, $previousFieldModel));
-            }
-        }
-        return $unconformities;
-    }
-
-    private function orderFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
+    protected function orderFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
     {
         $description = "alter table {$currentFieldModel->getTable()} modify {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();
