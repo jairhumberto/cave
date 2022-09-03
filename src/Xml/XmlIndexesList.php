@@ -2,6 +2,8 @@
 
 namespace Squille\Cave\Xml;
 
+use DOMElement;
+use DOMNode;
 use PDO;
 use PDOStatement;
 use Squille\Cave\InstructionsList;
@@ -12,14 +14,42 @@ use Squille\Cave\Unconformity;
 
 class XmlIndexesList extends AbstractIndexesListModel
 {
-    private $pdo;
+    private $root;
     private $table;
 
     public function __construct(DOMElement $parent, XmlTable $table)
     {
-        $this->pdo = $pdo;
+        $this->root = $this->createRootElement($parent);
         $this->table = $table;
         parent::__construct($this->retrieveIndexes());
+    }
+
+    /**
+     * @param DOMElement $parent
+     * @return DOMNode
+     */
+    private function createRootElement(DOMElement $parent)
+    {
+        $indexes = $this->getRootElement($parent);
+        if ($indexes == null) {
+            $indexes = $parent->ownerDocument->createElement("indexes");
+            $parent->appendChild($indexes);
+        }
+        return $indexes;
+    }
+
+    /**
+     * @param DOMElement $parent
+     * @return DOMNode|null
+     */
+    private function getRootElement(DOMElement $parent)
+    {
+        foreach ($parent->childNodes as $childNode) {
+            if ($childNode->nodeName == "indexes") {
+                return $childNode;
+            }
+        }
+        return null;
     }
 
     private function retrieveIndexes()

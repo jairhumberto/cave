@@ -12,14 +12,14 @@ class XmlField extends AbstractFieldModel
 {
     private $root;
     private $table;
-    private $Field;
-    private $Type;
-    private $Collation;
-    private $Null;
-    private $Key;
-    private $Default;
-    private $Extra;
-    private $Comment;
+    private $field;
+    private $type;
+    private $collation;
+    private $null;
+    private $key;
+    private $default;
+    private $extra;
+    private $comment;
 
     public function __construct(DOMElement $element, XmlTable $table)
     {
@@ -27,9 +27,36 @@ class XmlField extends AbstractFieldModel
         $this->table = $table;
     }
 
+    /**
+     * @param DOMElement $element
+     * @param XmlTable $table
+     * @return XmlField
+     */
+    public static function fromDomElement(DOMElement $element, XmlTable $table)
+    {
+        $instance = new XmlField($element, $table);
+        $instance->setField($element->getAttribute("field"));
+        $instance->setType($element->getAttribute("type"));
+        $instance->setCollation($element->getAttribute("collation"));
+        $instance->setNull($element->getAttribute("null"));
+        $instance->setKey($element->getAttribute("key"));
+        $instance->setDefault($element->getAttribute("default"));
+        $instance->setExtra($element->getAttribute("extra"));
+        $instance->setComment($element->getAttribute("comment"));
+        return $instance;
+    }
+
     public function getKey()
     {
-        return $this->Key;
+        return $this->key;
+    }
+
+    /**
+     * @param string $key
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
     }
 
     public function __toString()
@@ -65,6 +92,45 @@ class XmlField extends AbstractFieldModel
         return join(" ", $columnDefinition);
     }
 
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    public function getNull()
+    {
+        return $this->null;
+    }
+
+    /**
+     * @param string $null
+     */
+    public function setNull($null)
+    {
+        $this->null = $null;
+    }
+
+    public function getDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * @param string $default
+     */
+    public function setDefault($default)
+    {
+        $this->default = $default;
+    }
+
     private function defaultFiltered()
     {
         $default = $this->getDefault();
@@ -79,6 +145,58 @@ class XmlField extends AbstractFieldModel
         return substr($this->getDefault(), -1) == ")";
     }
 
+    public function getExtra()
+    {
+        return $this->extra;
+    }
+
+    /**
+     * @param string $extra
+     */
+    public function setExtra($extra)
+    {
+        $this->extra = $extra;
+    }
+
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * @param string $comment
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+    }
+
+    public function getCollation()
+    {
+        return $this->collation;
+    }
+
+    /**
+     * @param string $collation
+     */
+    public function setCollation($collation)
+    {
+        $this->collation = $collation;
+    }
+
+    public function getField()
+    {
+        return $this->field;
+    }
+
+    /**
+     * @param string $field
+     */
+    public function setField($field)
+    {
+        $this->field = $field;
+    }
+
     protected function typeUnconformity(IFieldModel $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} type {{$this->getType()} -> {$fieldModel->getType()}}";
@@ -90,25 +208,10 @@ class XmlField extends AbstractFieldModel
         return $this->table;
     }
 
-    public function getField()
-    {
-        return $this->Field;
-    }
-
-    public function getType()
-    {
-        return $this->Type;
-    }
-
     protected function collationUnconformity(IFieldModel $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} collate {{$this->getCollation()} -> {$fieldModel->getCollation()}}";
         return new Unconformity($description);
-    }
-
-    public function getCollation()
-    {
-        return $this->Collation;
     }
 
     protected function nullUnconformity(IFieldModel $fieldModel)
@@ -117,20 +220,10 @@ class XmlField extends AbstractFieldModel
         return new Unconformity($description);
     }
 
-    public function getNull()
-    {
-        return $this->Null;
-    }
-
     protected function defaultUnconformity(IFieldModel $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} default {'{$this->getDefault()}' -> '{$fieldModel->getDefault()}'}";
         return new Unconformity($description);
-    }
-
-    public function getDefault()
-    {
-        return $this->Default;
     }
 
     protected function extraUnconformity(IFieldModel $fieldModel)
@@ -139,20 +232,10 @@ class XmlField extends AbstractFieldModel
         return new Unconformity($description);
     }
 
-    public function getExtra()
-    {
-        return $this->Extra;
-    }
-
     protected function commentUnconformity(IFieldModel $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} comment {'{$this->getComment()}' -> '{$fieldModel->getComment()}'}";
         return new Unconformity($description);
-    }
-
-    public function getComment()
-    {
-        return $this->Comment;
     }
 
     protected function definitionUnconformity(IFieldModel $fieldModel)

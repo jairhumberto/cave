@@ -54,7 +54,7 @@ class XmlFieldsList extends AbstractFieldsListModel
     {
         $fields = [];
         foreach ($this->root->childNodes as $childNode) {
-            $fields[] = new XmlField($childNode, $this->table);
+            $fields[] = XmlField::fromDomElement($childNode, $this->table);
         }
         return $fields;
     }

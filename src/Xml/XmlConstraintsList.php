@@ -3,6 +3,7 @@
 namespace Squille\Cave\Xml;
 
 use DOMElement;
+use DOMNode;
 use PDO;
 use PDOStatement;
 use Squille\Cave\InstructionsList;
@@ -13,14 +14,42 @@ use Squille\Cave\Unconformity;
 
 class XmlConstraintsList extends AbstractConstraintsListModel
 {
-    private $pdo;
+    private $root;
     private $table;
 
     public function __construct(DOMElement $parent, XmlTable $table)
     {
-        $this->pdo = $pdo;
+        $this->root = $this->createRootElement($parent);
         $this->table = $table;
         parent::__construct($this->retrieveConstraints());
+    }
+
+    /**
+     * @param DOMElement $parent
+     * @return DOMNode
+     */
+    private function createRootElement(DOMElement $parent)
+    {
+        $constraints = $this->getRootElement($parent);
+        if ($constraints == null) {
+            $constraints = $parent->ownerDocument->createElement("constraints");
+            $parent->appendChild($constraints);
+        }
+        return $constraints;
+    }
+
+    /**
+     * @param DOMElement $parent
+     * @return DOMNode|null
+     */
+    private function getRootElement(DOMElement $parent)
+    {
+        foreach ($parent->childNodes as $childNode) {
+            if ($childNode->nodeName == "constraints") {
+                return $childNode;
+            }
+        }
+        return null;
     }
 
     private function retrieveConstraints()

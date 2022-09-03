@@ -14,11 +14,11 @@ class XmlTable extends AbstractTableModel
     private $fields;
     private $constraints;
     private $indexes;
-    private $Name;
-    private $Engine;
-    private $Row_format;
-    private $Collation;
-    private $Checksum;
+    private $name;
+    private $engine;
+    private $rowFormat;
+    private $collation;
+    private $checksum;
 
     public function __construct(DOMElement $element)
     {
@@ -28,9 +28,32 @@ class XmlTable extends AbstractTableModel
         $this->indexes = new XmlIndexesList($element, $this);
     }
 
+    /**
+     * @param DOMElement $element
+     * @return XmlTable
+     */
+    public static function fromDomElement(DOMElement $element)
+    {
+        $instance = new XmlTable($element);
+        $instance->setName($element->getAttribute("name"));
+        $instance->setEngine($element->getAttribute("engine"));
+        $instance->setRowFormat($element->getAttribute("row_format"));
+        $instance->setCollation($element->getAttribute("collation"));
+        $instance->setChecksum($element->getAttribute("checksum"));
+        return $instance;
+    }
+
     public function getName()
     {
-        return $this->Name;
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     public function getFields()
@@ -60,7 +83,15 @@ class XmlTable extends AbstractTableModel
 
     public function getEngine()
     {
-        return $this->Engine;
+        return $this->engine;
+    }
+
+    /**
+     * @param string $engine
+     */
+    public function setEngine($engine)
+    {
+        $this->engine = $engine;
     }
 
     protected function rowFormatUnconformity(ITableModel $tableModel)
@@ -75,7 +106,15 @@ class XmlTable extends AbstractTableModel
 
     public function getRowFormat()
     {
-        return $this->Row_format;
+        return $this->rowFormat;
+    }
+
+    /**
+     * @param string $rowFormat
+     */
+    public function setRowFormat($rowFormat)
+    {
+        $this->rowFormat = $rowFormat;
     }
 
     protected function collateUnconformity(ITableModel $tableModel)
@@ -90,7 +129,15 @@ class XmlTable extends AbstractTableModel
 
     public function getCollation()
     {
-        return $this->Collation;
+        return $this->collation;
+    }
+
+    /**
+     * @param string $collation
+     */
+    public function setCollation($collation)
+    {
+        $this->collation = $collation;
     }
 
     protected function checksumUnconformity(ITableModel $tableModel)
@@ -105,6 +152,14 @@ class XmlTable extends AbstractTableModel
 
     public function getChecksum()
     {
-        return $this->Checksum;
+        return $this->checksum;
+    }
+
+    /**
+     * @param string $checksum
+     */
+    public function setChecksum($checksum)
+    {
+        $this->checksum = $checksum;
     }
 }

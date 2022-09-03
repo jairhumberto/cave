@@ -52,7 +52,7 @@ class XmlTablesList extends AbstractTablesListModel
     {
         $tables = [];
         foreach ($this->root->childNodes as $childNode) {
-            $tables[] = new XmlTable($childNode);
+            $tables[] = XmlTable::fromDomElement($childNode);
         }
         return $tables;
     }
@@ -79,7 +79,7 @@ class XmlTablesList extends AbstractTablesListModel
         $instructions = new InstructionsList();
         $instructions->add(function () use ($abstractTableModel) {
             foreach ($this->root->childNodes as $childNode) {
-                if ($childNode->name == $abstractTableModel->getName()) {
+                if ($childNode->getAttibute("name") == $abstractTableModel->getName()) {
                     $this->root->removeChild($childNode);
                     break;
                 }
