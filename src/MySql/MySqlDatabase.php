@@ -44,7 +44,7 @@ class MySqlDatabase extends AbstractDatabaseModel
         $description = "alter database collate {{$this->getCollation()} -> {$databaseModel->getCollation()}}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($databaseModel) {
-            $this->pdo->query("ALTER DATABASE COLLATE {$databaseModel->getCollation()}");
+            $this->pdo->query("ALTER DATABASE COLLATE `{$databaseModel->getCollation()}`");
         });
         return new Unconformity($description, $instructions);
     }
