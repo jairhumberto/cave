@@ -10,7 +10,7 @@ use Squille\Cave\Unconformity;
 
 class XmlTable extends AbstractTableModel
 {
-    private $root;
+    private $tableElement;
     private $fields;
     private $constraints;
     private $indexes;
@@ -20,26 +20,26 @@ class XmlTable extends AbstractTableModel
     private $collation;
     private $checksum;
 
-    public function __construct(DOMElement $element)
+    public function __construct(DOMElement $tableElement)
     {
-        $this->root = $element;
-        $this->fields = new XmlFieldsList($element, $this);
-        $this->constraints = new XmlConstraintsList($element, $this);
-        $this->indexes = new XmlIndexesList($element, $this);
+        $this->tableElement = $tableElement;
+        $this->fields = new XmlFieldsList($tableElement, $this);
+        $this->constraints = new XmlConstraintsList($tableElement, $this);
+        $this->indexes = new XmlIndexesList($tableElement, $this);
     }
 
     /**
-     * @param DOMElement $element
+     * @param DOMElement $xmlTableElement
      * @return XmlTable
      */
-    public static function fromDomElement(DOMElement $element)
+    public static function createInstanceFromXmlTableElement(DOMElement $xmlTableElement)
     {
-        $instance = new XmlTable($element);
-        $instance->setName($element->getAttribute("name"));
-        $instance->setEngine($element->getAttribute("engine"));
-        $instance->setRowFormat($element->getAttribute("row_format"));
-        $instance->setCollation($element->getAttribute("collation"));
-        $instance->setChecksum($element->getAttribute("checksum"));
+        $instance = new XmlTable($xmlTableElement);
+        $instance->setName($xmlTableElement->getAttribute("name"));
+        $instance->setEngine($xmlTableElement->getAttribute("engine"));
+        $instance->setRowFormat($xmlTableElement->getAttribute("row_format"));
+        $instance->setCollation($xmlTableElement->getAttribute("collation"));
+        $instance->setChecksum($xmlTableElement->getAttribute("checksum"));
         return $instance;
     }
 
@@ -76,7 +76,7 @@ class XmlTable extends AbstractTableModel
         $description = "alter table $tableModel engine {{$this->getEngine()} -> {$tableModel->getEngine()}}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($tableModel) {
-            $this->root->setAttribute("engine", $tableModel->getEngine());
+            $this->tableElement->setAttribute("engine", $tableModel->getEngine());
         });
         return new Unconformity($description, $instructions);
     }
@@ -99,7 +99,7 @@ class XmlTable extends AbstractTableModel
         $description = "alter table $tableModel row_format {{$this->getRowFormat()} -> {$tableModel->getRowFormat()}}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($tableModel) {
-            $this->root->setAttribute("row_format", $tableModel->getRowFormat());
+            $this->tableElement->setAttribute("row_format", $tableModel->getRowFormat());
         });
         return new Unconformity($description, $instructions);
     }
@@ -122,7 +122,7 @@ class XmlTable extends AbstractTableModel
         $description = "alter table $tableModel collation {{$this->getCollation()} -> {$tableModel->getCollation()}}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($tableModel) {
-            $this->root->setAttribute("collation", $tableModel->getCollation());
+            $this->tableElement->setAttribute("collation", $tableModel->getCollation());
         });
         return new Unconformity($description, $instructions);
     }
@@ -145,7 +145,7 @@ class XmlTable extends AbstractTableModel
         $description = "alter table $tableModel checksum {{$this->getChecksum()} -> {$tableModel->getChecksum()}}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($tableModel) {
-            $this->root->setAttribute("checksum", $tableModel->getChecksum());
+            $this->tableElement->setAttribute("checksum", $tableModel->getChecksum());
         });
         return new Unconformity($description, $instructions);
     }

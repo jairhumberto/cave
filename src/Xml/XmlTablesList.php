@@ -12,35 +12,35 @@ use Squille\Cave\Unconformity;
 
 class XmlTablesList extends AbstractTablesListModel
 {
-    private $root;
+    private $tablesElement;
 
-    public function __construct(DOMElement $parent)
+    public function __construct(DOMElement $databaseElement)
     {
-        $this->root = $this->createRootElement($parent);
+        $this->tablesElement = $this->retrieveOrCreateTablesElement($databaseElement);
         parent::__construct($this->retrieveTables());
     }
 
     /**
-     * @param DOMElement $parent
+     * @param DOMElement $databaseElement
      * @return DOMNode
      */
-    private function createRootElement(DOMElement $parent)
+    private function retrieveOrCreateTablesElement(DOMElement $databaseElement)
     {
-        $tables = $this->getRootElement($parent);
+        $tables = $this->retrieveTablesElement($databaseElement);
         if ($tables == null) {
-            $tables = $parent->ownerDocument->createElement("tables");
-            $parent->appendChild($tables);
+            $document = $databaseElement->ownerDocument;
+            $tables = $databaseElement->appendChild($document->createElement("tables"));
         }
         return $tables;
     }
 
     /**
-     * @param DOMElement $parent
+     * @param DOMElement $databaseElement
      * @return DOMNode|null
      */
-    private function getRootElement(DOMElement $parent)
+    private function retrieveTablesElement(DOMElement $databaseElement)
     {
-        foreach ($parent->childNodes as $childNode) {
+        foreach ($databaseElement->childNodes as $childNode) {
             if ($childNode->nodeName == "tables") {
                 return $childNode;
             }
@@ -51,8 +51,8 @@ class XmlTablesList extends AbstractTablesListModel
     private function retrieveTables()
     {
         $tables = [];
-        foreach ($this->root->childNodes as $childNode) {
-            $tables[] = XmlTable::fromDomElement($childNode);
+        foreach ($this->tablesElement->childNodes as $childNode) {
+            $tables[] = XmlTable::createInstanceFromXmlTableElement($childNode);
         }
         return $tables;
     }
@@ -62,13 +62,20 @@ class XmlTablesList extends AbstractTablesListModel
         $description = "create table {$tableModel->getName()}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($tableModel) {
-            $tableNode = $this->root->ownerDocument->createElement("table");
+            $tableNode = $this->tablesElement->ownerDocument->createElement("table");
             $tableNode->setAttribute("name", $tableModel->getName());
             $tableNode->setAttribute("engine", $tableModel->getEngine());
             $tableNode->setAttribute("row_format", $tableModel->getRowFormat());
             $tableNode->setAttribute("collation", $tableModel->getCollation());
             $tableNode->setAttribute("checksum", $tableModel->getChecksum());
-            $this->root->appendChild($tableNode);
+            $tableNode->appendChild($tableModel->getFields());
+            //
+            // O problema da toString escrever sql é que agora preciso de xml.
+            // Preciso repensar o modelo.
+            //
+            $tableNode->appendChild($tableModel->getFields());
+            $tableNode->appendChild($tableModel->getFields());
+            $this->tablesElement->appendChild($tableNode);
         });
         return new Unconformity($description, $instructions);
     }
@@ -78,9 +85,9 @@ class XmlTablesList extends AbstractTablesListModel
         $description = "drop table {$abstractTableModel->getName()}";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($abstractTableModel) {
-            foreach ($this->root->childNodes as $childNode) {
+            foreach ($this->tablesElement->childNodes as $childNode) {
                 if ($childNode->getAttibute("name") == $abstractTableModel->getName()) {
-                    $this->root->removeChild($childNode);
+                    $this->tablesElement->removeChild($childNode);
                     break;
                 }
             }

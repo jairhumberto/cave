@@ -6,6 +6,7 @@ use PDO;
 use PDOStatement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractConstraintsListModel;
+use Squille\Cave\Models\AbstractConstraintModel;
 use Squille\Cave\Models\IConstraintModel;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\Unconformity;

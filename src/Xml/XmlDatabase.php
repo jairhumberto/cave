@@ -3,6 +3,7 @@
 namespace Squille\Cave\Xml;
 
 use DOMDocument;
+use DOMElement;
 use DOMException;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractDatabaseModel;
@@ -11,30 +12,35 @@ use Squille\Cave\Unconformity;
 
 class XmlDatabase extends AbstractDatabaseModel
 {
-    private $root;
+    /**
+     * @var DOMElement
+     */
+    private $databaseElement;
+
     private $collation;
     private $tables;
 
     /**
      * @throws DOMException
      */
-    public function __construct(DOMDocument $doc)
+    public function __construct(DOMDocument $document)
     {
-        $this->root = $this->createRootElement($doc);
-        $this->collation = $this->root->getAttribute("collation");
-        $this->tables = new XmlTablesList($this->root);
+        $this->databaseElement = $this->retrieveOrCreateDatabaseElement($document);
+        $this->collation = $this->databaseElement->getAttribute("collation");
+        $this->tables = new XmlTablesList($this->databaseElement);
     }
 
     /**
      * @throws DOMException
      */
-    private function createRootElement(DOMDocument $doc)
+    private function retrieveOrCreateDatabaseElement(DOMDocument $document)
     {
-        if ($doc->firstChild == null) {
-            $database = $doc->createElement("database");
-            $doc->appendChild($database);
+        $databasesNodeList = $document->getElementsByTagName("database");
+        $databaseElement = $databasesNodeList->item(0);
+        if ($databaseElement == null) {
+            $databaseElement = $document->appendChild($document->createElement("database"));
         }
-        return $doc->firstChild;
+        return $databaseElement;
     }
 
     public function getTables()
@@ -47,7 +53,7 @@ class XmlDatabase extends AbstractDatabaseModel
      */
     public function save($filename)
     {
-        $this->root->ownerDocument->save($filename);
+        $this->databaseElement->ownerDocument->save($filename);
     }
 
     protected function collationUnconformity(IDatabaseModel $databaseModel)
@@ -55,7 +61,7 @@ class XmlDatabase extends AbstractDatabaseModel
         $description = "Database collate ({$this->getCollation()}) differs from the model ({$databaseModel->getCollation()})";
         $instructions = new InstructionsList();
         $instructions->add(function () use ($databaseModel) {
-            $this->root->setAttribute("collation", $databaseModel->getCollation());
+            $this->databaseElement->setAttribute("collation", $databaseModel->getCollation());
         });
         return new Unconformity($description, $instructions);
     }

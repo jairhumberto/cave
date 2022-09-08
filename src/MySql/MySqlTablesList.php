@@ -5,7 +5,7 @@ namespace Squille\Cave\MySql;
 use PDO;
 use PDOStatement;
 use Squille\Cave\InstructionsList;
-use Squille\Cave\MOdels\AbstractTableModel;
+use Squille\Cave\Models\AbstractTableModel;
 use Squille\Cave\Models\AbstractTablesListModel;
 use Squille\Cave\Models\ITableModel;
 use Squille\Cave\Unconformity;
