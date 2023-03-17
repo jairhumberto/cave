@@ -6,15 +6,15 @@ use Squille\Cave\ArrayList;
 use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-abstract class AbstractTablesListModel extends ArrayList implements ITablesListModel
+abstract class AbstractTablesListModel extends ArrayList implements TablesListModelInterface
 {
-    public function checkIntegrity(ITablesListModel $tablesListModel)
+    public function checkIntegrity(TablesListModelInterface $tablesListModel)
     {
         return $this->missingTablesUnconformities($tablesListModel)
             ->merge($this->generalTablesUnconformities($tablesListModel));
     }
 
-    private function missingTablesUnconformities(ITablesListModel $tablesListModel)
+    private function missingTablesUnconformities(TablesListModelInterface $tablesListModel)
     {
         $unconformities = new UnconformitiesList();
         foreach ($tablesListModel as $tableModel) {
@@ -30,12 +30,12 @@ abstract class AbstractTablesListModel extends ArrayList implements ITablesListM
     }
 
     /**
-     * @param ITableModel $tableModel
+     * @param TableModelInterface $tableModel
      * @return Unconformity
      */
-    abstract protected function missingTableUnconformity(ITableModel $tableModel);
+    abstract protected function missingTableUnconformity(TableModelInterface $tableModel);
 
-    private function generalTablesUnconformities(ITablesListModel $tablesListModel)
+    private function generalTablesUnconformities(TablesListModelInterface $tablesListModel)
     {
         $unconformities = new UnconformitiesList();
         foreach ($this as $table) {

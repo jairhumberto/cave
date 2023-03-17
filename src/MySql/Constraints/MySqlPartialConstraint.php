@@ -3,10 +3,10 @@
 namespace Squille\Cave\MySql\Constraints;
 
 use PDO;
-use Squille\Cave\Models\IPartialConstraintModel;
+use Squille\Cave\Models\PartialConstraintModelInterface;
 use Squille\Cave\MySql\MySqlTable;
 
-class MySqlPartialConstraint implements IPartialConstraintModel
+class MySqlPartialConstraint implements PartialConstraintModelInterface
 {
     private $pdo;
     private $table;
@@ -52,7 +52,7 @@ class MySqlPartialConstraint implements IPartialConstraintModel
         return $this->table;
     }
 
-    public function equals(IPartialConstraintModel $partialConstraintModel)
+    public function equals(PartialConstraintModelInterface $partialConstraintModel)
     {
         return $partialConstraintModel->getColumn() == $this->getColumn()
             && $partialConstraintModel->getType() == $this->getType();

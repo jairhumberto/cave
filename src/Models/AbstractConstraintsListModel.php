@@ -5,15 +5,15 @@ namespace Squille\Cave\Models;
 use Squille\Cave\ArrayList;
 use Squille\Cave\UnconformitiesList;
 
-abstract class AbstractConstraintsListModel extends ArrayList implements IConstraintsListModel
+abstract class AbstractConstraintsListModel extends ArrayList implements ConstraintsListModelInterface
 {
-    public function checkIntegrity(IConstraintsListModel $constraintsListModel)
+    public function checkIntegrity(ConstraintsListModelInterface $constraintsListModel)
     {
         return $this->missingConstraintsUnconformities($constraintsListModel)
             ->merge($this->generalConstraintsUnconformities($constraintsListModel));
     }
 
-    private function missingConstraintsUnconformities(IConstraintsListModel $constraintsListModel)
+    private function missingConstraintsUnconformities(ConstraintsListModelInterface $constraintsListModel)
     {
         $unconformities = new UnconformitiesList();
         foreach ($constraintsListModel as $constraintModel) {
@@ -28,9 +28,9 @@ abstract class AbstractConstraintsListModel extends ArrayList implements IConstr
         return $unconformities;
     }
 
-    abstract protected function missingConstraintUnconformity(IConstraintModel $constraintModel);
+    abstract protected function missingConstraintUnconformity(ConstraintModelInterface $constraintModel);
 
-    private function generalConstraintsUnconformities(IConstraintsListModel $constraintsListModel)
+    private function generalConstraintsUnconformities(ConstraintsListModelInterface $constraintsListModel)
     {
         $unconformities = new UnconformitiesList();
         foreach ($this as $constraint) {

@@ -5,7 +5,7 @@ namespace Squille\Cave\MySql;
 use PDO;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\MOdels\AbstractTableModel;
-use Squille\Cave\Models\ITableModel;
+use Squille\Cave\Models\TableModelInterface;
 use Squille\Cave\MySql\Constraints\MySqlConstraintsList;
 use Squille\Cave\MySql\Indexes\MySqlIndexesList;
 use Squille\Cave\Unconformity;
@@ -55,7 +55,7 @@ class MySqlTable extends AbstractTableModel
         return $this->Name;
     }
 
-    protected function engineUnconformity(ITableModel $tableModel)
+    protected function engineUnconformity(TableModelInterface $tableModel)
     {
         $description = "alter table $tableModel engine {{$this->getEngine()} -> {$tableModel->getEngine()}}";
         $instructions = new InstructionsList();
@@ -73,7 +73,7 @@ class MySqlTable extends AbstractTableModel
         return $this->Engine;
     }
 
-    protected function rowFormatUnconformity(ITableModel $tableModel)
+    protected function rowFormatUnconformity(TableModelInterface $tableModel)
     {
         $description = "alter table $tableModel row_format {{$this->getRowFormat()} -> {$tableModel->getRowFormat()}}";
         $instructions = new InstructionsList();
@@ -91,7 +91,7 @@ class MySqlTable extends AbstractTableModel
         return $this->Row_format;
     }
 
-    protected function collateUnconformity(ITableModel $tableModel)
+    protected function collateUnconformity(TableModelInterface $tableModel)
     {
         $description = "alter table $tableModel collate {{$this->getCollation()} -> {$tableModel->getCollation()}}";
         $instructions = new InstructionsList();
@@ -109,7 +109,7 @@ class MySqlTable extends AbstractTableModel
         return $this->Collation;
     }
 
-    protected function checksumUnconformity(ITableModel $tableModel)
+    protected function checksumUnconformity(TableModelInterface $tableModel)
     {
         $description = "alter table $tableModel checksum {{$this->getChecksum()} -> {$tableModel->getChecksum()}}";
         $instructions = new InstructionsList();

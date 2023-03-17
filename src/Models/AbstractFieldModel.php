@@ -5,9 +5,9 @@ namespace Squille\Cave\Models;
 use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-abstract class AbstractFieldModel implements IFieldModel
+abstract class AbstractFieldModel implements FieldModelInterface
 {
-    public function checkIntegrity(IFieldModel $fieldModel)
+    public function checkIntegrity(FieldModelInterface $fieldModel)
     {
         $unconformities = new UnconformitiesList();
 
@@ -43,44 +43,44 @@ abstract class AbstractFieldModel implements IFieldModel
     }
 
     /**
-     * @param IFieldModel $fieldModel
+     * @param FieldModelInterface $fieldModel
      * @return Unconformity
      */
-    abstract protected function typeUnconformity(IFieldModel $fieldModel);
+    abstract protected function typeUnconformity(FieldModelInterface $fieldModel);
 
     /**
-     * @param IFieldModel $fieldModel
+     * @param FieldModelInterface $fieldModel
      * @return Unconformity
      */
-    abstract protected function collationUnconformity(IFieldModel $fieldModel);
+    abstract protected function collationUnconformity(FieldModelInterface $fieldModel);
 
     /**
-     * @param IFieldModel $fieldModel
+     * @param FieldModelInterface $fieldModel
      * @return Unconformity
      */
-    abstract protected function nullUnconformity(IFieldModel $fieldModel);
+    abstract protected function nullUnconformity(FieldModelInterface $fieldModel);
 
     /**
-     * @param IFieldModel $fieldModel
+     * @param FieldModelInterface $fieldModel
      * @return Unconformity
      */
-    abstract protected function defaultUnconformity(IFieldModel $fieldModel);
+    abstract protected function defaultUnconformity(FieldModelInterface $fieldModel);
 
     /**
-     * @param IFieldModel $fieldModel
+     * @param FieldModelInterface $fieldModel
      * @return Unconformity
      */
-    abstract protected function extraUnconformity(IFieldModel $fieldModel);
+    abstract protected function extraUnconformity(FieldModelInterface $fieldModel);
 
     /**
-     * @param IFieldModel $fieldModel
+     * @param FieldModelInterface $fieldModel
      * @return Unconformity
      */
-    abstract protected function commentUnconformity(IFieldModel $fieldModel);
+    abstract protected function commentUnconformity(FieldModelInterface $fieldModel);
 
     /**
-     * @param IFieldModel $fieldModel
+     * @param FieldModelInterface $fieldModel
      * @return Unconformity
      */
-    abstract protected function definitionUnconformity(IFieldModel $fieldModel);
+    abstract protected function definitionUnconformity(FieldModelInterface $fieldModel);
 }

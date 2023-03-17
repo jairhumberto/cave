@@ -4,10 +4,10 @@ namespace Squille\Cave\Models;
 
 use Squille\Cave\UnconformitiesList;
 
-interface IFieldModel
+interface FieldModelInterface
 {
     /**
-     * @return ITableModel
+     * @return TableModelInterface
      */
     public function getTable();
 
@@ -52,8 +52,8 @@ interface IFieldModel
     public function getComment();
 
     /**
-     * @param IFieldModel $fieldModel
+     * @param FieldModelInterface $fieldModel
      * @return UnconformitiesList
      */
-    public function checkIntegrity(IFieldModel $fieldModel);
+    public function checkIntegrity(FieldModelInterface $fieldModel);
 }

@@ -5,7 +5,7 @@ namespace Squille\Cave\Xml;
 use PDO;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractConstraintModel;
-use Squille\Cave\Models\IConstraintModel;
+use Squille\Cave\Models\ConstraintModelInterface;
 use Squille\Cave\Unconformity;
 
 class XmlConstraint extends AbstractConstraintModel
@@ -25,7 +25,7 @@ class XmlConstraint extends AbstractConstraintModel
         return $this->table;
     }
 
-    protected function incompatibleConstraintUnconformity(IConstraintModel $constraintModel)
+    protected function incompatibleConstraintUnconformity(ConstraintModelInterface $constraintModel)
     {
         $description = "alter table {$this->getTable()} {$this->dropCommand()}";
         $instructions = new InstructionsList();

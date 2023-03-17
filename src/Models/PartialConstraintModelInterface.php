@@ -2,7 +2,7 @@
 
 namespace Squille\Cave\Models;
 
-interface IPartialConstraintModel
+interface PartialConstraintModelInterface
 {
     /**
      * @return string
@@ -25,8 +25,8 @@ interface IPartialConstraintModel
     public function getTable();
 
     /**
-     * @param IPartialConstraintModel $partialConstraintModel
+     * @param PartialConstraintModelInterface $partialConstraintModel
      * @return bool
      */
-    public function equals(IPartialConstraintModel $partialConstraintModel);
+    public function equals(PartialConstraintModelInterface $partialConstraintModel);
 }

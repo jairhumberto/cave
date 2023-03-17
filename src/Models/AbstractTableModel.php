@@ -5,9 +5,9 @@ namespace Squille\Cave\Models;
 use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-abstract class AbstractTableModel implements ITableModel
+abstract class AbstractTableModel implements TableModelInterface
 {
-    public function checkIntegrity(ITableModel $tableModel)
+    public function checkIntegrity(TableModelInterface $tableModel)
     {
         $unconformities = new UnconformitiesList();
 
@@ -34,26 +34,26 @@ abstract class AbstractTableModel implements ITableModel
     }
 
     /**
-     * @param ITableModel $tableModel
+     * @param TableModelInterface $tableModel
      * @return Unconformity
      */
-    abstract protected function engineUnconformity(ITableModel $tableModel);
+    abstract protected function engineUnconformity(TableModelInterface $tableModel);
 
     /**
-     * @param ITableModel $tableModel
+     * @param TableModelInterface $tableModel
      * @return Unconformity
      */
-    abstract protected function rowFormatUnconformity(ITableModel $tableModel);
+    abstract protected function rowFormatUnconformity(TableModelInterface $tableModel);
 
     /**
-     * @param ITableModel $tableModel
+     * @param TableModelInterface $tableModel
      * @return Unconformity
      */
-    abstract protected function collateUnconformity(ITableModel $tableModel);
+    abstract protected function collateUnconformity(TableModelInterface $tableModel);
 
     /**
-     * @param ITableModel $tableModel
+     * @param TableModelInterface $tableModel
      * @return Unconformity
      */
-    abstract protected function checksumUnconformity(ITableModel $tableModel);
+    abstract protected function checksumUnconformity(TableModelInterface $tableModel);
 }

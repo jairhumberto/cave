@@ -2,10 +2,10 @@
 
 namespace Squille\Cave\Models;
 
-use Squille\Cave\IList;
+use Squille\Cave\ListInterface;
 use Squille\Cave\UnconformitiesList;
 
-interface IIndexModel extends IList
+interface ConstraintModelInterface extends ListInterface
 {
     /**
      * @return string
@@ -18,8 +18,8 @@ interface IIndexModel extends IList
     public function getTable();
 
     /**
-     * @param IIndexModel $indexModel
+     * @param ConstraintModelInterface $constraintModel
      * @return UnconformitiesList
      */
-    public function checkIntegrity(IIndexModel $indexModel);
+    public function checkIntegrity(ConstraintModelInterface $constraintModel);
 }

@@ -5,7 +5,7 @@ namespace Squille\Cave\Xml;
 use DOMElement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\MOdels\AbstractTableModel;
-use Squille\Cave\Models\ITableModel;
+use Squille\Cave\Models\TableModelInterface;
 use Squille\Cave\Unconformity;
 
 class XmlTable extends AbstractTableModel
@@ -71,7 +71,7 @@ class XmlTable extends AbstractTableModel
         return $this->indexes;
     }
 
-    protected function engineUnconformity(ITableModel $tableModel)
+    protected function engineUnconformity(TableModelInterface $tableModel)
     {
         $description = "alter table $tableModel engine {{$this->getEngine()} -> {$tableModel->getEngine()}}";
         $instructions = new InstructionsList();
@@ -94,7 +94,7 @@ class XmlTable extends AbstractTableModel
         $this->engine = $engine;
     }
 
-    protected function rowFormatUnconformity(ITableModel $tableModel)
+    protected function rowFormatUnconformity(TableModelInterface $tableModel)
     {
         $description = "alter table $tableModel row_format {{$this->getRowFormat()} -> {$tableModel->getRowFormat()}}";
         $instructions = new InstructionsList();
@@ -117,7 +117,7 @@ class XmlTable extends AbstractTableModel
         $this->rowFormat = $rowFormat;
     }
 
-    protected function collateUnconformity(ITableModel $tableModel)
+    protected function collateUnconformity(TableModelInterface $tableModel)
     {
         $description = "alter table $tableModel collation {{$this->getCollation()} -> {$tableModel->getCollation()}}";
         $instructions = new InstructionsList();
@@ -140,7 +140,7 @@ class XmlTable extends AbstractTableModel
         $this->collation = $collation;
     }
 
-    protected function checksumUnconformity(ITableModel $tableModel)
+    protected function checksumUnconformity(TableModelInterface $tableModel)
     {
         $description = "alter table $tableModel checksum {{$this->getChecksum()} -> {$tableModel->getChecksum()}}";
         $instructions = new InstructionsList();

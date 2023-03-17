@@ -4,7 +4,7 @@ namespace Squille\Cave\Models;
 
 use Squille\Cave\UnconformitiesList;
 
-interface IDatabaseModel
+interface DatabaseModelInterface
 {
     /**
      * @return string
@@ -12,13 +12,13 @@ interface IDatabaseModel
     public function getCollation();
 
     /**
-     * @return ITablesListModel
+     * @return TablesListModelInterface
      */
     public function getTables();
 
     /**
-     * @param IDatabaseModel $databaseModel
+     * @param DatabaseModelInterface $databaseModel
      * @return UnconformitiesList
      */
-    public function checkIntegrity(IDatabaseModel $databaseModel);
+    public function checkIntegrity(DatabaseModelInterface $databaseModel);
 }

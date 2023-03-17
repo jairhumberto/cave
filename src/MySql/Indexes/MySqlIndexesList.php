@@ -7,7 +7,7 @@ use PDOStatement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractIndexesListModel;
 use Squille\Cave\Models\AbstractIndexModel;
-use Squille\Cave\Models\IIndexModel;
+use Squille\Cave\Models\IndexModelInterface;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\Unconformity;
 
@@ -78,7 +78,7 @@ class MySqlIndexesList extends AbstractIndexesListModel
         return $groups;
     }
 
-    protected function missingIndexUnconformity(IIndexModel $indexModel)
+    protected function missingIndexUnconformity(IndexModelInterface $indexModel)
     {
         $description = "alter table {$this->getTable()} add {$indexModel->getName()}";
         $instructions = new InstructionsList();

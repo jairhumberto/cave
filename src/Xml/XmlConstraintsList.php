@@ -9,7 +9,7 @@ use PDOStatement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractConstraintModel;
 use Squille\Cave\Models\AbstractConstraintsListModel;
-use Squille\Cave\Models\IConstraintModel;
+use Squille\Cave\Models\ConstraintModelInterface;
 use Squille\Cave\Unconformity;
 
 class XmlConstraintsList extends AbstractConstraintsListModel
@@ -107,7 +107,7 @@ class XmlConstraintsList extends AbstractConstraintsListModel
         return $groups;
     }
 
-    protected function missingConstraintUnconformity(IConstraintModel $constraintModel)
+    protected function missingConstraintUnconformity(ConstraintModelInterface $constraintModel)
     {
         $description = "alter table {$this->getTable()} add {$constraintModel->getName()}";
         $instructions = new InstructionsList();

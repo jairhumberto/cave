@@ -4,7 +4,7 @@ namespace Squille\Cave;
 
 use Iterator;
 
-interface IList
+interface ListInterface
 {
     /**
      * @param mixed $item

@@ -5,7 +5,7 @@ namespace Squille\Cave\Xml;
 use DOMElement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractFieldModel;
-use Squille\Cave\Models\IFieldModel;
+use Squille\Cave\Models\FieldModelInterface;
 use Squille\Cave\Unconformity;
 
 class XmlField extends AbstractFieldModel
@@ -197,7 +197,7 @@ class XmlField extends AbstractFieldModel
         $this->field = $field;
     }
 
-    protected function typeUnconformity(IFieldModel $fieldModel)
+    protected function typeUnconformity(FieldModelInterface $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} type {{$this->getType()} -> {$fieldModel->getType()}}";
         return new Unconformity($description);
@@ -208,37 +208,37 @@ class XmlField extends AbstractFieldModel
         return $this->table;
     }
 
-    protected function collationUnconformity(IFieldModel $fieldModel)
+    protected function collationUnconformity(FieldModelInterface $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} collate {{$this->getCollation()} -> {$fieldModel->getCollation()}}";
         return new Unconformity($description);
     }
 
-    protected function nullUnconformity(IFieldModel $fieldModel)
+    protected function nullUnconformity(FieldModelInterface $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} null {{$this->getNull()} -> {$fieldModel->getNull()}}";
         return new Unconformity($description);
     }
 
-    protected function defaultUnconformity(IFieldModel $fieldModel)
+    protected function defaultUnconformity(FieldModelInterface $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} default {'{$this->getDefault()}' -> '{$fieldModel->getDefault()}'}";
         return new Unconformity($description);
     }
 
-    protected function extraUnconformity(IFieldModel $fieldModel)
+    protected function extraUnconformity(FieldModelInterface $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} extra {{$this->getExtra()} -> {$fieldModel->getExtra()}}";
         return new Unconformity($description);
     }
 
-    protected function commentUnconformity(IFieldModel $fieldModel)
+    protected function commentUnconformity(FieldModelInterface $fieldModel)
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} comment {'{$this->getComment()}' -> '{$fieldModel->getComment()}'}";
         return new Unconformity($description);
     }
 
-    protected function definitionUnconformity(IFieldModel $fieldModel)
+    protected function definitionUnconformity(FieldModelInterface $fieldModel)
     {
         $instructions = new InstructionsList();
         $instructions->add(function () use ($fieldModel) {
