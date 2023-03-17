@@ -3,11 +3,9 @@
 namespace Squille\Cave\MySql\Indexes;
 
 use PDO;
-use Squille\Cave\ArrayList;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractIndexModel;
 use Squille\Cave\Models\IIndexModel;
-use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
 abstract class AbstractMySqlIndex extends AbstractIndexModel

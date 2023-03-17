@@ -2,13 +2,8 @@
 
 namespace Squille\Cave\Models;
 
-use PDO;
-use PDOStatement;
 use Squille\Cave\ArrayList;
-use Squille\Cave\InstructionsList;
-use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\UnconformitiesList;
-use Squille\Cave\Unconformity;
 
 abstract class AbstractConstraintsListModel extends ArrayList implements IConstraintsListModel
 {
