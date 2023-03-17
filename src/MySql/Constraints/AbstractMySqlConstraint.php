@@ -5,7 +5,7 @@ namespace Squille\Cave\MySql\Constraints;
 use PDO;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractConstraintModel;
-use Squille\Cave\Models\IConstraintModel;
+use Squille\Cave\Models\ConstraintModelInterface;
 use Squille\Cave\Unconformity;
 
 abstract class AbstractMySqlConstraint extends AbstractConstraintModel
@@ -25,7 +25,7 @@ abstract class AbstractMySqlConstraint extends AbstractConstraintModel
         return $this->table;
     }
 
-    protected function incompatibleConstraintUnconformity(IConstraintModel $constraintModel)
+    protected function incompatibleConstraintUnconformity(ConstraintModelInterface $constraintModel)
     {
         $description = "alter table {$this->getTable()} {$this->dropCommand()}";
         $instructions = new InstructionsList();

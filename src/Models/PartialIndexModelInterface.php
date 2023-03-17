@@ -2,7 +2,7 @@
 
 namespace Squille\Cave\Models;
 
-interface IPartialIndexModel
+interface PartialIndexModelInterface
 {
     /**
      * @return string
@@ -25,8 +25,8 @@ interface IPartialIndexModel
     public function getTable();
 
     /**
-     * @param IPartialIndexModel $partialIndexModel
+     * @param PartialIndexModelInterface $partialIndexModel
      * @return bool
      */
-    public function equals(IPartialIndexModel $partialIndexModel);
+    public function equals(PartialIndexModelInterface $partialIndexModel);
 }

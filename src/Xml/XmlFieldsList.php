@@ -7,7 +7,7 @@ use DOMNode;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractFieldModel;
 use Squille\Cave\Models\AbstractFieldsListModel;
-use Squille\Cave\Models\IFieldModel;
+use Squille\Cave\Models\FieldModelInterface;
 use Squille\Cave\Unconformity;
 
 class XmlFieldsList extends AbstractFieldsListModel
@@ -59,7 +59,7 @@ class XmlFieldsList extends AbstractFieldsListModel
         return $fields;
     }
 
-    protected function missingFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
+    protected function missingFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel)
     {
         $description = "alter table {$currentFieldModel->getTable()} add {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();
@@ -96,7 +96,7 @@ class XmlFieldsList extends AbstractFieldsListModel
         return new Unconformity($description, $instructions);
     }
 
-    protected function orderFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
+    protected function orderFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel)
     {
         $description = "alter table {$currentFieldModel->getTable()} modify {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();

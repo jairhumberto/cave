@@ -4,7 +4,7 @@ namespace Squille\Cave\Models;
 
 use Squille\Cave\UnconformitiesList;
 
-interface ITableModel
+interface TableModelInterface
 {
     /**
      * @return string
@@ -32,23 +32,23 @@ interface ITableModel
     public function getChecksum();
 
     /**
-     * @return IFieldsListModel
+     * @return FieldsListModelInterface
      */
     public function getFields();
 
     /**
-     * @return IConstraintsListModel
+     * @return ConstraintsListModelInterface
      */
     public function getConstraints();
 
     /**
-     * @return IIndexesListModel
+     * @return IndexesListModelInterface
      */
     public function getIndexes();
 
     /**
-     * @param ITableModel $tableModel
+     * @param TableModelInterface $tableModel
      * @return UnconformitiesList
      */
-    public function checkIntegrity(ITableModel $tableModel);
+    public function checkIntegrity(TableModelInterface $tableModel);
 }

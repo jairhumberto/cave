@@ -7,7 +7,7 @@ use DOMNode;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\MOdels\AbstractTableModel;
 use Squille\Cave\Models\AbstractTablesListModel;
-use Squille\Cave\Models\ITableModel;
+use Squille\Cave\Models\TableModelInterface;
 use Squille\Cave\Unconformity;
 
 class XmlTablesList extends AbstractTablesListModel
@@ -57,7 +57,7 @@ class XmlTablesList extends AbstractTablesListModel
         return $tables;
     }
 
-    protected function missingTableUnconformity(ITableModel $tableModel)
+    protected function missingTableUnconformity(TableModelInterface $tableModel)
     {
         $description = "create table {$tableModel->getName()}";
         $instructions = new InstructionsList();

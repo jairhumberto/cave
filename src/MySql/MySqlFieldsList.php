@@ -7,7 +7,7 @@ use PDOStatement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractFieldModel;
 use Squille\Cave\Models\AbstractFieldsListModel;
-use Squille\Cave\Models\IFieldModel;
+use Squille\Cave\Models\FieldModelInterface;
 use Squille\Cave\Unconformity;
 
 class MySqlFieldsList extends AbstractFieldsListModel
@@ -39,7 +39,7 @@ class MySqlFieldsList extends AbstractFieldsListModel
         return $this->table;
     }
 
-    protected function missingFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
+    protected function missingFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel)
     {
         $description = "alter table {$currentFieldModel->getTable()} add {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();
@@ -66,7 +66,7 @@ class MySqlFieldsList extends AbstractFieldsListModel
         return new Unconformity($description, $instructions);
     }
 
-    protected function orderFieldUnconformity(IFieldModel $currentFieldModel, IFieldModel $previousFieldModel)
+    protected function orderFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel)
     {
         $description = "alter table {$currentFieldModel->getTable()} modify {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();

@@ -3,10 +3,10 @@
 namespace Squille\Cave\MySql\Indexes;
 
 use PDO;
-use Squille\Cave\Models\IPartialIndexModel;
+use Squille\Cave\Models\PartialIndexModelInterface;
 use Squille\Cave\MySql\MySqlTable;
 
-class MySqlPartialIndex implements IPartialIndexModel
+class MySqlPartialIndex implements PartialIndexModelInterface
 {
     private $pdo;
     private $table;
@@ -52,7 +52,7 @@ class MySqlPartialIndex implements IPartialIndexModel
         return $this->table;
     }
 
-    public function equals(IPartialIndexModel $partialIndexModel)
+    public function equals(PartialIndexModelInterface $partialIndexModel)
     {
         return $partialIndexModel->getColumn() == $this->getColumn()
             && $partialIndexModel->getType() == $this->getType();

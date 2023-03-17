@@ -4,7 +4,7 @@ namespace Squille\Cave;
 
 use Iterator;
 
-abstract class ArrayList implements Iterator, IList
+abstract class ArrayList implements Iterator, ListInterface
 {
     private $index;
     private $items;

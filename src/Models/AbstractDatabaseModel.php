@@ -5,9 +5,9 @@ namespace Squille\Cave\Models;
 use Squille\Cave\UnconformitiesList;
 use Squille\Cave\Unconformity;
 
-abstract class AbstractDatabaseModel implements IDatabaseModel
+abstract class AbstractDatabaseModel implements DatabaseModelInterface
 {
-    public function checkIntegrity(IDatabaseModel $databaseModel)
+    public function checkIntegrity(DatabaseModelInterface $databaseModel)
     {
         $unconformities = new UnconformitiesList();
         if ($this->getCollation() != $databaseModel->getCollation()) {
@@ -17,8 +17,8 @@ abstract class AbstractDatabaseModel implements IDatabaseModel
     }
 
     /**
-     * @param IDatabaseModel $databaseModel
+     * @param DatabaseModelInterface $databaseModel
      * @return Unconformity
      */
-    abstract protected function collationUnconformity(IDatabaseModel $databaseModel);
+    abstract protected function collationUnconformity(DatabaseModelInterface $databaseModel);
 }

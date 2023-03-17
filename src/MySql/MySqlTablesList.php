@@ -7,7 +7,7 @@ use PDOStatement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractTableModel;
 use Squille\Cave\Models\AbstractTablesListModel;
-use Squille\Cave\Models\ITableModel;
+use Squille\Cave\Models\TableModelInterface;
 use Squille\Cave\Unconformity;
 
 class MySqlTablesList extends AbstractTablesListModel
@@ -32,7 +32,7 @@ class MySqlTablesList extends AbstractTablesListModel
         }
     }
 
-    protected function missingTableUnconformity(ITableModel $tableModel)
+    protected function missingTableUnconformity(TableModelInterface $tableModel)
     {
         $description = "create table {$tableModel->getName()}";
         $instructions = new InstructionsList();
@@ -50,7 +50,7 @@ class MySqlTablesList extends AbstractTablesListModel
         return new Unconformity($description, $instructions);
     }
 
-    private function getTableOptions(ITableModel $modelTable)
+    private function getTableOptions(TableModelInterface $modelTable)
     {
         $tableOptionsArray = [
             "ENGINE {$modelTable->getEngine()}",

@@ -7,7 +7,7 @@ use DOMElement;
 use DOMException;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractDatabaseModel;
-use Squille\Cave\Models\IDatabaseModel;
+use Squille\Cave\Models\DatabaseModelInterface;
 use Squille\Cave\Unconformity;
 
 class XmlDatabase extends AbstractDatabaseModel
@@ -56,7 +56,7 @@ class XmlDatabase extends AbstractDatabaseModel
         $this->databaseElement->ownerDocument->save($filename);
     }
 
-    protected function collationUnconformity(IDatabaseModel $databaseModel)
+    protected function collationUnconformity(DatabaseModelInterface $databaseModel)
     {
         $description = "Database collate ({$this->getCollation()}) differs from the model ({$databaseModel->getCollation()})";
         $instructions = new InstructionsList();
