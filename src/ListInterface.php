@@ -4,7 +4,7 @@ namespace Squille\Cave;
 
 use Iterator;
 
-interface ListInterface
+interface ListInterface extends Iterator
 {
     /**
      * @param mixed $item
@@ -28,7 +28,7 @@ interface ListInterface
     public function get($index);
 
     /**
-     * @param Iterator $list
+     * @param ListInterface $list
      */
     public function merge($list);
 
