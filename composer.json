@@ -22,5 +22,11 @@
             "Squille\\Cave\\": "src/"
         }
     },
-    "bin": ["bin/cave"]
+    "bin": ["bin/cave"],
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit"
+    }
 }
