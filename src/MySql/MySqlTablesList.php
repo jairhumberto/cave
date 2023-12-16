@@ -32,7 +32,7 @@ class MySqlTablesList extends AbstractTablesListModel
         }
     }
 
-    protected function missingTableUnconformity(TableModelInterface $tableModel)
+    protected function missingTableUnconformity(TableModelInterface $tableModel): Unconformity
     {
         $description = "create table {$tableModel->getName()}";
         $instructions = new InstructionsList();
@@ -50,7 +50,7 @@ class MySqlTablesList extends AbstractTablesListModel
         return new Unconformity($description, $instructions);
     }
 
-    private function getTableOptions(TableModelInterface $tableModel)
+    private function getTableOptions(TableModelInterface $tableModel): string
     {
         $tableOptionsArray = [
             "ENGINE {$tableModel->getEngine()}",
@@ -63,7 +63,7 @@ class MySqlTablesList extends AbstractTablesListModel
         return join(",", $tableOptionsArray);
     }
 
-    protected function exceedingTableUnconformity(AbstractTableModel $table)
+    protected function exceedingTableUnconformity(AbstractTableModel $table): Unconformity
     {
         $description = "drop table {$table->getName()}";
         $instructions = new InstructionsList();

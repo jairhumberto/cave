@@ -4,16 +4,17 @@ namespace Squille\Cave\Models;
 
 use Squille\Cave\ArrayList;
 use Squille\Cave\UnconformitiesList;
+use Squille\Cave\Unconformity;
 
 abstract class AbstractConstraintsListModel extends ArrayList implements ConstraintsListModelInterface
 {
-    public function checkIntegrity(ConstraintsListModelInterface $constraintsListModel)
+    public function checkIntegrity(ConstraintsListModelInterface $constraintsListModel): UnconformitiesList
     {
         return $this->missingConstraintsUnconformities($constraintsListModel)
             ->merge($this->generalConstraintsUnconformities($constraintsListModel));
     }
 
-    private function missingConstraintsUnconformities(ConstraintsListModelInterface $constraintsListModel)
+    private function missingConstraintsUnconformities(ConstraintsListModelInterface $constraintsListModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         foreach ($constraintsListModel as $constraintModel) {
@@ -28,9 +29,9 @@ abstract class AbstractConstraintsListModel extends ArrayList implements Constra
         return $unconformities;
     }
 
-    abstract protected function missingConstraintUnconformity(ConstraintModelInterface $constraintModel);
+    abstract protected function missingConstraintUnconformity(ConstraintModelInterface $constraintModel): Unconformity;
 
-    private function generalConstraintsUnconformities(ConstraintsListModelInterface $constraintsListModel)
+    private function generalConstraintsUnconformities(ConstraintsListModelInterface $constraintsListModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         foreach ($this as $constraint) {
@@ -47,5 +48,5 @@ abstract class AbstractConstraintsListModel extends ArrayList implements Constra
         return $unconformities;
     }
 
-    abstract protected function exceedingConstraintUnconformity(AbstractConstraintModel $mySqlConstraint);
+    abstract protected function exceedingConstraintUnconformity(AbstractConstraintModel $mySqlConstraint): Unconformity;
 }

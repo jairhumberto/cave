@@ -16,7 +16,7 @@ class MySqlUniqueKey extends AbstractMySqlConstraint
         parent::__construct($pdo, $partialConstraints);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -26,7 +26,7 @@ class MySqlUniqueKey extends AbstractMySqlConstraint
         return sprintf("UNIQUE KEY %s USING %s (%s)", $this->name, $this->type, parent::__toString());
     }
 
-    public function dropCommand()
+    public function dropCommand(): string
     {
         return "DROP KEY {$this->getName()}";
     }

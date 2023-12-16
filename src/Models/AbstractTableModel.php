@@ -7,7 +7,7 @@ use Squille\Cave\Unconformity;
 
 abstract class AbstractTableModel implements TableModelInterface
 {
-    public function checkIntegrity(TableModelInterface $tableModel)
+    public function checkIntegrity(TableModelInterface $tableModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
 
@@ -33,27 +33,8 @@ abstract class AbstractTableModel implements TableModelInterface
             ->merge($this->getIndexes()->checkIntegrity($tableModel->getIndexes()));
     }
 
-    /**
-     * @param TableModelInterface $tableModel
-     * @return Unconformity
-     */
-    abstract protected function engineUnconformity(TableModelInterface $tableModel);
-
-    /**
-     * @param TableModelInterface $tableModel
-     * @return Unconformity
-     */
-    abstract protected function rowFormatUnconformity(TableModelInterface $tableModel);
-
-    /**
-     * @param TableModelInterface $tableModel
-     * @return Unconformity
-     */
-    abstract protected function collateUnconformity(TableModelInterface $tableModel);
-
-    /**
-     * @param TableModelInterface $tableModel
-     * @return Unconformity
-     */
-    abstract protected function checksumUnconformity(TableModelInterface $tableModel);
+    abstract protected function engineUnconformity(TableModelInterface $tableModel): Unconformity;
+    abstract protected function rowFormatUnconformity(TableModelInterface $tableModel): Unconformity;
+    abstract protected function collateUnconformity(TableModelInterface $tableModel): Unconformity;
+    abstract protected function checksumUnconformity(TableModelInterface $tableModel): Unconformity;
 }

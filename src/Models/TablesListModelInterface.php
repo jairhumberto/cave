@@ -7,9 +7,5 @@ use Squille\Cave\UnconformitiesList;
 
 interface TablesListModelInterface extends ListInterface
 {
-    /**
-     * @param TablesListModelInterface $tablesListModel
-     * @return UnconformitiesList
-     */
-    public function checkIntegrity(TablesListModelInterface $tablesListModel);
+    public function checkIntegrity(TablesListModelInterface $tablesListModel): UnconformitiesList;
 }

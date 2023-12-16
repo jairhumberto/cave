@@ -20,12 +20,12 @@ abstract class AbstractMySqlConstraint extends AbstractConstraintModel
         parent::__construct($partialConstraints);
     }
 
-    public function getTable()
+    public function getTable(): string
     {
         return $this->table;
     }
 
-    protected function incompatibleConstraintUnconformity(ConstraintModelInterface $constraintModel)
+    protected function incompatibleConstraintUnconformity(ConstraintModelInterface $constraintModel): Unconformity
     {
         $description = "alter table {$this->getTable()} {$this->dropCommand()}";
         $instructions = new InstructionsList();
@@ -38,8 +38,5 @@ abstract class AbstractMySqlConstraint extends AbstractConstraintModel
         return new Unconformity($description, $instructions);
     }
 
-    /**
-     * @return string
-     */
-    abstract public function dropCommand();
+    abstract public function dropCommand(): string;
 }

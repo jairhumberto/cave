@@ -20,10 +20,7 @@ class MySqlPartialConstraint implements PartialConstraintModelInterface
         $this->table = $table;
     }
 
-    /**
-     * @return string
-     */
-    public static function selectExpressions()
+    public static function selectExpressions(): string
     {
         $allKeys = array_keys(get_class_vars(MySqlPartialConstraint::class));
         $properties = array_filter($allKeys, function ($item) {
@@ -32,7 +29,7 @@ class MySqlPartialConstraint implements PartialConstraintModelInterface
         return join(",", $properties);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->index_name;
     }
@@ -42,23 +39,23 @@ class MySqlPartialConstraint implements PartialConstraintModelInterface
         return $this->getColumn();
     }
 
-    public function getColumn()
+    public function getColumn(): string
     {
         return $this->column_name;
     }
 
-    public function getTable()
+    public function getTable(): string
     {
         return $this->table;
     }
 
-    public function equals(PartialConstraintModelInterface $partialConstraintModel)
+    public function equals(PartialConstraintModelInterface $partialConstraintModel): bool
     {
         return $partialConstraintModel->getColumn() == $this->getColumn()
             && $partialConstraintModel->getType() == $this->getType();
     }
 
-    public function getType()
+    public function getType(): string
     {
         return $this->index_type;
     }

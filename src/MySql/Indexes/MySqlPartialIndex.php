@@ -20,10 +20,7 @@ class MySqlPartialIndex implements PartialIndexModelInterface
         $this->table = $table;
     }
 
-    /**
-     * @return string
-     */
-    public static function selectExpressions()
+    public static function selectExpressions(): string
     {
         $allKeys = array_keys(get_class_vars(MySqlPartialIndex::class));
         $properties = array_filter($allKeys, function ($item) {
@@ -37,28 +34,28 @@ class MySqlPartialIndex implements PartialIndexModelInterface
         return $this->getColumn();
     }
 
-    public function getColumn()
+    public function getColumn(): string
     {
         return $this->column_name;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->index_name;
     }
 
-    public function getTable()
+    public function getTable(): string
     {
         return $this->table;
     }
 
-    public function equals(PartialIndexModelInterface $partialIndexModel)
+    public function equals(PartialIndexModelInterface $partialIndexModel): bool
     {
         return $partialIndexModel->getColumn() == $this->getColumn()
             && $partialIndexModel->getType() == $this->getType();
     }
 
-    public function getType()
+    public function getType(): string
     {
         return $this->index_type;
     }

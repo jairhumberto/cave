@@ -5,6 +5,9 @@ namespace Squille\Cave\MySql;
 use PDO;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\MOdels\AbstractTableModel;
+use Squille\Cave\Models\ConstraintsListModelInterface;
+use Squille\Cave\Models\FieldsListModelInterface;
+use Squille\Cave\Models\IndexesListModelInterface;
 use Squille\Cave\Models\TableModelInterface;
 use Squille\Cave\MySql\Constraints\MySqlConstraintsList;
 use Squille\Cave\MySql\Indexes\MySqlIndexesList;
@@ -30,17 +33,17 @@ class MySqlTable extends AbstractTableModel
         $this->indexes = new MySqlIndexesList($this->pdo, $this);
     }
 
-    public function getFields()
+    public function getFields(): FieldsListModelInterface
     {
         return $this->fields;
     }
 
-    public function getConstraints()
+    public function getConstraints(): ConstraintsListModelInterface
     {
         return $this->constraints;
     }
 
-    public function getIndexes()
+    public function getIndexes(): IndexesListModelInterface
     {
         return $this->indexes;
     }
@@ -50,12 +53,12 @@ class MySqlTable extends AbstractTableModel
         return $this->getName();
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->Name;
     }
 
-    protected function engineUnconformity(TableModelInterface $tableModel)
+    protected function engineUnconformity(TableModelInterface $tableModel): Unconformity
     {
         $description = "alter table $tableModel engine {{$this->getEngine()} -> {$tableModel->getEngine()}}";
         $instructions = new InstructionsList();
@@ -68,12 +71,12 @@ class MySqlTable extends AbstractTableModel
         return new Unconformity($description, $instructions);
     }
 
-    public function getEngine()
+    public function getEngine(): string
     {
         return $this->Engine;
     }
 
-    protected function rowFormatUnconformity(TableModelInterface $tableModel)
+    protected function rowFormatUnconformity(TableModelInterface $tableModel): Unconformity
     {
         $description = "alter table $tableModel row_format {{$this->getRowFormat()} -> {$tableModel->getRowFormat()}}";
         $instructions = new InstructionsList();
@@ -86,12 +89,12 @@ class MySqlTable extends AbstractTableModel
         return new Unconformity($description, $instructions);
     }
 
-    public function getRowFormat()
+    public function getRowFormat(): string
     {
         return $this->Row_format;
     }
 
-    protected function collateUnconformity(TableModelInterface $tableModel)
+    protected function collateUnconformity(TableModelInterface $tableModel): Unconformity
     {
         $description = "alter table $tableModel collate {{$this->getCollation()} -> {$tableModel->getCollation()}}";
         $instructions = new InstructionsList();
@@ -104,12 +107,12 @@ class MySqlTable extends AbstractTableModel
         return new Unconformity($description, $instructions);
     }
 
-    public function getCollation()
+    public function getCollation(): string
     {
         return $this->Collation;
     }
 
-    protected function checksumUnconformity(TableModelInterface $tableModel)
+    protected function checksumUnconformity(TableModelInterface $tableModel): Unconformity
     {
         $description = "alter table $tableModel checksum {{$this->getChecksum()} -> {$tableModel->getChecksum()}}";
         $instructions = new InstructionsList();
@@ -122,7 +125,7 @@ class MySqlTable extends AbstractTableModel
         return new Unconformity($description, $instructions);
     }
 
-    public function getChecksum()
+    public function getChecksum(): string
     {
         return $this->Checksum;
     }

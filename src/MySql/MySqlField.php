@@ -6,6 +6,7 @@ use PDO;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractFieldModel;
 use Squille\Cave\Models\FieldModelInterface;
+use Squille\Cave\Models\TableModelInterface;
 use Squille\Cave\Unconformity;
 
 class MySqlField extends AbstractFieldModel
@@ -27,7 +28,7 @@ class MySqlField extends AbstractFieldModel
         $this->table = $table;
     }
 
-    public function getKey()
+    public function getKey(): string
     {
         return $this->Key;
     }
@@ -38,7 +39,7 @@ class MySqlField extends AbstractFieldModel
         return "`{$this->getField()}` $columnDefinition";
     }
 
-    private function getColumnDefinition()
+    private function getColumnDefinition(): string
     {
         $columnDefinition = [$this->getType()];
         if ($this->getNull() == "YES") {
@@ -74,88 +75,88 @@ class MySqlField extends AbstractFieldModel
         return $default;
     }
 
-    private function defaultIsFunction()
+    private function defaultIsFunction(): bool
     {
         return substr($this->getDefault(), -1) == ")";
     }
 
-    protected function typeUnconformity(FieldModelInterface $fieldModel)
+    protected function typeUnconformity(FieldModelInterface $fieldModel): Unconformity
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} type {{$this->getType()} -> {$fieldModel->getType()}}";
         return new Unconformity($description);
     }
 
-    public function getTable()
+    public function getTable(): TableModelInterface
     {
         return $this->table;
     }
 
-    public function getField()
+    public function getField(): string
     {
         return $this->Field;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return $this->Type;
     }
 
-    protected function collationUnconformity(FieldModelInterface $fieldModel)
+    protected function collationUnconformity(FieldModelInterface $fieldModel): Unconformity
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} collate {{$this->getCollation()} -> {$fieldModel->getCollation()}}";
         return new Unconformity($description);
     }
 
-    public function getCollation()
+    public function getCollation(): string
     {
         return $this->Collation;
     }
 
-    protected function nullUnconformity(FieldModelInterface $fieldModel)
+    protected function nullUnconformity(FieldModelInterface $fieldModel): Unconformity
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} null {{$this->getNull()} -> {$fieldModel->getNull()}}";
         return new Unconformity($description);
     }
 
-    public function getNull()
+    public function getNull(): string
     {
         return $this->Null;
     }
 
-    protected function defaultUnconformity(FieldModelInterface $fieldModel)
+    protected function defaultUnconformity(FieldModelInterface $fieldModel): Unconformity
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} default {'{$this->getDefault()}' -> '{$fieldModel->getDefault()}'}";
         return new Unconformity($description);
     }
 
-    public function getDefault()
+    public function getDefault(): string
     {
         return $this->Default;
     }
 
-    protected function extraUnconformity(FieldModelInterface $fieldModel)
+    protected function extraUnconformity(FieldModelInterface $fieldModel): Unconformity
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} extra {{$this->getExtra()} -> {$fieldModel->getExtra()}}";
         return new Unconformity($description);
     }
 
-    public function getExtra()
+    public function getExtra(): string
     {
         return $this->Extra;
     }
 
-    protected function commentUnconformity(FieldModelInterface $fieldModel)
+    protected function commentUnconformity(FieldModelInterface $fieldModel): Unconformity
     {
         $description = "alter table {$fieldModel->getTable()} modify {$fieldModel->getField()} comment {'{$this->getComment()}' -> '{$fieldModel->getComment()}'}";
         return new Unconformity($description);
     }
 
-    public function getComment()
+    public function getComment(): string
     {
         return $this->Comment;
     }
 
-    protected function definitionUnconformity(FieldModelInterface $fieldModel)
+    protected function definitionUnconformity(FieldModelInterface $fieldModel): Unconformity
     {
         $instructions = new InstructionsList();
         $instructions->add(function () use ($fieldModel) {

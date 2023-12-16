@@ -11,30 +11,20 @@ interface ListInterface extends Iterator
      */
     public function add($item);
 
-    /**
-     * @return bool
-     */
-    public function any();
-
-    /**
-     * @return int
-     */
-    public function count();
+    public function any(): bool;
+    public function count(): int;
 
     /**
      * @param int $index
      * @return mixed
      */
-    public function get($index);
+    public function get(int $index);
 
-    /**
-     * @param ListInterface $list
-     */
-    public function merge($list);
+    public function merge(ListInterface $list): ListInterface;
 
     /**
      * @param callable $condition
      * @return mixed
      */
-    public function search($condition);
+    public function search(callable $condition);
 }

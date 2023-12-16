@@ -8,13 +8,13 @@ use Squille\Cave\Unconformity;
 
 abstract class AbstractTablesListModel extends ArrayList implements TablesListModelInterface
 {
-    public function checkIntegrity(TablesListModelInterface $tablesListModel)
+    public function checkIntegrity(TablesListModelInterface $tablesListModel): UnconformitiesList
     {
         return $this->missingTablesUnconformities($tablesListModel)
             ->merge($this->generalTablesUnconformities($tablesListModel));
     }
 
-    private function missingTablesUnconformities(TablesListModelInterface $tablesListModel)
+    private function missingTablesUnconformities(TablesListModelInterface $tablesListModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         foreach ($tablesListModel as $tableModel) {
@@ -29,13 +29,9 @@ abstract class AbstractTablesListModel extends ArrayList implements TablesListMo
         return $unconformities;
     }
 
-    /**
-     * @param TableModelInterface $tableModel
-     * @return Unconformity
-     */
-    abstract protected function missingTableUnconformity(TableModelInterface $tableModel);
+    abstract protected function missingTableUnconformity(TableModelInterface $tableModel): Unconformity;
 
-    private function generalTablesUnconformities(TablesListModelInterface $tablesListModel)
+    private function generalTablesUnconformities(TablesListModelInterface $tablesListModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         foreach ($this as $table) {
@@ -52,9 +48,5 @@ abstract class AbstractTablesListModel extends ArrayList implements TablesListMo
         return $unconformities;
     }
 
-    /**
-     * @param AbstractTableModel $table
-     * @return Unconformity
-     */
-    abstract protected function exceedingTableUnconformity(AbstractTableModel $table);
+    abstract protected function exceedingTableUnconformity(AbstractTableModel $table): Unconformity;
 }

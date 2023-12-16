@@ -8,6 +8,7 @@ use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractIndexesListModel;
 use Squille\Cave\Models\AbstractIndexModel;
 use Squille\Cave\Models\IndexModelInterface;
+use Squille\Cave\Models\TableModelInterface;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\Unconformity;
 
@@ -23,7 +24,7 @@ class MySqlIndexesList extends AbstractIndexesListModel
         parent::__construct($this->retrieveIndexes());
     }
 
-    private function retrieveIndexes()
+    private function retrieveIndexes(): array
     {
         try {
             $selectExpressions = MySqlPartialIndex::selectExpressions() ?: "*";
@@ -51,12 +52,12 @@ class MySqlIndexesList extends AbstractIndexesListModel
         }
     }
 
-    public function getTable()
+    public function getTable(): TableModelInterface
     {
         return $this->table;
     }
 
-    private function groupIndexes(array $partialIndexes)
+    private function groupIndexes(array $partialIndexes): array
     {
         $keys = [];
         $groups = $this->groupPartialIndexes($partialIndexes);
@@ -66,7 +67,7 @@ class MySqlIndexesList extends AbstractIndexesListModel
         return $keys;
     }
 
-    private function groupPartialIndexes(array $partialIndexes)
+    private function groupPartialIndexes(array $partialIndexes): array
     {
         $groups = [];
         foreach ($partialIndexes as $part) {
@@ -78,7 +79,7 @@ class MySqlIndexesList extends AbstractIndexesListModel
         return $groups;
     }
 
-    protected function missingIndexUnconformity(IndexModelInterface $indexModel)
+    protected function missingIndexUnconformity(IndexModelInterface $indexModel): Unconformity
     {
         $description = "alter table {$this->getTable()} add {$indexModel->getName()}";
         $instructions = new InstructionsList();
@@ -88,7 +89,7 @@ class MySqlIndexesList extends AbstractIndexesListModel
         return new Unconformity($description, $instructions);
     }
 
-    protected function exceedingIndexUnconformity(AbstractIndexModel $mySqlIndex)
+    protected function exceedingIndexUnconformity(AbstractIndexModel $mySqlIndex): Unconformity
     {
         $description = "alter table {$this->getTable()} drop index {$mySqlIndex->getName()}";
         $instructions = new InstructionsList();
