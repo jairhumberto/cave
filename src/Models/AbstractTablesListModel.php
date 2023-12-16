@@ -53,8 +53,8 @@ abstract class AbstractTablesListModel extends ArrayList implements TablesListMo
     }
 
     /**
-     * @param AbstractTableModel $abstractTableModel
+     * @param AbstractTableModel $table
      * @return Unconformity
      */
-    abstract protected function exceedingTableUnconformity(AbstractTableModel $abstractTableModel);
+    abstract protected function exceedingTableUnconformity(AbstractTableModel $table);
 }

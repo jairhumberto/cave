@@ -2,8 +2,6 @@
 
 namespace Squille\Cave;
 
-use Iterator;
-
 abstract class ArrayList implements ListInterface
 {
     private $index;
