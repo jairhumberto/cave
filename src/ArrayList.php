@@ -13,22 +13,22 @@ abstract class ArrayList implements ListInterface
         $this->items = $items;
     }
 
-    public function any()
+    public function any(): bool
     {
         return count($this->items) > 0;
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->items);
     }
 
-    public function get($index)
+    public function get(int $index)
     {
         return $this->items[$index];
     }
 
-    public function search($condition)
+    public function search(callable $condition)
     {
         foreach ($this as $item) {
             if ($condition($item)) {
@@ -48,12 +48,12 @@ abstract class ArrayList implements ListInterface
         ++$this->index;
     }
 
-    public function key()
+    public function key(): int
     {
         return $this->index;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->items[$this->index]);
     }
@@ -63,7 +63,7 @@ abstract class ArrayList implements ListInterface
         $this->index = 0;
     }
 
-    public function merge($list)
+    public function merge(ListInterface $list): ArrayList
     {
         foreach ($list as $item) {
             $this->add($item);
@@ -71,7 +71,7 @@ abstract class ArrayList implements ListInterface
         return $this;
     }
 
-    public function add($item)
+    public function add($item): void
     {
         $this->items[] = $item;
     }

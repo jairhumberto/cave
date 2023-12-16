@@ -6,19 +6,8 @@ use Squille\Cave\UnconformitiesList;
 
 interface DatabaseModelInterface
 {
-    /**
-     * @return string
-     */
-    public function getCollation();
+    public function getCollation(): string;
+    public function getTables(): TablesListModelInterface;
 
-    /**
-     * @return TablesListModelInterface
-     */
-    public function getTables();
-
-    /**
-     * @param DatabaseModelInterface $databaseModel
-     * @return UnconformitiesList
-     */
-    public function checkIntegrity(DatabaseModelInterface $databaseModel);
+    public function checkIntegrity(DatabaseModelInterface $databaseModel): UnconformitiesList;
 }

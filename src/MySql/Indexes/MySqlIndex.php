@@ -16,7 +16,7 @@ class MySqlIndex extends AbstractMySqlIndex
         parent::__construct($pdo, $partialConstraints);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

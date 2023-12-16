@@ -6,12 +6,7 @@ use PDO;
 
 class MySqlConstraintFactory
 {
-    /**
-     * @param PDO $pdo
-     * @param array $partialConstraints
-     * @return AbstractMySqlConstraint
-     */
-    public static function createInstance(PDO $pdo, array $partialConstraints)
+    public static function createInstance(PDO $pdo, array $partialConstraints): AbstractMySqlConstraint
     {
         $firstKeyPart = $partialConstraints[0];
         if ($firstKeyPart->getName() == "PRIMARY") {

@@ -20,12 +20,12 @@ abstract class AbstractMySqlIndex extends AbstractIndexModel
         parent::__construct($partialConstraints);
     }
 
-    public function getTable()
+    public function getTable(): string
     {
         return $this->table;
     }
 
-    protected function incompatibleIndexUnconformity(IndexModelInterface $indexModel)
+    protected function incompatibleIndexUnconformity(IndexModelInterface $indexModel): Unconformity
     {
         $description = "alter table {$this->getTable()} drop index {$this->getName()}";
         $instructions = new InstructionsList();

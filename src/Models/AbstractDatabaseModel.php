@@ -7,7 +7,7 @@ use Squille\Cave\Unconformity;
 
 abstract class AbstractDatabaseModel implements DatabaseModelInterface
 {
-    public function checkIntegrity(DatabaseModelInterface $databaseModel)
+    public function checkIntegrity(DatabaseModelInterface $databaseModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         if ($this->getCollation() != $databaseModel->getCollation()) {
@@ -16,9 +16,5 @@ abstract class AbstractDatabaseModel implements DatabaseModelInterface
         return $unconformities->merge($this->getTables()->checkIntegrity($databaseModel->getTables()));
     }
 
-    /**
-     * @param DatabaseModelInterface $databaseModel
-     * @return Unconformity
-     */
-    abstract protected function collationUnconformity(DatabaseModelInterface $databaseModel);
+    abstract protected function collationUnconformity(DatabaseModelInterface $databaseModel): Unconformity;
 }

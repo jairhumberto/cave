@@ -13,12 +13,12 @@ class Unconformity
         $this->instructions = $instructions ?: new InstructionsList();
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    public function fix()
+    public function fix(): void
     {
         foreach ($this->instructions as $instruction) {
             $instruction();

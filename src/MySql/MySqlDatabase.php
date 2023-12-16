@@ -7,6 +7,7 @@ use PDOStatement;
 use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractDatabaseModel;
 use Squille\Cave\Models\DatabaseModelInterface;
+use Squille\Cave\Models\TablesListModelInterface;
 use Squille\Cave\Unconformity;
 
 class MySqlDatabase extends AbstractDatabaseModel
@@ -22,7 +23,7 @@ class MySqlDatabase extends AbstractDatabaseModel
         $this->tables = new MySqlTablesList($pdo);
     }
 
-    private function retrieveCollation()
+    private function retrieveCollation(): string
     {
         try {
             $stm = $this->pdo->query("SELECT @@collation_database");
@@ -34,12 +35,12 @@ class MySqlDatabase extends AbstractDatabaseModel
         }
     }
 
-    public function getTables()
+    public function getTables(): TablesListModelInterface
     {
         return $this->tables;
     }
 
-    protected function collationUnconformity(DatabaseModelInterface $databaseModel)
+    protected function collationUnconformity(DatabaseModelInterface $databaseModel): Unconformity
     {
         $description = "alter database collate {{$this->getCollation()} -> {$databaseModel->getCollation()}}";
         $instructions = new InstructionsList();
@@ -49,7 +50,7 @@ class MySqlDatabase extends AbstractDatabaseModel
         return new Unconformity($description, $instructions);
     }
 
-    public function getCollation()
+    public function getCollation(): string
     {
         return $this->collation;
     }

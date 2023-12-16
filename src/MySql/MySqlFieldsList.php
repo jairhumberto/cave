@@ -8,6 +8,7 @@ use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractFieldModel;
 use Squille\Cave\Models\AbstractFieldsListModel;
 use Squille\Cave\Models\FieldModelInterface;
+use Squille\Cave\Models\TableModelInterface;
 use Squille\Cave\Unconformity;
 
 class MySqlFieldsList extends AbstractFieldsListModel
@@ -22,7 +23,7 @@ class MySqlFieldsList extends AbstractFieldsListModel
         parent::__construct($this->retrieveFields());
     }
 
-    private function retrieveFields()
+    private function retrieveFields(): array
     {
         try {
             $result = $this->pdo->query("SHOW FULL FIELDS IN {$this->getTable()}");
@@ -34,12 +35,12 @@ class MySqlFieldsList extends AbstractFieldsListModel
         }
     }
 
-    public function getTable()
+    public function getTable(): TableModelInterface
     {
         return $this->table;
     }
 
-    protected function missingFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel)
+    protected function missingFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel): Unconformity
     {
         $description = "alter table {$currentFieldModel->getTable()} add {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();
@@ -53,7 +54,7 @@ class MySqlFieldsList extends AbstractFieldsListModel
         return new Unconformity($description, $instructions);
     }
 
-    protected function exceedingFieldUnconformity(AbstractFieldModel $mySqlField)
+    protected function exceedingFieldUnconformity(AbstractFieldModel $mySqlField): Unconformity
     {
         $description = "alter table {$mySqlField->getTable()} drop column {$mySqlField->getField()}";
         $instructions = new InstructionsList();
@@ -66,7 +67,7 @@ class MySqlFieldsList extends AbstractFieldsListModel
         return new Unconformity($description, $instructions);
     }
 
-    protected function orderFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel)
+    protected function orderFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel): Unconformity
     {
         $description = "alter table {$currentFieldModel->getTable()} modify {$currentFieldModel->getField()}";
         $instructions = new InstructionsList();

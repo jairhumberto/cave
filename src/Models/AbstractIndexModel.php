@@ -4,10 +4,11 @@ namespace Squille\Cave\Models;
 
 use Squille\Cave\ArrayList;
 use Squille\Cave\UnconformitiesList;
+use Squille\Cave\Unconformity;
 
 abstract class AbstractIndexModel extends ArrayList implements IndexModelInterface
 {
-    public function checkIntegrity(IndexModelInterface $indexModel)
+    public function checkIntegrity(IndexModelInterface $indexModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         if ($this->partialIndexesIncompatible($indexModel)) {
@@ -16,14 +17,14 @@ abstract class AbstractIndexModel extends ArrayList implements IndexModelInterfa
         return $unconformities;
     }
 
-    private function partialIndexesIncompatible(IndexModelInterface $indexModel)
+    private function partialIndexesIncompatible(IndexModelInterface $indexModel): bool
     {
         return $this->count() != $indexModel->count()
             || $this->indexesPartsMissing($indexModel)
             || $this->indexesPartsExceeding($indexModel);
     }
 
-    private function indexesPartsMissing(IndexModelInterface $indexModel)
+    private function indexesPartsMissing(IndexModelInterface $indexModel): bool
     {
         foreach ($indexModel as $key => $indexPartModel) {
             $currentIndexPart = $this->get($key);
@@ -34,7 +35,7 @@ abstract class AbstractIndexModel extends ArrayList implements IndexModelInterfa
         return false;
     }
 
-    private function indexesPartsExceeding(IndexModelInterface $indexModel)
+    private function indexesPartsExceeding(IndexModelInterface $indexModel): bool
     {
         foreach ($this as $key => $indexPart) {
             $currentIndexPartModel = $indexModel->get($key);
@@ -45,5 +46,5 @@ abstract class AbstractIndexModel extends ArrayList implements IndexModelInterfa
         return false;
     }
 
-    abstract protected function incompatibleIndexUnconformity(IndexModelInterface $indexModel);
+    abstract protected function incompatibleIndexUnconformity(IndexModelInterface $indexModel): Unconformity;
 }

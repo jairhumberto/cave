@@ -7,19 +7,7 @@ use Squille\Cave\UnconformitiesList;
 
 interface ConstraintModelInterface extends ListInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * @return string
-     */
-    public function getTable();
-
-    /**
-     * @param ConstraintModelInterface $constraintModel
-     * @return UnconformitiesList
-     */
-    public function checkIntegrity(ConstraintModelInterface $constraintModel);
+    public function getName(): string;
+    public function getTable(): string;
+    public function checkIntegrity(ConstraintModelInterface $constraintModel): UnconformitiesList;
 }

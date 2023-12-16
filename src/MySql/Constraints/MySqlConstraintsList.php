@@ -8,6 +8,7 @@ use Squille\Cave\InstructionsList;
 use Squille\Cave\Models\AbstractConstraintsListModel;
 use Squille\Cave\Models\AbstractConstraintModel;
 use Squille\Cave\Models\ConstraintModelInterface;
+use Squille\Cave\Models\TableModelInterface;
 use Squille\Cave\MySql\MySqlTable;
 use Squille\Cave\Unconformity;
 
@@ -23,7 +24,7 @@ class MySqlConstraintsList extends AbstractConstraintsListModel
         parent::__construct($this->retrieveConstraints());
     }
 
-    private function retrieveConstraints()
+    private function retrieveConstraints(): array
     {
         try {
             $selectExpressions = MySqlPartialConstraint::selectExpressions() ?: "*";
@@ -51,12 +52,12 @@ class MySqlConstraintsList extends AbstractConstraintsListModel
         }
     }
 
-    public function getTable()
+    public function getTable(): TableModelInterface
     {
         return $this->table;
     }
 
-    private function groupConstraints(array $partialConstraints)
+    private function groupConstraints(array $partialConstraints): array
     {
         $keys = [];
         $groups = $this->groupPartialConstraints($partialConstraints);
@@ -66,7 +67,7 @@ class MySqlConstraintsList extends AbstractConstraintsListModel
         return $keys;
     }
 
-    private function groupPartialConstraints(array $partialConstraints)
+    private function groupPartialConstraints(array $partialConstraints): array
     {
         $groups = [];
         foreach ($partialConstraints as $part) {
@@ -78,7 +79,7 @@ class MySqlConstraintsList extends AbstractConstraintsListModel
         return $groups;
     }
 
-    protected function missingConstraintUnconformity(ConstraintModelInterface $constraintModel)
+    protected function missingConstraintUnconformity(ConstraintModelInterface $constraintModel): Unconformity
     {
         $description = "alter table {$this->getTable()} add {$constraintModel->getName()}";
         $instructions = new InstructionsList();
@@ -88,7 +89,7 @@ class MySqlConstraintsList extends AbstractConstraintsListModel
         return new Unconformity($description, $instructions);
     }
 
-    protected function exceedingConstraintUnconformity(AbstractConstraintModel $mySqlConstraint)
+    protected function exceedingConstraintUnconformity(AbstractConstraintModel $mySqlConstraint): Unconformity
     {
         $description = "alter table {$this->getTable()} {$mySqlConstraint->dropCommand()}";
         $instructions = new InstructionsList();

@@ -6,54 +6,14 @@ use Squille\Cave\UnconformitiesList;
 
 interface FieldModelInterface
 {
-    /**
-     * @return TableModelInterface
-     */
-    public function getTable();
-
-    /**
-     * @return string
-     */
-    public function getField();
-
-    /**
-     * @return string
-     */
-    public function getType();
-
-    /**
-     * @return string
-     */
-    public function getCollation();
-
-    /**
-     * @return string
-     */
-    public function getNull();
-
-    /**
-     * @return string
-     */
-    public function getKey();
-
-    /**
-     * @return string
-     */
-    public function getDefault();
-
-    /**
-     * @return string
-     */
-    public function getExtra();
-
-    /**
-     * @return string
-     */
-    public function getComment();
-
-    /**
-     * @param FieldModelInterface $fieldModel
-     * @return UnconformitiesList
-     */
-    public function checkIntegrity(FieldModelInterface $fieldModel);
+    public function getTable(): TableModelInterface;
+    public function getField(): string;
+    public function getType(): string;
+    public function getCollation(): string;
+    public function getNull(): string;
+    public function getKey(): string;
+    public function getDefault(): string;
+    public function getExtra(): string;
+    public function getComment(): string;
+    public function checkIntegrity(FieldModelInterface $fieldModel): UnconformitiesList;
 }

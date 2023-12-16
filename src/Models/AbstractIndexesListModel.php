@@ -4,16 +4,17 @@ namespace Squille\Cave\Models;
 
 use Squille\Cave\ArrayList;
 use Squille\Cave\UnconformitiesList;
+use Squille\Cave\Unconformity;
 
 abstract class AbstractIndexesListModel extends ArrayList implements IndexesListModelInterface
 {
-    public function checkIntegrity(IndexesListModelInterface $indexesListModel)
+    public function checkIntegrity(IndexesListModelInterface $indexesListModel): UnconformitiesList
     {
         return $this->missingIndexesUnconformities($indexesListModel)
             ->merge($this->generalIndexesUnconformities($indexesListModel));
     }
 
-    private function missingIndexesUnconformities(IndexesListModelInterface $indexesListModel)
+    private function missingIndexesUnconformities(IndexesListModelInterface $indexesListModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         foreach ($indexesListModel as $indexModel) {
@@ -28,9 +29,9 @@ abstract class AbstractIndexesListModel extends ArrayList implements IndexesList
         return $unconformities;
     }
 
-    abstract protected function missingIndexUnconformity(IndexModelInterface $indexModel);
+    abstract protected function missingIndexUnconformity(IndexModelInterface $indexModel): Unconformity;
 
-    private function generalIndexesUnconformities(IndexesListModelInterface $indexesListModel)
+    private function generalIndexesUnconformities(IndexesListModelInterface $indexesListModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         foreach ($this as $index) {
@@ -47,5 +48,5 @@ abstract class AbstractIndexesListModel extends ArrayList implements IndexesList
         return $unconformities;
     }
 
-    abstract protected function exceedingIndexUnconformity(AbstractIndexModel $mySqlIndex);
+    abstract protected function exceedingIndexUnconformity(AbstractIndexModel $mySqlIndex): Unconformity;
 }

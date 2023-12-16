@@ -8,14 +8,14 @@ use Squille\Cave\Unconformity;
 
 abstract class AbstractFieldsListModel extends ArrayList implements FieldsListModelInterface
 {
-    public function checkIntegrity(FieldsListModelInterface $fieldsListModel)
+    public function checkIntegrity(FieldsListModelInterface $fieldsListModel): UnconformitiesList
     {
         return $this->missingFieldsUnconformities($fieldsListModel)
             ->merge($this->generalFieldsUnconformities($fieldsListModel))
             ->merge($this->orderFieldsUnconformities($fieldsListModel));
     }
 
-    private function missingFieldsUnconformities(FieldsListModelInterface $fieldsListModel)
+    private function missingFieldsUnconformities(FieldsListModelInterface $fieldsListModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         foreach ($fieldsListModel as $key => $fieldModel) {
@@ -36,19 +36,14 @@ abstract class AbstractFieldsListModel extends ArrayList implements FieldsListMo
         return $unconformities;
     }
 
-    private function addField(FieldModelInterface $currentFieldModel)
+    private function addField(FieldModelInterface $currentFieldModel): void
     {
         $this->add($currentFieldModel);
     }
 
-    /**
-     * @param FieldModelInterface $currentFieldModel
-     * @param FieldModelInterface $previousFieldModel
-     * @return Unconformity
-     */
-    abstract protected function missingFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel);
+    abstract protected function missingFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel): Unconformity;
 
-    private function generalFieldsUnconformities(FieldsListModelInterface $fieldsListModel)
+    private function generalFieldsUnconformities(FieldsListModelInterface $fieldsListModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         foreach ($this as $field) {
@@ -65,13 +60,9 @@ abstract class AbstractFieldsListModel extends ArrayList implements FieldsListMo
         return $unconformities;
     }
 
-    /**
-     * @param AbstractFieldModel $mySqlField
-     * @return Unconformity
-     */
-    abstract protected function exceedingFieldUnconformity(AbstractFieldModel $mySqlField);
+    abstract protected function exceedingFieldUnconformity(AbstractFieldModel $mySqlField): Unconformity;
 
-    private function orderFieldsUnconformities(FieldsListModelInterface $fieldsListModel)
+    private function orderFieldsUnconformities(FieldsListModelInterface $fieldsListModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
         foreach ($fieldsListModel as $key => $fieldModel) {
@@ -88,10 +79,5 @@ abstract class AbstractFieldsListModel extends ArrayList implements FieldsListMo
         return $unconformities;
     }
 
-    /**
-     * @param FieldModelInterface $currentFieldModel
-     * @param FieldModelInterface $previousFieldModel
-     * @return Unconformity
-     */
-    abstract protected function orderFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel);
+    abstract protected function orderFieldUnconformity(FieldModelInterface $currentFieldModel, FieldModelInterface $previousFieldModel): Unconformity;
 }

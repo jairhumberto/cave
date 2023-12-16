@@ -6,49 +6,13 @@ use Squille\Cave\UnconformitiesList;
 
 interface TableModelInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * @return string
-     */
-    public function getEngine();
-
-    /**
-     * @return string
-     */
-    public function getRowFormat();
-
-    /**
-     * @return string
-     */
-    public function getCollation();
-
-    /**
-     * @return string
-     */
-    public function getChecksum();
-
-    /**
-     * @return FieldsListModelInterface
-     */
-    public function getFields();
-
-    /**
-     * @return ConstraintsListModelInterface
-     */
-    public function getConstraints();
-
-    /**
-     * @return IndexesListModelInterface
-     */
-    public function getIndexes();
-
-    /**
-     * @param TableModelInterface $tableModel
-     * @return UnconformitiesList
-     */
-    public function checkIntegrity(TableModelInterface $tableModel);
+    public function getName(): string;
+    public function getEngine(): string;
+    public function getRowFormat(): string;
+    public function getCollation(): string;
+    public function getChecksum(): string;
+    public function getFields(): FieldsListModelInterface;
+    public function getConstraints(): ConstraintsListModelInterface;
+    public function getIndexes(): IndexesListModelInterface;
+    public function checkIntegrity(TableModelInterface $tableModel): UnconformitiesList;
 }

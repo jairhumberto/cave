@@ -6,12 +6,7 @@ use PDO;
 
 class MySqlIndexFactory
 {
-    /**
-     * @param PDO $pdo
-     * @param array $partialIndexes
-     * @return AbstractMySqlIndex
-     */
-    public static function createInstance(PDO $pdo, array $partialIndexes)
+    public static function createInstance(PDO $pdo, array $partialIndexes): AbstractMySqlIndex
     {
         $firstKeyPart = $partialIndexes[0];
         if ($firstKeyPart->getType() == "FULLTEXT") {

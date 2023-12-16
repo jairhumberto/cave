@@ -7,14 +7,6 @@ use Squille\Cave\UnconformitiesList;
 
 interface IndexesListModelInterface extends ListInterface
 {
-    /**
-     * @return TableModelInterface
-     */
-    public function getTable();
-
-    /**
-     * @param IndexesListModelInterface $indexesListModel
-     * @return UnconformitiesList
-     */
-    public function checkIntegrity(IndexesListModelInterface $indexesListModel);
+    public function getTable(): TableModelInterface;
+    public function checkIntegrity(IndexesListModelInterface $indexesListModel): UnconformitiesList;
 }

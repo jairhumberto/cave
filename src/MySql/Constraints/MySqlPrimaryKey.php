@@ -6,12 +6,12 @@ use PDO;
 
 class MySqlPrimaryKey extends AbstractMySqlConstraint
 {
-    public function getName()
+    public function getName(): string
     {
         return "PRIMARY";
     }
 
-    public function dropCommand()
+    public function dropCommand(): string
     {
         return "DROP PRIMARY KEY";
     }

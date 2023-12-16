@@ -7,7 +7,7 @@ use Squille\Cave\Unconformity;
 
 abstract class AbstractFieldModel implements FieldModelInterface
 {
-    public function checkIntegrity(FieldModelInterface $fieldModel)
+    public function checkIntegrity(FieldModelInterface $fieldModel): UnconformitiesList
     {
         $unconformities = new UnconformitiesList();
 
@@ -42,45 +42,11 @@ abstract class AbstractFieldModel implements FieldModelInterface
         return $unconformities;
     }
 
-    /**
-     * @param FieldModelInterface $fieldModel
-     * @return Unconformity
-     */
-    abstract protected function typeUnconformity(FieldModelInterface $fieldModel);
-
-    /**
-     * @param FieldModelInterface $fieldModel
-     * @return Unconformity
-     */
-    abstract protected function collationUnconformity(FieldModelInterface $fieldModel);
-
-    /**
-     * @param FieldModelInterface $fieldModel
-     * @return Unconformity
-     */
-    abstract protected function nullUnconformity(FieldModelInterface $fieldModel);
-
-    /**
-     * @param FieldModelInterface $fieldModel
-     * @return Unconformity
-     */
-    abstract protected function defaultUnconformity(FieldModelInterface $fieldModel);
-
-    /**
-     * @param FieldModelInterface $fieldModel
-     * @return Unconformity
-     */
-    abstract protected function extraUnconformity(FieldModelInterface $fieldModel);
-
-    /**
-     * @param FieldModelInterface $fieldModel
-     * @return Unconformity
-     */
-    abstract protected function commentUnconformity(FieldModelInterface $fieldModel);
-
-    /**
-     * @param FieldModelInterface $fieldModel
-     * @return Unconformity
-     */
-    abstract protected function definitionUnconformity(FieldModelInterface $fieldModel);
+    abstract protected function typeUnconformity(FieldModelInterface $fieldModel): Unconformity;
+    abstract protected function collationUnconformity(FieldModelInterface $fieldModel): Unconformity;
+    abstract protected function nullUnconformity(FieldModelInterface $fieldModel): Unconformity;
+    abstract protected function defaultUnconformity(FieldModelInterface $fieldModel): Unconformity;
+    abstract protected function extraUnconformity(FieldModelInterface $fieldModel): Unconformity;
+    abstract protected function commentUnconformity(FieldModelInterface $fieldModel): Unconformity;
+    abstract protected function definitionUnconformity(FieldModelInterface $fieldModel): Unconformity;
 }
