@@ -50,25 +50,25 @@ class MySqlTablesList extends AbstractTablesListModel
         return new Unconformity($description, $instructions);
     }
 
-    private function getTableOptions(TableModelInterface $modelTable)
+    private function getTableOptions(TableModelInterface $tableModel)
     {
         $tableOptionsArray = [
-            "ENGINE {$modelTable->getEngine()}",
-            "ROW_FORMAT {$modelTable->getRowFormat()}",
-            "COLLATE {$modelTable->getCollation()}"
+            "ENGINE {$tableModel->getEngine()}",
+            "ROW_FORMAT {$tableModel->getRowFormat()}",
+            "COLLATE {$tableModel->getCollation()}"
         ];
-        if ($modelTable->getChecksum()) {
-            $tableOptionsArray[] = "CHECKSUM {$modelTable->getChecksum()}";
+        if ($tableModel->getChecksum()) {
+            $tableOptionsArray[] = "CHECKSUM {$tableModel->getChecksum()}";
         }
         return join(",", $tableOptionsArray);
     }
 
-    protected function exceedingTableUnconformity(AbstractTableModel $abstractTableModel)
+    protected function exceedingTableUnconformity(AbstractTableModel $table)
     {
-        $description = "drop table {$abstractTableModel->getName()}";
+        $description = "drop table {$table->getName()}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($abstractTableModel) {
-            $this->pdo->query("DROP TABLE {$abstractTableModel->getName()}");
+        $instructions->add(function () use ($table) {
+            $this->pdo->query("DROP TABLE {$table->getName()}");
         });
         return new Unconformity($description, $instructions);
     }

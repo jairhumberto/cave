@@ -80,13 +80,13 @@ class XmlTablesList extends AbstractTablesListModel
         return new Unconformity($description, $instructions);
     }
 
-    protected function exceedingTableUnconformity(AbstractTableModel $abstractTableModel)
+    protected function exceedingTableUnconformity(AbstractTableModel $table)
     {
-        $description = "drop table {$abstractTableModel->getName()}";
+        $description = "drop table {$table->getName()}";
         $instructions = new InstructionsList();
-        $instructions->add(function () use ($abstractTableModel) {
+        $instructions->add(function () use ($table) {
             foreach ($this->tablesElement->childNodes as $childNode) {
-                if ($childNode->getAttibute("name") == $abstractTableModel->getName()) {
+                if ($childNode->getAttibute("name") == $table->getName()) {
                     $this->tablesElement->removeChild($childNode);
                     break;
                 }
