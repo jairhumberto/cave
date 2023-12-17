@@ -1,5 +1,4 @@
 vendor/
 .idea
-composer.lock
-src/main.php
-*.xml
+.phpunit.result.cache
+.phpunit.cache
