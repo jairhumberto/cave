@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<database collation="utf8_general_ci">
+    <table name="pessoa">
+        <column name="id" type="int(11)" />
+        <column name="nome" type="varchar(255)" />
+        <column name="cpf" type="varchar(11)" />
+        <column name="novo_cpf" type="varchar(11)" />
+    </table>
+</database>
